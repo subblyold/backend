@@ -19,6 +19,8 @@ class SubblyBackendServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('subbly/backend');
+
+    include __DIR__.'/../../routes.php';
 	}
 
 	/**
