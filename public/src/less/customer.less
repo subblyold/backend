@@ -1,0 +1,71 @@
+
+//
+// Customers resume
+// --------------------------------------------------
+
+
+  // orders resume details 
+.cust-rsum {
+  padding-top: ( @font-size-large + 10px );
+  margin-left: @list-status-width;
+}
+
+  // customers resume row
+.cust-row {
+  
+  &.active {
+    background: @customer;
+    border-top: 1px solid @customer; 
+
+    & * {
+      color: @white !important;
+    }
+  }
+}
+
+.cust-identifier {
+  float: left;
+  line-height: 20px;
+}
+
+.cust-action {
+  float: right;
+  padding-top: 10px;
+}
+
+//
+// Customer Addresses List
+// --------------------------------------------------
+
+.cust-addresses {
+  border-bottom: 1px solid @border-ligth;
+  width: 100%;
+
+  td {
+    border-top: 1px solid @border-ligth;
+    padding: 30px 0;
+  }
+
+  .address-id {
+    background: @gray-lighter;
+    border-radius: 40px;
+    color: @gray;
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    margin: 0 auto;
+    text-align: center;
+    width: 40px;
+  }
+
+  a {
+    color: @customer;
+  }
+}
+
+.cust-no-addresses {
+  background: @gray-lighter;
+  color: @gray;
+  display: block;
+  padding: @padding-large-vertical @padding-large-horizontal;
+}

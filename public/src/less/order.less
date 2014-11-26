@@ -1,0 +1,129 @@
+
+//
+// Orders resume
+// --------------------------------------------------
+
+  // orders resume status
+.ordr-sts {
+  text-align: center;
+  width: @list-status-width;
+}
+
+  // orders resume details 
+.ordr-dtls {
+  padding-top: @font-size-large
+}
+
+  // orders resume row
+.ordr-row {
+  
+  &.active {
+    background: @product;
+    border-top: 1px solid @product; 
+
+    & * {
+      color: @white !important;
+    }
+  }
+}
+
+//
+// Order Details
+// --------------------------------------------------
+
+.ord-lst {
+  border-top: 1px solid @border-ligth;
+  margin: @margin-large-vertical 0;
+  width: 100%
+}
+
+.pdt-dtls {
+  display: block;
+  padding-left: @padding-large-horizontal;
+}
+
+.pdt-dtls-lst {
+  float: right;
+  padding: @padding-large-vertical @padding-base-vertical 0;
+
+  li {
+    display: inline-block;
+  }
+}
+
+.pdt-dtls-primary {
+  .flex-display;
+  .align-items(center);
+  min-height: 48px;
+  float: left;
+  max-width: 190px;
+  padding-left: 7px;
+}
+
+.pdt-label {
+  display: inline-block;
+  width: 75px;
+}
+
+.pdt-qty {
+  text-align: center;
+  width: 50px;
+}
+
+.pdt-total {
+  min-width: 80px;
+  text-align: right;
+}
+
+.ord-lst-rw {
+  padding: @padding-large-vertical 0;
+}
+
+.ord-dtls {
+
+  .thmb-list {
+    border: 1px solid @border;
+    overflow: hidden;
+  }
+}
+
+.ord-lst {
+
+  .ord-rw-itm {
+    padding: 0 7px;
+  }
+}
+
+.ord-pdt-dtl {
+  .clearfix;
+  float: left;
+
+  .ord-rw-itm {
+    display: block;
+  }
+}
+
+.ord-lst-rw {
+  .clearfix;
+
+  & + .ord-lst-rw {
+    border-top: 1px solid @border-ligth;
+  }
+
+}
+
+.ord-pdts-lst {
+  width: 100%;
+}
+
+
+//
+// Order Total Detail
+// --------------------------------------------------
+
+.ord-ttl-dts {
+  background: #faf6e6;
+  border-radius: @border-radius-large;
+  margin: 40px 0;
+  padding: 25px 30px;
+}

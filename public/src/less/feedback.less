@@ -1,0 +1,91 @@
+
+.feedback-overlay {
+  .transitionBlocks( ~"visibility 0s linear 0.5s,opacity 0.5s linear");
+  background: url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7);
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  visibility:hidden;
+  z-index: ( @zindex-higher - 10 );
+
+  &.show {
+    .transition-delay(0s);
+    opacity: 1;
+    visibility:visible;
+  }
+}
+
+.feedback-inner {
+  .transition( all, 300ms);
+  color: @black;
+  padding: @margin-large-vertical;
+  position: relative;
+  opacity: 0; 
+  -webkit-transform: translate3d(0,10px,0); 
+  transform: translate3d(0,10px,0);
+  height: 26px;
+  line-height: 26px;
+
+  &.display {
+    opacity: 1; 
+    -webkit-transform: translate3d(0,0,0); 
+    transform: translate3d(0,0,0);
+  }
+}
+
+.feedback {
+  .transition( background, 300ms);
+  background: #efefef;
+  left: @main-nav-width;
+  opacity: 1;
+  position: fixed;
+  top: 0;
+  width: calc( 100% - @main-nav-width );
+  z-index: @zindex-higher;
+
+  &.progress-start {
+    opacity: 1; 
+    -webkit-transform: scale3d(0,0.08,1); 
+    transform: scale3d(0,0.08,1);
+  }
+
+  &.progress {
+    -webkir-transition-duration: 30s;
+    transition-duration: 30s;
+    opacity: 1; 
+    -webkit-transform: scale3d(1,0.08,1); 
+    transform: scale3d(1,0.08,1);
+  }
+
+  &.progress-ended {
+    -webkir-transition-duration: 250ms !important;
+    transition-duration: 250ms !important;
+    opacity: 1; 
+    -webkit-transform: scale3d(1,0.08,1); 
+    transform: scale3d(1,0.08,1);
+  }
+
+  &.display {
+    opacity: 1; 
+    -webkit-transform: scale3d(1,1,1);
+    transform: scale3d(1,1,1);
+  }
+
+  &.hide {
+    opacity: 0;
+  }
+
+  // States
+  &.success {
+    background: #abddb3
+  }
+
+  &.error {
+    background: #f3c0c1
+  }
+}
+
+
