@@ -140,17 +140,18 @@ module.exports = function(grunt)
                   , 'assets/lib/backbone/backbone-appready.js'
                   , 'assets/lib/backbone/backbone.basicauth.js'
                   , 'assets/lib/handlebars/handlebars-v2.0.0.js'
+                  , 'assets/lib/handlebars/handlebars-intl.js'
+                  , 'assets/lib/handlebars/locale/en.js'
+                  , 'assets/lib/handlebars/locale/fr.js'
                   // , 'assets/lib/bootstrap/dropdown.js'
                   , 'assets/lib/bootstrap/button.js'
-                  // , 'assets/lib/bootstrap/tab.js'
                   // , 'assets/lib/bootstrap/modal.js'
                   , 'assets/lib/moment/moment.js'
                   // , 'assets/lib/download/download.js'
 
-                  , 'assets/js/scroll2sicky.js'
-
                   // App
                   , 'assets/js/closure.intro.js'
+                  , 'assets/js/helpers/scroll2sicky.js'
                   , 'assets/js/helpers/helpers.js'
                   , 'assets/js/helpers/handlebars.js'
                   , 'assets/js/helpers/validation.js'

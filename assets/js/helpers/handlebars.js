@@ -1,6 +1,8 @@
 
 // Handlebars Helpers
 
+HandlebarsIntl.registerWith( Handlebars )
+
 // Handlebars.registerHelper( 'i18n', function( str )
 // {
 //   // wrap `__` function because Handlebars
@@ -45,7 +47,7 @@ Handlebars.registerHelper('isNotEmpty', function( value, options )
   }
 })
 
-Handlebars.registerHelper('formatNumber', function( int )
+Handlebars.registerHelper('formatNumberDeprecated', function( int )
 {
   if( _.isUndefined( int ) )
     return

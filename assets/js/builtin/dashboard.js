@@ -24,7 +24,13 @@
 
     , list: function() 
       {
-        this.getViewByPath( this._viewsNames ).displayTpl()
+        var data = {
+          todaySales: 499.12
+        }
+
+        this
+          .getViewByPath( this._viewsNames )
+          .displayTpl( data )
       }
   }
 

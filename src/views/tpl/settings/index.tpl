@@ -68,7 +68,21 @@
               <span class="form-select-holder">
                 <select class="form-input" name="subbly.site_status">
                   {{#each siteStatusList}}
-                  <option value="{{this}}" {{isSelected this default=../site_status attribute="selected"}}>{{this}}</option>
+                  <option value="{{this}}" {{isSelected this default=../subbly.site_status attribute="selected"}}>{{this}}</option>
+                  {{/each}}
+                </select>
+              </span>
+            </div><!-- /.form-field -->
+          </div><!-- /.form-row -->
+          <div class="form-row">
+            <div class="form-field input-6">
+              <label class="form-label">
+                Backend Language
+              </label>
+              <span class="form-select-holder">
+                <select class="form-input" name="subbly.backend_locale">
+                  {{#each backendLocaleList}}
+                  <option value="{{this}}" {{isSelected this default=../subbly.backend_locale attribute="selected"}}>{{this}}</option>
                   {{/each}}
                 </select>
               </span>

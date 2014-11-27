@@ -15,7 +15,7 @@
     <ul class="dashboard-stats">
       <li>
         <span>SALES TODAY</span>
-        $499.00
+        {{formatNumber todaySales style="currency" currency="USD"}}
       </li>
       <li>
         <span>CUSTOMERS</span>
