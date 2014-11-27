@@ -76,7 +76,7 @@ var SubblyView = Backbone.View.extend(
       tplData = tplData || {}
 
       var intlData = {
-          locales: "en"
+          locales: 'fr'
         , formats: 
           {
               number: {

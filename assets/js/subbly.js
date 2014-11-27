@@ -96,22 +96,23 @@ SubblyCore.prototype.init = function()
   if( !this.isLogin() )
   {
     console.info( 'trigger login view' )
-    this.trigger( 'hash::change', 'login' )
+    console.groupEnd()
+
+    this.trigger( 'user::login' )
   }
   else
   {
     console.info( 'user is logged in' )
-  }
-  
-  console.info( 'release app router' )
-  console.groupEnd()
+    console.info( 'release app router' )
+    console.groupEnd()
 
-  var scope = this
-  
-  this._router.ready(function( route )
-  {
-    scope.trigger( 'hash::changed', route )
-  })
+    var scope = this
+    
+    this._router.ready(function( route )
+    {
+      scope.trigger( 'hash::changed', route )
+    })
+  }
 }
 
 
@@ -231,6 +232,13 @@ SubblyCore.prototype.setCredentials = function( credentials )
   this._credentials = credentials
 
   this.setCookie( this._credentialsCookie, this._credentials )
+
+  var scope = this
+  
+  this._router.ready(function( route )
+  {
+    scope.trigger( 'hash::changed', route )
+  })
 }
 
 /*
@@ -280,7 +288,7 @@ SubblyCore.prototype.logout = function()
 
   this.setCookie( this._credentialsCookie, null )
 
-  this.trigger( 'hash::change', 'login' )
+  this.trigger( 'user::login' )
 }
 
 

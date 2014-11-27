@@ -8,7 +8,6 @@ var Router = Backbone.Router.extend(
 
   , routes: {
         '':       'default'
-      , 'login':  'login'
       , 'logout': 'logout'
       , '*path':  'notFound'
     }
@@ -43,7 +42,6 @@ var Router = Backbone.Router.extend(
         , root:       subbly.getConfig( 'baseUrl' )
       })
 
-
       // Router events callback
       Backbone.history.on('route', function( router, route, params )
       {
@@ -51,6 +49,8 @@ var Router = Backbone.Router.extend(
       })
 
       // subbly.on( 'hash::change', this.closeCurrent, this )
+
+      subbly.on( 'user::login', this.login, this)
 
       return this
     }
