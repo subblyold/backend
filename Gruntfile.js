@@ -28,7 +28,7 @@ module.exports = function(grunt)
                   , sourceMapFilename: '<%= pkg.dist %>css/<%= pkg.name %>.local.css.map'
                 }
               , files: {
-                  '<%= pkg.dist %>css/<%= pkg.name %>.local.css': 'public/src/less/subbly.less'
+                  '<%= pkg.dist %>css/<%= pkg.name %>.local.css': 'assets/less/subbly.less'
                 }
             }
           , staging: 
@@ -43,7 +43,7 @@ module.exports = function(grunt)
                   , compress: true
                 }
               , files: {
-                  '<%= pkg.dist %>css/<%= pkg.name %>.staging.css': 'public/src/less/subbly.less'
+                  '<%= pkg.dist %>css/<%= pkg.name %>.staging.css': 'assets/less/subbly.less'
                 }
             }
         }
@@ -63,7 +63,7 @@ module.exports = function(grunt)
               , files: 
                 {
                     '<%= pkg.dist %>css/<%= pkg.name %>.local.css': [
-                        'public/src/less/subbly.less'
+                        'assets/less/subbly.less'
                     ]
                 }
               , src: '<%= pkg.dist %>css/<%= pkg.name %>.local.css'
@@ -73,7 +73,7 @@ module.exports = function(grunt)
         {
             options: 
             {
-              csslintrc: 'public/src/less/.csslintrc'
+              csslintrc: 'assets/less/.csslintrc'
             }
           , src: [ '<%= pkg.dist %>css/<%= pkg.name %>.local.css' ]
         }
@@ -129,53 +129,53 @@ module.exports = function(grunt)
             {
                 src: [
                   // Dependencies
-                    'public/src/lib/jquery/jquery-2.1.1.js'
-                  // , 'public/src/lib/jquery/jquery.ui.widget.js'
-                  , 'public/src/lib/jquery/jquery.nanoscroller.js'
-                  // , 'public/src/lib/jquery/jquery.fileupload.js'
-                  , 'public/src/lib/underscore/underscore.js'
-                  , 'public/src/lib/backbone/backbone.js'
-                  , 'public/src/lib/backbone/backbone.controller.js'
-                  , 'public/src/lib/backbone/backbone-approuter.js'
-                  , 'public/src/lib/backbone/backbone-appready.js'
-                  , 'public/src/lib/backbone/backbone.basicauth.js'
-                  , 'public/src/lib/handlebars/handlebars-v2.0.0.js'
-                  // , 'public/src/lib/bootstrap/dropdown.js'
-                  , 'public/src/lib/bootstrap/button.js'
-                  // , 'public/src/lib/bootstrap/modal.js'
-                  , 'public/src/lib/moment/moment.js'
-                  // , 'public/src/lib/download/download.js'
+                    'assets/lib/jquery/jquery-2.1.1.js'
+                  // , 'assets/lib/jquery/jquery.ui.widget.js'
+                  , 'assets/lib/jquery/jquery.nanoscroller.js'
+                  // , 'assets/lib/jquery/jquery.fileupload.js'
+                  , 'assets/lib/underscore/underscore.js'
+                  , 'assets/lib/backbone/backbone.js'
+                  , 'assets/lib/backbone/backbone.controller.js'
+                  , 'assets/lib/backbone/backbone-approuter.js'
+                  , 'assets/lib/backbone/backbone-appready.js'
+                  , 'assets/lib/backbone/backbone.basicauth.js'
+                  , 'assets/lib/handlebars/handlebars-v2.0.0.js'
+                  // , 'assets/lib/bootstrap/dropdown.js'
+                  , 'assets/lib/bootstrap/button.js'
+                  // , 'assets/lib/bootstrap/modal.js'
+                  , 'assets/lib/moment/moment.js'
+                  // , 'assets/lib/download/download.js'
 
-                  , 'public/src/js/scroll2sicky.js'
+                  , 'assets/js/scroll2sicky.js'
 
                   // App
-                  , 'public/src/js/closure.intro.js'
-                  , 'public/src/js/helpers/helpers.js'
-                  , 'public/src/js/helpers/handlebars.js'
-                  , 'public/src/js/helpers/validation.js'
-                  , 'public/src/js/helpers/xhr.js'
-                  , 'public/src/js/helpers/feedback.js'
-                  // , 'public/src/js/helpers/delete.js'
-                  // , 'public/src/js/helpers/uploader.js'
-                  // , 'public/src/js/helpers/session.js'
-                  // , 'public/src/js/helpers/feedback.js'
+                  , 'assets/js/closure.intro.js'
+                  , 'assets/js/helpers/helpers.js'
+                  , 'assets/js/helpers/handlebars.js'
+                  , 'assets/js/helpers/validation.js'
+                  , 'assets/js/helpers/xhr.js'
+                  , 'assets/js/helpers/feedback.js'
+                  // , 'assets/js/helpers/delete.js'
+                  // , 'assets/js/helpers/uploader.js'
+                  // , 'assets/js/helpers/session.js'
+                  // , 'assets/js/helpers/feedback.js'
 
-                  , 'public/src/js/model.js'
-                  , 'public/src/js/collection.js'
-                  , 'public/src/js/view.js'
-                  , 'public/src/js/controller.js'
-                  , 'public/src/js/subbly.js'
+                  , 'assets/js/model.js'
+                  , 'assets/js/collection.js'
+                  , 'assets/js/view.js'
+                  , 'assets/js/controller.js'
+                  , 'assets/js/subbly.js'
 
-                  , 'public/src/js/models/*.js'
-                  , 'public/src/js/collections/*.js'
-                  , 'public/src/js/controllers/*.js'
-                  , 'public/src/js/views/*.js'
+                  , 'assets/js/models/*.js'
+                  , 'assets/js/collections/*.js'
+                  , 'assets/js/controllers/*.js'
+                  , 'assets/js/views/*.js'
 
-                  , 'public/src/js/builtin/*.js'
+                  , 'assets/js/builtin/*.js'
 
-                  , 'public/src/js/router.js'
-                  , 'public/src/js/closure.utils.js'
-                  , 'public/src/js/closure.outro.js'
+                  , 'assets/js/router.js'
+                  , 'assets/js/closure.utils.js'
+                  , 'assets/js/closure.outro.js'
                 ]
               , dest: '<%= pkg.dist %>js/<%= pkg.name %>.local.js'
             }
@@ -212,7 +212,7 @@ module.exports = function(grunt)
         {
             javascript: 
             {
-              files: ['public/src/js/*.js', 'public/src/js/*/*.js', 'themes/plugins/*.js'] //, 'public/src/js/*/*.js'
+              files: ['assets/js/*.js', 'assets/js/*/*.js', 'themes/plugins/*.js'] //, 'assets/js/*/*.js'
             , tasks: ['concat_sourcemap']
             , options: 
               {
@@ -221,7 +221,7 @@ module.exports = function(grunt)
             }
           , css: 
             {
-              files: ['public/src/less/*.less']
+              files: ['assets/less/*.less']
             , tasks: ['less-compile']
             , options: 
               {
