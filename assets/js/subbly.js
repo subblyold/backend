@@ -300,6 +300,20 @@ SubblyCore.prototype.apiUrl = function( url )
   return this._config.apiUrl + url
 }
 
+
+/*
+ * Return user's Auth Header
+ *
+ * @return  {object}
+ */
+
+SubblyCore.prototype.apiHeader = function()
+{
+  return {
+    Authorization: 'Basic ' + this._credentials
+  }
+}
+
 /*
  * Call service protected by closure
  *

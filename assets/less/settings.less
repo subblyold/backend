@@ -1,0 +1,63 @@
+
+//
+// Settings
+// --------------------------------------------------
+
+.settings {
+  background: @white;
+  height: 100%;
+
+  .nav-tabs {
+    display: block;
+    margin-top: 35px;
+    position: relative;
+
+    &:after {
+      border-bottom: 1px solid @border-ligth;
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      width: 100%;
+      z-index: 0;
+    }
+
+    li {
+      display: inline-block;
+      margin-right: 20px;
+      position: relative;
+      z-index: 10;
+
+      & + li {
+        margin-left: 20px;
+      }
+    }
+
+    a {
+      border-bottom: 1px solid transparent;
+      color: @gray-dark;
+      display: block;
+      font-size: @font-size-nav;
+      padding-bottom: 25px;
+    }
+
+    a.active,
+    a:hover {
+      border-color: @black;
+      color: @black
+    }
+  }
+
+  .content-tabs {
+    width: 620px
+  }
+
+  .tab-pane {
+    display: none;
+    padding: @content-padding 0;
+
+    &.active {
+      display: block;
+    }
+  }
+}

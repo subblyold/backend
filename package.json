@@ -1,5 +1,5 @@
 {
-  "name": "subbly",
+  "name": "Subbly Backend",
   "description": "subbly backend",
   "version": "0.1.0",
   "homepage": "https://github.com/subbly/backend",
@@ -8,6 +8,7 @@
     "url": "https://github.com/subbly/backend/issues"
   },
   "dist": "../../../themes/backend/assets/",
+  "filename": "subbly",
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-autoprefixer": "~0.7.2",
@@ -24,6 +25,7 @@
     "grunt-contrib-uglify": "~0.4.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-csscomb": "~2.0.1",
-    "grunt-exec": "~0.4.5"
+    "grunt-exec": "~0.4.5",
+    "grunt-notify": "^0.4.1"
   }
 }

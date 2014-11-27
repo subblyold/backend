@@ -24,11 +24,11 @@ module.exports = function(grunt)
                     strictMath: true
                   , sourceMap: true
                   , outputSourceFiles: true
-                  , sourceMapURL: '<%= pkg.name %>.local.css.map'
-                  , sourceMapFilename: '<%= pkg.dist %>css/<%= pkg.name %>.local.css.map'
+                  , sourceMapURL: '<%= pkg.filename %>.local.css.map'
+                  , sourceMapFilename: '<%= pkg.dist %>css/<%= pkg.filename %>.local.css.map'
                 }
               , files: {
-                  '<%= pkg.dist %>css/<%= pkg.name %>.local.css': 'assets/less/subbly.less'
+                  '<%= pkg.dist %>css/<%= pkg.filename %>.local.css': 'assets/less/subbly.less'
                 }
             }
           , staging: 
@@ -38,12 +38,12 @@ module.exports = function(grunt)
                     strictMath: true
                   , sourceMap: true
                   , outputSourceFiles: true
-                  , sourceMapURL: '<%= pkg.name %>.staging.css.map'
-                  , sourceMapFilename: '<%= pkg.dist %>css/<%= pkg.name %>.staging.css.map'
+                  , sourceMapURL: '<%= pkg.filename %>.staging.css.map'
+                  , sourceMapFilename: '<%= pkg.dist %>css/<%= pkg.filename %>.staging.css.map'
                   , compress: true
                 }
               , files: {
-                  '<%= pkg.dist %>css/<%= pkg.name %>.staging.css': 'assets/less/subbly.less'
+                  '<%= pkg.dist %>css/<%= pkg.filename %>.staging.css': 'assets/less/subbly.less'
                 }
             }
         }
@@ -62,11 +62,11 @@ module.exports = function(grunt)
                 }
               , files: 
                 {
-                    '<%= pkg.dist %>css/<%= pkg.name %>.local.css': [
+                    '<%= pkg.dist %>css/<%= pkg.filename %>.local.css': [
                         'assets/less/subbly.less'
                     ]
                 }
-              , src: '<%= pkg.dist %>css/<%= pkg.name %>.local.css'
+              , src: '<%= pkg.dist %>css/<%= pkg.filename %>.local.css'
             }
         }
       , csslint: 
@@ -75,7 +75,7 @@ module.exports = function(grunt)
             {
               csslintrc: 'assets/less/.csslintrc'
             }
-          , src: [ '<%= pkg.dist %>css/<%= pkg.name %>.local.css' ]
+          , src: [ '<%= pkg.dist %>css/<%= pkg.filename %>.local.css' ]
         }
       , cssmin: 
         {
@@ -88,7 +88,7 @@ module.exports = function(grunt)
             {
                 files: 
                 {
-                  '<%= pkg.dist %>css/<%= pkg.name %>.production.css': '<%= pkg.dist %>css/<%= pkg.name %>.local.css'
+                  '<%= pkg.dist %>css/<%= pkg.filename %>.production.css': '<%= pkg.dist %>css/<%= pkg.filename %>.local.css'
                 }
             }
         }
@@ -142,6 +142,7 @@ module.exports = function(grunt)
                   , 'assets/lib/handlebars/handlebars-v2.0.0.js'
                   // , 'assets/lib/bootstrap/dropdown.js'
                   , 'assets/lib/bootstrap/button.js'
+                  // , 'assets/lib/bootstrap/tab.js'
                   // , 'assets/lib/bootstrap/modal.js'
                   , 'assets/lib/moment/moment.js'
                   // , 'assets/lib/download/download.js'
@@ -177,7 +178,7 @@ module.exports = function(grunt)
                   , 'assets/js/closure.utils.js'
                   , 'assets/js/closure.outro.js'
                 ]
-              , dest: '<%= pkg.dist %>js/<%= pkg.name %>.local.js'
+              , dest: '<%= pkg.dist %>js/<%= pkg.filename %>.local.js'
             }
         }
       , uglify: 
@@ -188,11 +189,11 @@ module.exports = function(grunt)
               {
                   banner: '<%= banner %>'
                 , sourceMap: true
-                , sourceMapName: '<%= pkg.dist %>js/<%= pkg.name %>.staging.js.map'
+                , sourceMapName: '<%= pkg.dist %>js/<%= pkg.filename %>.staging.js.map'
               }
             , files: 
               {
-                  '<%= pkg.dist %>js/<%= pkg.name %>.staging.js': '<%= pkg.dist %>js/<%= pkg.name %>.local.js'
+                  '<%= pkg.dist %>js/<%= pkg.filename %>.staging.js': '<%= pkg.dist %>js/<%= pkg.filename %>.local.js'
               }            
           }
         , production:
@@ -204,8 +205,19 @@ module.exports = function(grunt)
               }
             , files: 
               {
-                  '<%= pkg.dist %>js/<%= pkg.name %>.production.js': '<%= pkg.dist %>js/<%= pkg.name %>.local.js'
+                  '<%= pkg.dist %>js/<%= pkg.filename %>.production.js': '<%= pkg.dist %>js/<%= pkg.filename %>.local.js'
               }            
+          }
+        }
+      , notify_hooks: 
+        {
+          options: 
+          {
+              enabled: true
+            , max_jshint_notifications: 5 // maximum number of notifications from jshint output
+            , title: '<%= pkg.name %>' // defaults to the name in package.json, or will use project directory's name
+            , success: true // whether successful grunt executions should be notified automatically
+            , duration: 3 // the duration of notification in seconds, for `notify-send only
           }
         }
       , watch: 
@@ -242,7 +254,8 @@ module.exports = function(grunt)
     grunt.loadNpmTasks('grunt-concat-sourcemap');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
-
+    grunt.loadNpmTasks('grunt-notify');
+    grunt.task.run('notify_hooks');
 
     grunt.registerTask('less-compile', ['less:development']);
 

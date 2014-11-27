@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Subbly Backend GUI</title>
+  <script src="../../../../../../themes/backend/assets/lib/modernizr.js"></script>
+
+  <link rel="stylesheet" href="../../../../../../themes/backend/assets/css/subbly.local.css">
+  <style>
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <section class="main-nav">
+      <a href="javascript:;" class="main-logo js-trigger-go-home">
+         <img class src="../../../../../../themes/backend/assets/img/subbly-logo.svg" width="100" alt="logo Subbly">
+      </a>
+
+      <div class="user-nav">
+        <div class="user-nav-container">
+          <a href="javascript:;">
+            Le col de Claudine
+          </a>
+          <span class="caret"></span>
+          <ul class="user-nav-sub">
+            <li>
+              <a href="javascript:;">
+                Visit my store
+              </a>
+            </li>
+            <li>
+              <a href="javascript:;">
+                logout
+              </a>
+            </li>
+          </ul><!-- /.user-nav-sub -->
+        </div><!-- /.user-nav-container -->
+      </div><!-- /.user-nav -->
+      <hr>
+      <ul class="bo-nav">
+        <li>
+          <a href="javascript:;" class="fst-nav js-trigger-go-home">
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="javascript:;" class="fst-nav js-trigger-go-orders active">
+            Orders
+          </a>
+          <span class="badge product">9</span>
+        </li>
+        <li>
+          <a href="javascript:;" class="fst-nav js-trigger-go-customers">
+            Customers
+          </a>
+        </li>
+        <li>
+          <a href="javascript:;" class="fst-nav js-trigger-go-products">
+            Products
+          </a>
+        </li>
+        <li>
+          <a href="javascript:;" class="fst-nav js-trigger-go-settings">
+            Settings
+          </a>
+        </li>
+        <li class="fst-nav js-trigger-go-hangard">
+          <a href="javascript:;">
+            Hangar
+          </a>
+        </li>
+      </ul><!-- /.subbly-nav -->
+    </section><!-- /.main-nav -->
+    <section class="main-view">
+      <div class="view-full">
+        <div class="settings nano">
+          <div class="nano-content">
+            <div class="c-pdg">
+              <h3 class="f-ttl c-blk">Settings</h3>
+              <ul role="tablist" class="nav-tabs">
+                <li role="presentation" class="active">
+                  <a href="#settings-general">
+                    General
+                  </a>
+                </li>
+                <li role="presentation">
+                  <a href="#settings-payment">
+                    Payment
+                  </a>
+                </li>
+                <li role="presentation">
+                  <a href="#settings-billing">
+                    Billing
+                  </a>
+                </li>
+                <li role="presentation">
+                  <a href="#settings-shipping-tax">
+                    Shipping &amp; tax
+                  </a>
+                </li>
+                <li role="presentation">
+                  <a href="#settings-language-curreny">
+                    Language &amp; currency
+                  </a>
+                </li>
+                <li role="presentation">
+                  <a href="#settings-users">
+                    Users
+                  </a>
+                </li>
+              </ul><!-- /.nav-tab -->
+              <div class="content-tabs">
+                <div role="tabpanel" class="tab-pane active" id="settings-general">
+                  <form class="form">
+                    <div class="form-row">
+                      <div class="form-field">
+                        <label class="form-label">
+                          Name of your shop
+                        </label>
+                        <input type="text" class="form-input" placeholder="test" value="default text field">
+                      </div><!-- /.form-field -->
+                    </div><!-- /.form-row -->
+                    <div class="form-row">
+                      <div class="form-field">
+                        <label class="form-label">
+                          Description
+                        </label>
+                        <textarea class="form-input" row="5" col="3">standard textarea</textarea>
+                      </div><!-- /.form-field -->
+                    </div><!-- /.form-row -->
+                  </form>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="settings-payment">settings-payment</div>
+                <div role="tabpanel" class="tab-pane" id="settings-billing">settings-billing</div>
+                <div role="tabpanel" class="tab-pane" id="settings-shipping-tax">settings-shipping-tax</div>
+                <div role="tabpanel" class="tab-pane" id="settings-language-curreny">settings-language-curreny</div>
+                <div role="tabpanel" class="tab-pane" id="settings-users">settings-users</div>
+              </div><!-- /.content-tabs -->
+            </div><!-- /.c-pdg -->
+          </div><!-- /.nano-content -->
+        </div><!-- /.settings -->
+      </div><!-- /.view-full -->
+    </section><!-- /.main-view -->
+  </div><!-- /. container -->
+  <!--
+  script>
+    // Subbly constants
+    var subblyConfig = {
+        baseUrl: '/backend/'
+      , apiUrl:  'http://www.subbly.dev/api/v1/'
+      , env:     'local'
+      , debug:   1
+    }
+  </script>
+  <script src="/static/templates"></script>
+  <script src="../../../../../../themes/backend/assets/js/subbly.local.js"></script-->
+  <script src="../lib/jquery/jquery-2.1.1.js"></script>
+  <script src="../lib/jquery/jquery.nanoscroller.js"></script>
+  
+  <script>
+$(function()
+{
+  $('.nano').nanoScroller();
+  
+
+  // scroll2sicky.init( $('div.view-half-list') )
+})
+  </script>
+</body>
+</html>
