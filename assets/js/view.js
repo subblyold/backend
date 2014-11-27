@@ -75,26 +75,8 @@ var SubblyView = Backbone.View.extend(
 
       tplData = tplData || {}
 
-      var intlData = {
-          locales: 'fr'
-        , formats: 
-          {
-              number: {
-                  USD: {
-                      style:    'currency'
-                    , currency: 'USD'
-                  }
-                , percentage: {
-                      style: 'percent'
-                  }
-              }
-          }
-      }
-
       var tpl  = Handlebars.compile( this._viewTpl )
-        , html = tpl( tplData, {
-                      data: { intl: intlData }
-                  })
+        , html = tpl( tplData )
 
       // inject html inton view
       this.$el.html( html )

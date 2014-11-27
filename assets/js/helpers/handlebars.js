@@ -1,7 +1,7 @@
 
 // Handlebars Helpers
 
-HandlebarsIntl.registerWith( Handlebars )
+// HandlebarsIntl.registerWith( Handlebars )
 
 // Handlebars.registerHelper( 'i18n', function( str )
 // {
@@ -55,6 +55,11 @@ Handlebars.registerHelper('formatNumberDeprecated', function( int )
   var str = int.toString()
   
   return str.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+})
+
+Handlebars.registerHelper('formatNumber', function( value, options ) 
+{
+  return Helpers.formatNumber( value, options.hash.type || 'decimal' )
 })
 
 Handlebars.registerHelper('bytesToSize', function( bytes )

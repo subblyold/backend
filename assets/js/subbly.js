@@ -22,6 +22,12 @@ var SubblyCore = function( config )
   // XHR call reference
   this._fetchXhr          = {}
 
+  // Settings
+  this._settings = {
+      locale:   'fr'
+    , currency: 'EUR'
+  }
+
   // Feedback
   this._feedback = new Feedback()
 
@@ -459,7 +465,25 @@ SubblyCore.prototype.cleanXhr = function()
 }
 
 
-// PLUGINS
+// SETTINGS
+//-------------------------------
+
+
+/*
+ * Get current settings 
+ *
+ * @params  {string}  settings key (optional)
+ * @return  {mixed}
+ */
+SubblyCore.prototype.getSetting = function( key, defaults )
+{
+  if( _.isUndefined( key ) )
+    return this._settings
+
+  return Helpers.getNested( this._settings, key, defaults || false )
+}
+
+// COOKIES
 //-------------------------------
 
 

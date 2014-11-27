@@ -15,19 +15,19 @@
     <ul class="dashboard-stats">
       <li>
         <span>SALES TODAY</span>
-        {{formatNumber todaySales style="currency" currency="USD"}}
+        {{formatNumber todaySales type="currency"}}
       </li>
       <li>
         <span>CUSTOMERS</span>
-        38
+        {{formatNumber totalCustomers}}
       </li>
       <li>
         <span>ORDERS</span>
-        288
+        {{formatNumber totalOrders}}
       </li>
       <li>
         <span>AVERAGE BASKET</span>
-        $69.00
+        {{formatNumber basketAverage type="currency"}}
       </li>
     </ul>
   </div><!-- /.dashboard-content -->

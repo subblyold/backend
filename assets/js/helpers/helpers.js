@@ -74,4 +74,36 @@ var Helpers =
 
       return target
     }
+
+  , formatNumber: function( value, style )
+    {
+      var settings = {}
+
+      switch( style )
+      {
+        case 'currency': 
+          settings = { style: 'currency', currency: subbly.getSetting('currency') , minimumFractionDigits: 2 }
+          break
+        case 'float': 
+          settings = { style: 'decimal', minimumFractionDigits: 2 }
+          break
+      }
+
+      // Safari, IE11-
+      if( _.isUndefined( window.Intl ) )
+      {
+        switch( style )
+        {
+          case 'currency': 
+            return value + ' ' + subbly.getSetting('currency')
+            break
+          default:
+            return value
+        }
+      }
+      else
+      {
+        return new Intl.NumberFormat( subbly.getSetting('locale'), settings ).format( value )
+      }
+    }
 }

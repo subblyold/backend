@@ -25,7 +25,10 @@
     , list: function() 
       {
         var data = {
-          todaySales: 499.12
+            todaySales:     499.12
+          , basketAverage:  69.00
+          , totalOrders:    2880
+          , totalCustomers: 3421
         }
 
         this
