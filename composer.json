@@ -1,17 +1,33 @@
 {
     "name": "subbly/backend",
     "description": "",
+    "license": "MIT",
+
     "authors": [
         {
+            "name": "Benjamin Guedj",
+            "email": "benjamin@subbly.com",
+            "role": "Designer - founder"
+        },
+        {
+            "name":  "Michael Lefebvre",
+            "email": "michael@subbly.com",
+            "role": "Developer"
+        },
+        {
             "name": "Nicolas Brousse",
-            "email": "nicolas@subbly.com"
+            "email": "nicolas@subbly.com",
+            "role": "Developer"
         }
     ],
+
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.2.*",
-        "mustache/mustache":  "2.7.0"
+        
+        "subbly/framework": "1.0@dev",
+        "mustache/mustache": "2.7.0"
     },
+
     "autoload": {
         "classmap": [
             "src/migrations"
@@ -20,5 +36,10 @@
             "Subbly\\Backend\\": "src/"
         }
     },
-    "minimum-stability": "stable"
+
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    }
 }
