@@ -21,31 +21,12 @@
 
     , list: function() 
       {
-        var scope    = this
+        var settings = subbly.settings().getAsObject()
 
-        new xhrCall(
-        {
-            url:     'settings'
-          , headers: subbly.apiHeader()
-          , success: function( response )
-            {
-              var settings = {
-                siteStatusList: [ 'offline', 'online' ]
-              }
-
-              _.each( response.response.settings, function( value, key )
-              {
-                Helpers.setNested( settings, key, value )
-              })
-
-              scope.getViewByPath( scope._viewsNames )
-                .setValue( 'settings', settings )
-                .displayTpl( settings )
-            }
-          , error:   function( jqXHR, textStatus, errorThrown )
-            {
-            }
-        })
+        this.getViewByPath( this._viewsNames )
+          .setValue( 'settings', settings )
+          .setValue( 'model', subbly.settings() )
+          .displayTpl( settings )
       }
   }
 
@@ -70,6 +51,8 @@
       {
         this._$tabsLinks = this.$el.find('ul.nav-tabs a')
         this._$tabs      = this.$el.find('.tab-pane')
+
+        subbly.trigger( 'loader::progressEnd' )
       }
 
     , switchTab: function( event )
@@ -90,24 +73,28 @@
       {
         event.preventDefault()
 
-        var $inputs  = $( event.target ).find(':input')
-          , formData = $inputs.serializeObject( false )
+        var scope      = this
+          , $inputs    = $( event.target ).find(':input')
+          , formData   = $inputs.serializeObject( false )
+          , updateI18n =  ( 
+                            formData['subbly.backend_language'] 
+                            && subbly.getSetting('subbly.backend_language') != formData['subbly.backend_language']
+                          )
 
-        new xhrCall(
+        subbly.store( this.model, formData, 
         {
-            url:     'settings'
-          , type:    'PUT'
-          , data:    JSON.stringify( formData )
-          , headers: subbly.apiHeader()
-          , success: function( response )
+            type: 'PUT'
+          , onSuccess: function( model, response )
             {
-
-            }
-          , error:   function( jqXHR, textStatus, errorThrown )
-            {
+              if( updateI18n )
+              {
+                subbly.i18n().setLocale( formData['subbly.backend_language'], function()
+                {
+                  scope.displayTpl( model.getAsObject() )
+                })
+              }
             }
         })
-
       }
 
     // , addNew: function()

@@ -81,14 +81,7 @@
   <iframe class="dp-n" name="postFrame"></iframe>
   <script>
     // Subbly constants
-    var subblyConfig = {
-        baseUrl: '/<?= Config::get( 'subbly.backendUri', 'backend' ); ?>/'
-      , apiUrl:  '<?= URL::to('/api/v1'); ?>/'
-      , env:     '<?= $environment ?>'
-      , locale:  'en'
-      , debug:   <?= (bool) Config::get('app.debug'); ?>
-
-    }
+    var subblyConfig = <?= json_encode( $config ) ?>
   </script>
   <script src="<?= URL::to('/static/templates') ?>"></script>
   <script src="<?= URL::to('/static/locales') ?>"></script>

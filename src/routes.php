@@ -5,12 +5,27 @@
  */
 
 Route::group(array(
-    'prefix' => Config::get( 'subbly.backendUri', '/backend' )
+    'prefix' => Config::get( 'subbly.backendUri', '/admin' )
 ), function() 
 {
   $displayBackend = function()
   {
-    return View::make('backend::backend')->with( 'environment', App::environment() );
+    $env    = App::environment();
+    $config = [
+        'baseUrl'     => Config::get( 'subbly.backendUri', '/admin' ).'/'
+      , 'apiUrl'      => URL::to('/api/v1') .'/'
+      , 'env'         => $env
+      , 'debug'       => (bool) Config::get('app.debug')
+      , 'locales'     => Config::get('backend::locales.list')
+      , 'currencies'  => Config::get('backend::currencies')
+      , 'orderStatus' => Config::get('backend::order')
+      , 'siteStatus'  => Config::get('backend::site.status')
+    ];
+
+    return View::make('backend::backend', [
+        'environment' => $env
+      , 'config'      => $config
+    ]);
   };
 
   Route::get( '/' ,     $displayBackend );
@@ -38,12 +53,11 @@ Route::any('/void', function()
 
 Route::any('/static/locales', function()
 {
+  $config = Config::get('backend::locales');
+
   $locales = array(
-      'locales' => [
-          'en'
-        , 'fr'
-      ]
-    , 'resources' => URL::to( '/themes/backend/assets/locales/{{locale}}.json' )
+      'locales'   => array_keys( $config['list'] )
+    , 'resources' => URL::to( $config['resources'] )
   );
 
   $contents = 'var LOCALES = ' . json_encode( $locales );

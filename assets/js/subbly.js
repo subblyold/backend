@@ -217,7 +217,7 @@ SubblyCore.prototype.trigger = function( args1, args2, args3, args4, args5, args
 /*
  * Feedback shortcust
  *
- * @return  {void}
+ * @return  {object}
  */
 
 SubblyCore.prototype.feedback = function()
@@ -235,6 +235,17 @@ SubblyCore.prototype.i18n = function()
 {
   return this._i18n
 }
+
+/*
+ * Settings shortcuts
+ *
+ * @return  {object}
+ */
+SubblyCore.prototype.settings = function()
+{
+  return this._settings
+}
+
 
 // CREDENTIALS / LOGIN
 //-------------------------------
@@ -447,31 +458,35 @@ SubblyCore.prototype.store = function( model, data, options, context )
   if( !data )
     throw new Error( 'No data pass to Subbly.store' )
 
-  options.json = {}
-
-  options.json[ model.singleResult ] = data 
-
   var _feedback = this.feedback()
   
   _feedback.add().progress()
 
-  model.save( options.json, 
-  {
+  var settings = $.extend({
       success: function( model, response, opts )
       {
+        model.clear()
+        model.set( response.response[ model.singleResult ] )
+
         _feedback.progressEnd( 'success', options.successMsg || response.headers.status.message )
 
-        if( options.success && _.isFunction( options.success ) )
-          options.success( model, response, opts )
+        if( options.onSuccess && _.isFunction( options.onSuccess ) )
+          options.onSuccess( model, response, opts )
       }
     , error: function( model, response, opts )
       {
         _feedback.progressEnd( 'error', options.errorMsg || response.responseJSON.headers.status.message )
 
-        if( options.error && _.isFunction( options.error ) )
-          options.error( model, response, opts  )
+        if( options.onError && _.isFunction( options.onError ) )
+          options.onError( model, response, opts  )
       }
-  })
+  }, options )
+
+  options.json = {}
+
+  options.json[ model.singleResult ] = data 
+
+  model.save( options.json, settings )
 }
 
 /*
@@ -510,6 +525,7 @@ SubblyCore.prototype.getSetting = function( key, defaults )
   return this._settings.get( key )
   // return Helpers.getNested( this._settings, key, defaults || false )
 }
+
 
 // COOKIES
 //-------------------------------

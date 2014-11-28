@@ -5,32 +5,32 @@
       <ul role="tablist" class="nav-tabs">
         <li role="presentation">
           <a href="#settings-general" class="active">
-            General
+            {{i18n 'settings.tabs.general'}}
           </a>
         </li>
         <li role="presentation">
           <a href="#settings-payment">
-            Payment
+            {{i18n 'settings.tabs.payment'}}
           </a>
         </li>
         <li role="presentation">
           <a href="#settings-billing">
-            Billing
+            {{i18n 'settings.tabs.billing'}}
           </a>
         </li>
         <li role="presentation">
           <a href="#settings-shipping-tax">
-            Shipping &amp; tax
+            {{i18n 'settings.tabs.shippingTaxs'}}
           </a>
         </li>
         <li role="presentation">
           <a href="#settings-language-curreny">
-            Language &amp; currency
+            {{i18n 'settings.tabs.languageCurrency'}}
           </a>
         </li>
         <li role="presentation">
           <a href="#settings-users">
-            Users
+            {{i18n 'settings.tabs.users'}}
           </a>
         </li>
       </ul><!-- /.nav-tab -->
@@ -47,14 +47,6 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">
-                Description
-              </label>
-              <textarea class="form-input" row="5" col="3" name="subbly.shop_desc">{{subbly.shop_desc}}</textarea>
-            </div><!-- /.form-field -->
-          </div><!-- /.form-row -->
-          <div class="form-row">
-            <div class="form-field">
-              <label class="form-label">
                 Email of admin
               </label>
               <input type="text" class="form-input" name="subbly.contact_email" value="{{subbly.contact_email}}">
@@ -66,9 +58,9 @@
                 Store statut
               </label>
               <span class="form-select-holder">
-                <select class="form-input" name="subbly.site_status">
+                <select class="form-input" name="subbly.shop_status">
                   {{#each siteStatusList}}
-                  <option value="{{this}}" {{isSelected this default=../subbly.site_status attribute="selected"}}>{{this}}</option>
+                  <option value="{{this}}" {{isSelected this default=../subbly.shop_status attribute="selected"}}>{{this}}</option>
                   {{/each}}
                 </select>
               </span>
@@ -80,10 +72,10 @@
                 Backend Language
               </label>
               <span class="form-select-holder">
-                <select class="form-input" name="subbly.backend_locale">
-                  {{#each backendLocaleList}}
-                  <option value="{{this}}" {{isSelected this default=../subbly.backend_locale attribute="selected"}}>{{this}}</option>
-                  {{/each}}
+                <select class="form-input" name="subbly.backend_language">
+                  {{#keyValue backendLocales}}
+                  <option value="{{key}}" {{isSelected key default=../subbly.backend_language attribute="selected"}}>{{value}}</option>
+                  {{/keyValue}}
                 </select>
               </span>
             </div><!-- /.form-field -->
