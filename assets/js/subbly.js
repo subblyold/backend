@@ -28,6 +28,9 @@ var SubblyCore = function( config )
     , currency: 'EUR'
   }
 
+  // i18n
+  this._i18n = new i18n( this.getConfig( 'locale' ) )
+
   // Feedback
   this._feedback = new Feedback()
 
@@ -209,8 +212,13 @@ SubblyCore.prototype.trigger = function( args1, args2, args3, args4, args5, args
   this._event.trigger( args1, args2, args3, args4, args5, args6, args7 )
 }
 
+
+// SHORTCUTS
+//-------------------------------
+
+
 /*
- * Trigger loader
+ * Feedback shortcust
  *
  * @return  {void}
  */
@@ -220,6 +228,16 @@ SubblyCore.prototype.feedback = function()
   return this._feedback
 }
 
+/*
+ * I18n shortcust
+ *
+ * @return  {string}
+ */
+
+SubblyCore.prototype.i18n = function()
+{
+  return this._i18n
+}
 
 // CREDENTIALS / LOGIN
 //-------------------------------
@@ -627,4 +645,5 @@ console.groupCollapsed( 'Subbly Global Init' )
 subbly = new SubblyCore( subblyConfig )
 
 window.Subbly = subbly
+
 

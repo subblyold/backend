@@ -6,15 +6,15 @@
 
 Route::group(array(
     'prefix' => Config::get( 'subbly.backendUri', '/backend' )
-), function() {
+), function() 
+{
+  $displayBackend = function()
+  {
+    return View::make('backend::backend')->with( 'environment', App::environment() );
+  };
 
-    $displayBackend = function()
-    {
-      return View::make('backend::backend')->with( 'environment', App::environment() );
-    };
-
-    Route::get( '/' ,     $displayBackend );
-    Route::get( '{url}' , $displayBackend )->where('url', '.*');
+  Route::get( '/' ,     $displayBackend );
+  Route::get( '{url}' , $displayBackend )->where('url', '.*');
 });
 
 /*
@@ -24,11 +24,33 @@ Route::group(array(
 
 Route::any('/void', function()
 {
-    $response = Response::make( array(), 204 );
+  $response = Response::make( array(), 204 );
 
-    $response->header('Content-Type', 'json');
+  $response->header('Content-Type', 'json');
 
-    return $response;
+  return $response;
+});
+
+/*
+ * Return locales path
+ * Allow natural autocomplete on ajax form
+ */
+
+Route::any('/static/locales', function()
+{
+  $locales = array(
+      'locales' => [
+          'en'
+        , 'fr'
+      ]
+    , 'resources' => URL::to( '/themes/backend/assets/locales/{{locale}}.json' )
+  );
+
+  $contents = 'var LOCALES = ' . json_encode( $locales );
+
+  $response = Response::make($contents, 200 );
+  $response->header('Content-Type', 'application/javascript');
+  return $response;
 });
 
 /*

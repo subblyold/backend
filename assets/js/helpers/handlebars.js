@@ -1,14 +1,17 @@
 
 // Handlebars Helpers
 
-// HandlebarsIntl.registerWith( Handlebars )
-
-// Handlebars.registerHelper( 'i18n', function( str )
-// {
-//   // wrap `__` function because Handlebars
-//   // doesn't have access to App variables scope
-//   return __( str )
-// })
+Handlebars.registerHelper( 'i18n', function( str )
+{
+  try
+  {
+    return Subbly.i18n().get( str )
+  }
+  catch( e )
+  {
+    return 'i18n not loaded yet'
+  }
+})
 
 // Select/Checkbox/Radio button options helper
 // {{isSelected this default="string or reference" attribute="selected"}}

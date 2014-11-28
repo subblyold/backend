@@ -1,4 +1,9 @@
 
+  // String manipulation extensions for Underscore.js javascript library. 
+  // Mix in non-conflict functions to Underscore namespace
+  // https://github.com/epeli/underscore.string
+  _.mixin( _.str.exports() )
+
   // Zombies! RUN!
   // Managing Page Transitions In Backbone Apps
   // http://lostechies.com/derickbailey/2011/09/15/zombies-run-managing-page-transitions-in-backbone-apps/

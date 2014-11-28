@@ -1,7 +1,7 @@
 <div class="dashboard">
   <div class="dashboard-content">
     <h3 class="f-ttl c-pdg-b">
-      Welcome in your shop,<br>
+      {{i18n 'dashboard.welcome'}},<br>
       <span class="c-blk">You need to configure your Paypal</span>
     </h3>
     <p>
