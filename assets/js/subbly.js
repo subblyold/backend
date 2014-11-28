@@ -23,13 +23,10 @@ var SubblyCore = function( config )
   this._fetchXhr          = {}
 
   // Settings
-  this._settings = {
-      locale:   'fr'
-    , currency: 'EUR'
-  }
+  this._settings = false
 
   // i18n
-  this._i18n = new i18n( this.getConfig( 'locale' ) )
+  this._i18n = new i18n()
 
   // Feedback
   this._feedback = new Feedback()
@@ -115,12 +112,12 @@ SubblyCore.prototype.init = function()
     console.info( 'release app router' )
     console.groupEnd()
 
-    var scope = this
+    // var scope = this
     
-    this._router.ready(function( route )
-    {
-      scope.trigger( 'hash::changed', route )
-    })
+    // this._router.ready(function( route )
+    // {
+    //   scope.trigger( 'hash::changed', route )
+    // })
   }
 }
 
@@ -245,6 +242,7 @@ SubblyCore.prototype.i18n = function()
 
 /*
  * Set user credentials
+ * Load user settings and locales
  *
  * @return  {void}
  */
@@ -257,12 +255,23 @@ SubblyCore.prototype.setCredentials = function( credentials )
 
   this.setCookie( this._credentialsCookie, this._credentials )
 
+  this._settings = this.api('Subbly.Model.Settings')
+
   var scope = this
-  
-  this._router.ready(function( route )
+
+  this.fetch( this._settings,
   {
-    scope.trigger( 'hash::changed', route )
-  })
+    success: function( model, response )
+    {
+      scope.i18n().setLocale( scope.getSetting('subbly.backend_language'), function()
+      {
+        scope._router.ready(function( route )
+        {
+          scope.trigger( 'hash::changed', route )
+        })
+      })
+    }
+  }, this )
 }
 
 /*
@@ -496,9 +505,10 @@ SubblyCore.prototype.cleanXhr = function()
 SubblyCore.prototype.getSetting = function( key, defaults )
 {
   if( _.isUndefined( key ) )
-    return this._settings
+    return this._settings.attributes
 
-  return Helpers.getNested( this._settings, key, defaults || false )
+  return this._settings.get( key )
+  // return Helpers.getNested( this._settings, key, defaults || false )
 }
 
 // COOKIES

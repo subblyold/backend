@@ -1,15 +1,15 @@
 
 
-var i18n = function( locale )
+var i18n = function()
 {
   this.locales = LOCALES.locales
   this.path    = LOCALES.resources
   this.keys    = null
   
-  this.setLocale( locale )
+  // this.setLocale( locale )
 }
 
-i18n.prototype.setLocale = function( locale )
+i18n.prototype.setLocale = function( locale, cb )
 {
   this.current = locale
 
@@ -22,6 +22,9 @@ i18n.prototype.setLocale = function( locale )
     , success:     function( response )
       {
         scope.keys = response
+
+        if( _.isFunction( cb ) )
+          cb()
       }
     , error:      function( response )
       {
@@ -58,7 +61,6 @@ i18n.prototype.get = function( _str )
 {
   var str  = this._getKey( _str )
     , args = [].slice.call( arguments, 1 )
-console.log( args )
 
   if( args.length )
     return _.vsprintf( str, args )
