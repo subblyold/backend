@@ -96,5 +96,5 @@ i18n.prototype.choice = function( _str, _count )
 // shortcut ala gettext
 var __ = function( _str )
 {
-  subbly.i18n.get( _str )
+  subbly.i18n().get( _str )
 }

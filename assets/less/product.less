@@ -1,0 +1,91 @@
+
+//
+// Product category
+// --------------------------------------------------
+
+.modal-catgories {
+  .clearfix;
+  height: 455px;
+}
+
+.modal-sub-catgories,
+.modal-main-catgories {
+  color: @gray-dark;
+  float: left;
+  height: 100%;
+  width: 50%;
+
+  h3 {
+    border-bottom: 1px solid @border-ligth;
+    height: 80px;
+    font-size: @font-size-small;
+    font-weight: bold;
+    line-height: 80px;
+    padding-left: 50px;
+    position: relative;
+    text-transform: uppercase;
+
+    a {
+      color: @gray-dark;
+      font-size: 22px;
+      // font-weight: normal;
+      position: absolute;
+      right: 13px;
+      top: -2px;
+    }
+  }
+}
+
+.modal-main-catgories {
+  border-right: 1px solid @border-ligth
+}
+
+.modal-catgories-list {
+  height: calc( 100% - 80px );
+
+  li {
+    border-bottom: 1px solid @border-ligth;
+    height: 55px;
+    line-height: 55px;
+
+    &:hover {
+      background: @bkgd-hover;
+
+      .icon {
+        color: @gray-dark;
+      }
+    }
+
+    &.active {
+      background: @product;
+      color: @white;
+
+      .icon {
+        color: @white !important
+      }
+    }
+  }
+
+  .icon {
+    color: @white;
+    font-size: @font-size-small
+  }
+
+  .icon-handler {
+    cursor: -webkit-grab;
+    cursor: grab;
+    margin: 0 15px;
+  }
+
+  .icon-trash {
+    cursor: pointer;
+    float: right;
+    margin: 18px 15px 0 0;
+  }
+
+  .badge {
+    background: @white;
+    color: @gray-dark;
+    margin-left: 5px;
+  }
+}

@@ -56,13 +56,50 @@
       _viewName:     'ProductEntry'
     , _viewTpl:      TPL.products.entry
 
+    , onInitialize: function()
+      {
+        // add view's event
+        this.addEvents( {'click a.js-trigger-categories':  'categoriesPopupOpen'} )
+      }
+
     , onDisplayTpl: function( tplData )
       {
+        this.$el.find('ul.sortable').sortable()
+
         // !! always set form after html render
         this.setForm({
             id:       'subbly-product-entry'
           , rules:    this.model.getRules()
           , skip:     false
+        })
+      }
+
+    , categoriesPopupOpen: function()
+      {
+        var scope  = this
+          , $modal = $( document.getElementById('modal') )
+
+        this.modal = subbly.api('Subbly.View.Modal', 
+        {
+            message:  'xhr.responseJSON.message'
+          , tpl:      TPL.products.categories
+          , onShown:  function()
+            {
+              $modal.find('div.nano').nanoScroller()
+              $modal.find('ul.sortable').sortable({
+                  handle: '.js-handle'
+                , items:  'li'
+              })
+            }
+          , onCancel: function()
+            {
+              // scope.settings.onCancel()
+              scope.modal.close()
+            }
+          , onSubmit: function()
+            {
+              // scope.callXhr()
+            }
         })
       }
 

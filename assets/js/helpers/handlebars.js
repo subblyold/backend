@@ -209,6 +209,11 @@ Handlebars.registerHelper('json', function( obj )
   return JSON.stringify( obj, undefined, 4)
 })
 
+Handlebars.registerHelper('count', function( arr ) 
+{
+  return arr.length
+})
+
 Handlebars.registerHelper('indexPlusOne', function( str ) 
 {
   return (( +str ) + 1 )

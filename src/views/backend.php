@@ -12,6 +12,7 @@
 
 </head>
 <body>
+  <div class="modal fade" id="modal"></div><!-- /.modal -->
   <div class="login" id="login">
     <div class="login-contenair">
       <img class src="<?= URL::to('/themes/backend/assets/img/logo.svg'); ?>" width="100" alt="logo Subbly">

@@ -40,7 +40,7 @@
               Category
             </label>
             <p class="alignment-justify">
-              <a href="javascript:;" class="btn btn-action">
+              <a href="javascript:;" class="btn btn-action js-trigger-categories">
                 Edit category
               </a>
               <span class="f-sml c-pdg-bas-l">Select where in your store's menu that you want your customers to find your product.</span>
@@ -121,14 +121,20 @@
       </div>
       <div class="c-pdg-h c-pdg-bas-t c-pdg-b ta-c">
         <div class="thmb-col">
-          <a href="javascript:;" class="thmb product">
-            <i class="icon icon-handler"></i>
-            <span class="thmb-img" style="background-image:url(/src/fixtures/img/product-01.jpg)"></span>
-          </a>
-          <a href="javascript:;" class="thmb product">
-            <i class="icon icon-handler"></i>
-            <span class="thmb-img" style="background-image:url(/src/fixtures/img/product-02.jpg)"></span>
-          </a>
+          <ul class="sortable">
+            <li>
+              <a href="javascript:;" class="thmb product">
+                <i class="icon icon-handler js-handle"></i>
+                <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-01.jpg)"></span>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:;" class="thmb product">
+                <i class="icon icon-handler js-handle"></i>
+                <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-02.jpg)"></span>
+              </a>
+            </li>
+          </ul>
         </div><!-- /.thmb-col  -->
       </div>
     </div><!-- /.nano-content -->

@@ -132,6 +132,7 @@ module.exports = function(grunt)
                     'assets/lib/jquery/jquery-2.1.1.js'
                   // , 'assets/lib/jquery/jquery.ui.widget.js'
                   , 'assets/lib/jquery/jquery.nanoscroller.js'
+                  , 'assets/lib/jquery/jquery.sortable.js'
                   // , 'assets/lib/jquery/jquery.fileupload.js'
                   , 'assets/lib/underscore/underscore.js'
                   , 'assets/lib/underscore/underscore.string.js'
@@ -143,7 +144,7 @@ module.exports = function(grunt)
                   , 'assets/lib/handlebars/handlebars-v2.0.0.js'
                   // , 'assets/lib/bootstrap/dropdown.js'
                   , 'assets/lib/bootstrap/button.js'
-                  // , 'assets/lib/bootstrap/modal.js'
+                  , 'assets/lib/bootstrap/modal.js'
                   , 'assets/lib/moment/moment.js'
                   // , 'assets/lib/download/download.js'
 

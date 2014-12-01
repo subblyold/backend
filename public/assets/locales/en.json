@@ -17,6 +17,8 @@
       "item": {
         "single": "%1$s item",
         "plural": "%1$s items"
-      }
+      },
+      "cancel": "cancel",
+      "save": "save"
   }
 }

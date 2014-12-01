@@ -16,6 +16,8 @@
       "item": {
         "single": "%1$s article",
         "plural": "%1$s articles"
-      }
+      },
+      "cancel": "annuler",
+      "save": "sauvegarder"
   }
 }
