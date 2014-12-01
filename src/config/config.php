@@ -1,4 +1,4 @@
-<?
+<?php
 
 return array(
     'site' => [
@@ -24,7 +24,7 @@ return array(
           , 'active'
           , 'hidden'
           , 'sold_out'
-          , 'coming_soon' 
+          , 'coming_soon'
         ]
     )
 );
