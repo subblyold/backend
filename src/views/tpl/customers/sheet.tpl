@@ -2,35 +2,20 @@
   <div class="nano-content ord-dtls">
     <div class="c-pdg-h c-pdg-t">
       <div class="customer-title">
-        <h3 class="f-lrg">
-          <strong class="c-blk strong">Profile</strong>
-          Orders ({{count orders}})
-        </h3>
-      </div>
-      <div id="customer-orders">
-        <ul class="cln-lst c-pdg-bas-t user-orders">
-          <li class="cln-lst-rw cust-row js-trigger-goto list-row">
-            <span class="cln-lst-itm cln-lst-blk ordr-sts"> <span class="bullet waiting"></span> </span>
-            <span class="cln-lst-itm cln-lst-blk strong c-blk">
-              5 products
-            </span>
-            <span class="fl-r">
-              <span class="cln-lst-itm cln-lst-blk strong c-blk">
-                $ 3 630.00
-              </span>
-              <span class="cln-lst-itm cln-lst-blk">
-                12/02/2014
-              </span>
-              <span class="cln-lst-itm cln-lst-blk">
-                <a href="javascript:;" class="btn btn-icon">
-                  <i class="icon icon-files"></i>
-                </a>
-              </span>
-            </span>
+        <ul class="f-lrg customer-nav">
+          <li>
+            <a href="#customer-profile" class="active">
+              Profile
+            </a>
           </li>
+          <li>
+            <a href="#customer-orders">
+              Orders ({{count orders}})
+            </a>
+          </li>          
         </ul>
-      </div><!-- /#customer-orders -->
-      <div id="customer-profile">
+      </div>
+      <div id="customer-profile" class="customer-tab active">
         <hr class="hr">
         <div class="cl-f">
           <div class="cust-identifier">
@@ -49,18 +34,7 @@
             </a>
           </span><!-- /.fl-r -->
         </div><!-- /.cl-f -->
-  <!--       <hr class="hr">
-        <ul class="customer-subscriptions">
-          <li>
-            Newsletter : <strong class="c-blk strong">Yes</strong>
-          </li>
-          <li>
-            Subscription date :  <strong class="c-blk strong">04/02/2012 at 19:10:51</strong>
-          </li>
-          <li>
-            Last visit :  <strong class="c-blk strong">04/03/2012 at 13:14:13</strong>
-          </li>
-        </ul> -->
+
         <hr class="hr full">
 
         <h4 class="f-lrg c-pdg-bas-v">Adresses</h4>
@@ -102,7 +76,31 @@
             Delete this customer 
           </a>
         </p>
-      </div><!-- /.c-pdg-h -->
     </div><!-- /#customer-profile -->
+    <div id="customer-orders" class="customer-tab">
+      <ul class="cln-lst c-pdg-bas-t user-orders">
+        <li class="cln-lst-rw cust-row js-trigger-goto list-row">
+          <span class="cln-lst-itm cln-lst-blk ordr-sts"> <span class="bullet waiting"></span> </span>
+          <span class="cln-lst-itm cln-lst-blk strong c-blk">
+            5 products
+          </span>
+          <span class="fl-r">
+            <span class="cln-lst-itm cln-lst-blk strong c-blk ordr-total">
+              $ 3 630.00
+            </span>
+            <span class="cln-lst-itm cln-lst-blk">
+              12/02/2014
+            </span>
+            <span class="cln-lst-itm cln-lst-blk ordr-btn-rcp">
+              <a href="javascript:;" class="btn btn-icon">
+                <i class="icon icon-files"></i>
+              </a>
+            </span>
+          </span>
+        </li>
+      </ul>
+    </div><!-- /#customer-orders -->
+
+    </div><!-- /.c-pdg-h -->
   </div><!-- /.nano-content ord-dtls -->
 </div><!-- /.nano -->

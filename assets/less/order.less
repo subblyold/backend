@@ -117,6 +117,32 @@
 }
 
 
+.customer-nav {
+  li {
+    display: inline-block;
+    margin-right: 10px;
+
+    & + li {
+      margin-right: 10px;
+    }
+  }
+
+  a {
+    &.active {
+      color: @black;
+      font-weight: bold;
+    }
+  }
+}
+
+.customer-tab {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+
 //
 // Order Total Detail
 // --------------------------------------------------
@@ -138,7 +164,8 @@
     line-height: 70px;
   }
 
-  a {
-    
+  .ordr-total,
+  .ordr-btn-rcp {
+    padding: 0 15px;
   }
 }

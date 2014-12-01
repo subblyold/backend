@@ -87,9 +87,5 @@
   <script src="<?= URL::to('/static/templates') ?>"></script>
   <script src="<?= URL::to('/static/locales') ?>"></script>
   <script src="<?= URL::to('/themes/backend/assets/js/subbly.' . $environment . '.js') ?>"></script>
-  <!--
-  script src="<?= URL::to('/themes/plugins/helloword.js') ?>"></script>
-  <script src="<?= URL::to('/themes/plugins/test.js') ?>"></script
-  -->
 </body>
 </html>

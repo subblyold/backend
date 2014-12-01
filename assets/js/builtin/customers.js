@@ -199,6 +199,36 @@
   {
       _viewName:     'CustomerSheet'
     , _viewTpl:      TPL.customers.sheet
+
+      // On view initialize
+    , onInitialize: function()
+      {
+        // add view's event
+        this.addEvents( {
+            'click ul.customer-nav a': 'switchTab'
+        })
+      }
+
+    , onDisplayTpl: function()
+      {
+        this._$tabsLinks = this.$el.find('ul.customer-nav a')
+        this._$tabs      = this.$el.find('div.customer-tab')
+      }
+
+    , switchTab: function( event )
+      {
+        event.preventDefault()
+
+        var id = event.target.href.split('#')[1]
+
+        this._$tabsLinks.removeClass('active')
+        this._$tabs.removeClass('active')
+
+        event.target.classList.add('active')
+
+        document.getElementById( id ).classList.add('active')
+      }
+
   }
 
 
