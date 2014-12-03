@@ -51,8 +51,6 @@
       {
         this._$tabsLinks = this.$el.find('ul.nav-tabs a')
         this._$tabs      = this.$el.find('.tab-pane')
-
-        subbly.trigger( 'loader::progressEnd' )
       }
 
     , switchTab: function( event )

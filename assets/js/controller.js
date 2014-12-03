@@ -46,8 +46,6 @@ var SubblyController = Backbone.Controller.extend(
 
       // register current controller
       this._mainRouter.setCurrentController( this )
-
-      subbly.trigger( 'loader::progressEnd' )
     }
 
     // Clean DOM and JS memory

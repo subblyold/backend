@@ -45,7 +45,7 @@ Feedback.prototype.add = function()
       scope.dismiss()
     })
 
-  // this.overlay.classList.add('show')
+  this.overlay.classList.add('show')
 
   return this
 }
@@ -120,7 +120,9 @@ Feedback.prototype.progressEnd = function( state, message )
 
   if( !_.isUndefined( state ) )
     this.state( state )
-  
+
+  this.overlay.classList.remove('show')
+
   this.$entry
     .stop( true, true )
     .css( 'width', width)
@@ -137,8 +139,6 @@ Feedback.prototype.progressEnd = function( state, message )
           }
 
           scope.ended = false
-          
-          scope.overlay.classList.remove('show')
 
           scope.$entry.stop( true, true ).fadeOut( 300, function()
           {

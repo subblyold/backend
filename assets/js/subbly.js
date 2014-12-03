@@ -36,9 +36,6 @@ var SubblyCore = function( config )
 
   this._event.on( 'user::loggedIn', this.setCredentials, this )
   this._event.on( 'user::logout',   this.logout,         this )
-  // this._event.on( 'feedback::add',  this.feedback,       this )
-  // this._event.on( 'feedback::done', this.feedbackDone,   this )
-  this._event.on( 'loader::progressEnd', this._feedback.progressEnd  )
 
   this._viewAllowedType = [ 
       'Model'
@@ -80,7 +77,6 @@ SubblyCore.prototype.init = function()
 
     if( scope._changesAreSaved )
     {
-      scope._feedback.add().progress()
       scope._router.navigate( href, opts )
     }
     else
@@ -402,36 +398,28 @@ SubblyCore.prototype.api = function( serviceName, args )
  */
 SubblyCore.prototype.fetch = function( obj, options, context )
 {
-  var _feedback = this._feedback
-    , options   = options || {}
+  var options   = options || {}
     , xhrId     = _.uniqueId( 'xhr_' )
-    , cbShared  = function()
-      {
-        _feedback.progressEnd()
-
-        if( context )
-          context.trigger( 'fetch::responds' )
-      }
 
   if( context )
     context.trigger( 'fetch::calling' )
   
-  _feedback.add().progress()
-
   this._fetchXhr[ xhrId ] = obj.fetch({
       data:    options.data || {} 
     , xhrId:   xhrId
     , success: function( bbObj, response, opts )
       {
-        cbShared()
+        if( context )
+          context.trigger( 'fetch::responds' )
 
         if( options.success && _.isFunction( options.success ) )
           options.success( bbObj, response, opts )
       }
     , error: function( bbObj, response, opts )
       {
-        cbShared()
-        
+        if( context )
+          context.trigger( 'fetch::responds' )
+
         if( options.error && _.isFunction( options.error ) )
           options.error( bbObj, response, opts  )
       }
