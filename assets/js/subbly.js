@@ -37,6 +37,7 @@ var SubblyCore = function( config )
   this._event.on( 'user::loggedIn', this.setCredentials, this )
   this._event.on( 'user::logout',   this.logout,         this )
 
+  // Backbone's based allowed API services
   this._viewAllowedType = [ 
       'Model'
     , 'Collection'
