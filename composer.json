@@ -25,6 +25,7 @@
         "php": ">=5.4.0",
         
         "subbly/framework": "~0.1@dev",
+        "dompdf/dompdf" : "0.6.*",
         "mustache/mustache": "2.7.0"
     },
 
