@@ -143,8 +143,6 @@
 
           delete this._fragment
         }
-
-        subbly.trigger( 'loader::hide' )
       }
 
       // go to customer profile

@@ -148,7 +148,6 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 
       if( !this.collection.length && this._inviteTxt )
       {
-        subbly.trigger( 'loader::hide' )
         this.displayInviteMsg()
         console.warn('Collection empty, display invite message')
         console.groupEnd()

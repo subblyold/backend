@@ -42,8 +42,6 @@ Components.Subbly.View.Modal = Backbone.View.extend(
 
       if( _.isFunction( this.settings.setUp ) )
         this.settings.setUp()
-
-      // Pubsub.trigger( 'loader::hide' )
     }
 
   , events: {
