@@ -23,7 +23,12 @@
 
     , display: function() 
       {
-        var scope  = this
+        var scope = this
+          , view  = this.getViewByPath( 'Subbly.View.Products' )
+
+        var collection = subbly.api('Subbly.Collection.Products')
+
+        view.displayTpl()
 
         subbly.fetch( subbly.api('Subbly.Collection.Products'),
         {
@@ -33,9 +38,9 @@
             }
           , success: function( collection, response )
             {
-              scope.getViewByPath( 'Subbly.View.Products' )
+              view
                 .setValue( 'collection', collection )
-                .displayTpl()
+                .render()
             }
         }, this )
       }
@@ -78,7 +83,7 @@
         this._$viewItems = this._$list.add( this._$grid )
         this._$triggers  = this.$el.find('a.js-toggle-view')
 
-        this.render()
+        // this.render()
 
         return this
       }
@@ -86,8 +91,16 @@
       // Render list's row
     , render: function()
       {
-        // if( !this.collection )
-        //   return
+        if( !this.collection )
+          return
+        
+        if( this.collection.isEmpty() )
+        {
+          this._$fetchView.addClass('rendering').addClass('empty').removeClass('loading')
+          return
+        }
+
+        this._$fetchView.removeClass('rendering').removeClass('loading')
 
         // fetch flag
         this._isLoadingMore = false

@@ -10,6 +10,7 @@ var SubblyView = Backbone.View.extend(
   , _controller: false
   , _$nano:      false
   , _sticky:     false
+  , _$fetchView: false
 
   , initialize: function( options )
     {
@@ -68,10 +69,26 @@ var SubblyView = Backbone.View.extend(
       return this
     }
 
+  , showLoading: function()
+    {
+      this._$fetchView.addClass('rendering').addClass('loading')
+
+      return this
+    }
+
+  , removeLoading: function()
+    {
+      this._$fetchView.removeClass('rendering').removeClass('loading')
+
+      return this
+    }
+
   , displayTpl: function( tplData )
     {
       if( !this._viewTpl )
         return
+
+      // this.$el.find('div.fetch-holder').removeClass('rendering').removeClass('loading')
 
       tplData = tplData || {}
 
@@ -82,8 +99,9 @@ var SubblyView = Backbone.View.extend(
       this.$el.html( html )
 
       // Setup nanoscroller
-      this._$nano = this.$el.find('div.nano')
-      
+      this._$nano      = this.$el.find('div.nano')
+      this._$fetchView = this.$el.find('.fetch-holder')
+
       var scope = this
 
       this._$nano.nanoScroller()
@@ -92,10 +110,20 @@ var SubblyView = Backbone.View.extend(
         scope.trigger('view::scrollend')
       })
 
-      if( this.onDisplayTpl )
-        this.onDisplayTpl( tplData )
-
       this._sticky = new scroll2sicky( this.$el )
+
+      if( this.onDisplayTpl )
+        this.onDisplayTpl()
+
+      return this
+    }
+
+  , render: function()
+    {
+      this.removeLoading()
+
+      if( this.onRenderAfter )
+        this.onRenderAfter()
 
       return this
     }

@@ -37,7 +37,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       if( this._tplRow )
         this._tplRowCompiled = Handlebars.compile( this._tplRow )
 
-      this.render()
+      // this.render()
 
       return this
     }
@@ -131,6 +131,20 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         console.groupEnd()
         return
       }
+      
+      if( this.collection.isEmpty() )
+      {
+        console.warn('ABORT, collection is empty')
+        console.groupEnd()
+        this._$fetchView.addClass('rendering').addClass('empty').removeClass('loading')
+
+        if( this.onDetailIsEmpty )
+          this.onDetailIsEmpty()
+        
+        return
+      }
+
+      this._$fetchView.removeClass('rendering').removeClass('loading')
 
       // fetch flag
       this._isLoadingMore = false

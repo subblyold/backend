@@ -52,9 +52,28 @@
 
     , displayView: function( sheetCB )
       {
-        var scope  = this
+        var scope      = this
+          , view       = this.getViewByPath( 'Subbly.View.Customers' )
+          , collection = subbly.api('Subbly.Collection.Users')
 
-        subbly.fetch( subbly.api('Subbly.Collection.Users'),
+        view.displayTpl()
+
+        // call sub-view display
+        this.getViewByPath( 'Subbly.View.CustomerSheet' )
+          .displayTpl()
+
+//         // test zero customers return
+//         window.setTimeout(function()
+//         {
+// console.log( collection )
+//               view
+//                 .setValue( 'collection', collection )
+//                 .render()
+
+//         }, 2500)
+//         return
+
+        subbly.fetch( collection,
         {
             data:   {
                 offset: 0
@@ -63,9 +82,10 @@
           , success: function( collection, response )
             {
               scope._listDisplayed = true
-              scope.getViewByPath( 'Subbly.View.Customers' )
+
+              view
                 .setValue( 'collection', collection )
-                .displayTpl()
+                .render()
 
               if( _.isFunction( sheetCB ) )
                 sheetCB()
@@ -79,7 +99,10 @@
 
         var scope = this
           , user  = subbly.api('Subbly.Model.User', { uid: uid })
+          , view  = this.getViewByPath( 'Subbly.View.CustomerSheet' )
 
+        view.showLoading()
+        
         subbly.fetch( user,
         {
             data: { includes: ['addresses', 'orders'] }
@@ -90,9 +113,10 @@
               json.displayName = model.displayName()
               json.lastLogin   = moment.utc( model.get('last_login') ).format('llll')
 
-              scope.getViewByPath( 'Subbly.View.CustomerSheet' )
+              view
                 .setValue( 'model', model )
                 .displayTpl( json )
+                .removeLoading()
             }
         }, this )
       }
@@ -174,6 +198,11 @@
         return html
       }
 
+    , onDetailIsEmpty: function()
+      {
+        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).noResult()
+      }
+
       // Higthligth active row
     , setActiveRow: function( uid )
       {
@@ -207,6 +236,11 @@
         this.addEvents( {
             'click ul.customer-nav a': 'switchTab'
         })
+      }
+
+    , noResult: function()
+      {
+        this.$el.find('div.fetch-holder').removeClass('loading')
       }
 
     , onDisplayTpl: function()

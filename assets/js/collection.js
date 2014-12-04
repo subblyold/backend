@@ -29,4 +29,19 @@ var SubblyCollection = Backbone.Collection.extend(
 
       return Backbone.Collection.prototype.fetch.call( this, options )
     }
+
+  , isEmpty: function()
+    {
+      if( !this.length )
+        return true
+
+      // special case
+      // as we call API collection with '{}' as default args
+      // the collection can not have zero model
+      // but first model will never have `id` attribute
+      // this is not reliable, cause we can create 
+      // a new collection with a new model
+      // but better than nothing
+      return ( this.models[0] && _.isUndefined( this.models[0].get( this.models[0].idAttribute ) ) )
+    }
 })

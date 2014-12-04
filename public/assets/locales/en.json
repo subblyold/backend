@@ -13,6 +13,22 @@
       "users": "Users"
     }
   },
+  "products": {
+    "noEntry": "You don't have any products yet.",
+    "pageTitle": "All products",
+    "btnAdd": "Add product",
+    "formPlaceholder": "Search by name, ref, etc."
+  },
+  "customers": {
+    "noEntry": "You don't have<br> any customers yet.",
+    "pageTitle": "Customers",
+    "formPlaceholder": "Search by name, date"
+  },
+  "orders": {
+    "noEntry": "You don't have<br> any orders yet.",
+    "pageTitle": "Orders",
+    "formPlaceholder": "Search by date, name, etc."
+  },
   "labels": {
       "item": {
         "single": "%1$s item",

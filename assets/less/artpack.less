@@ -276,6 +276,44 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 //
+// fetch holder
+// --------------------------------------------------
+
+.fetch-holder {
+
+  .empty-list,
+  .loading-list {
+    display: none;
+    position: relative;
+  }
+
+  .loading-list {
+    height: 100%;
+  }
+
+  &.loading {
+    .loading-list {
+      display: block;
+    }
+  }
+
+  &.empty {
+    .empty-list {
+      font: 32px 'LatoLight';
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      text-align: center;
+      z-index: 1000;
+      width: 100%;
+      -webkit-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+  }
+}
+
+//
 // Column list
 // --------------------------------------------------
 

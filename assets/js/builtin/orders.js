@@ -1,9 +1,13 @@
 
+  // CONTROLLER
+  // --------------------------------
+
   var Orders = 
   {
       _tplStructure:   'half' // full|half|third
     , _viewsNames:     [ 'Subbly.View.Orders', 'Subbly.View.OrderEntry' ]
     , _controllerName: 'orders'
+    , _listDisplayed:  false  
     , _mainNavRegister:
       {
           name:       'Orders'
@@ -20,6 +24,7 @@
       {
         this._listDisplayed = false
       }
+
       // Routes
       //-------------------------------
 
@@ -47,9 +52,28 @@
 
     , displayView: function( sheetCB )
       {
-        var scope  = this
+        var scope      = this
+          , view       = this.getViewByPath( 'Subbly.View.Orders' )
+          , collection = subbly.api('Subbly.Collection.Orders')
 
-        subbly.fetch( subbly.api('Subbly.Collection.Orders'),
+        view
+          .displayTpl()
+
+        // call sub-view display
+        this.getViewByPath( 'Subbly.View.OrderEntry' )
+          .displayTpl()
+
+        // // test zero orders return
+        // window.setTimeout(function()
+        // {
+        //       view
+        //         .setValue( 'collection', collection )
+        //         .render()
+
+        // }, 2500)
+        // return
+
+        subbly.fetch( collection,
         {
             data:   {
                 offset:   0
@@ -59,9 +83,10 @@
           , success: function( collection, response )
             {
               scope._listDisplayed = true
-              scope.getViewByPath( 'Subbly.View.Orders' )
+
+              view
                 .setValue( 'collection', collection )
-                .displayTpl()
+                .render()
 
               if( _.isFunction( sheetCB ) )
                 sheetCB()
@@ -73,8 +98,11 @@
       {
         this.getViewByPath( 'Subbly.View.Orders' ).setActiveRow( id )
 
-        var scope  = this
-          , order  = subbly.api('Subbly.Model.Order', { id: id })
+        var scope = this
+          , order = subbly.api('Subbly.Model.Order', { id: id })
+          , view  = scope.getViewByPath( 'Subbly.View.OrderEntry' )
+
+        view.showLoading()
 
         subbly.fetch( order,
         {
@@ -86,9 +114,10 @@
               json.customerName = 'Fake Name'
               json.createdDate  = moment.utc( model.get('created_at') ).fromNow()
 
-              scope.getViewByPath( 'Subbly.View.OrderEntry' )
+              view
                 .setValue( 'model', model )
                 .displayTpl( json )
+                .removeLoading()
             }
         }, this )
       }
@@ -100,6 +129,16 @@
   {
       _viewName:     'OrderEntry'
     , _viewTpl:      TPL.orders.entry
+
+    , noResult: function()
+      {
+        this.$el.find('div.fetch-holder').removeClass('loading')
+      }
+
+    , onDisplayTpl: function()
+      {
+        // this.$el.find('div.fetch-holder').removeClass('rendering').removeClass('loading')
+      }
   }
 
   var OrdersList = 
@@ -139,6 +178,11 @@
         })
 
         return html
+      }
+
+    , onDetailIsEmpty: function()
+      {
+        this._controller.getViewByPath( 'Subbly.View.OrderEntry' ).noResult()
       }
 
       // Higthligth active row

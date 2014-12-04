@@ -12,6 +12,22 @@
       "users": "Utilisateurs"
     }
   },
+  "products": {
+    "noEntry": "Vous n’avez pas encore de produits",
+    "pageTitle": "Tout les produits",
+    "btnAdd": "Ajoutez un produits",
+    "formPlaceholder": "Rechercher par nom, réf., etc."
+  },
+  "customers": {
+    "noEntry": "Vous n’avez<br>pas encore de clients",
+    "pageTitle": "Clients",
+    "formPlaceholder": "Rechercher par nom"
+  },
+  "orders": {
+    "noEntry": "Vous n'avez pas encore<br>de commandes",
+    "pageTitle": "Commandes",
+    "formPlaceholder": "Chercher par date, nom, etc."
+  },
   "labels": {
       "item": {
         "single": "%1$s article",

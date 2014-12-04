@@ -22,10 +22,12 @@
 
     , display: function( sku ) 
       {
-        var scope   = this
-          , isNew   = ( sku === '_new' )
+        var isNew   = ( sku === '_new' )
           , opts    = ( isNew ) ? {} : { sku: sku }
           , product = subbly.api('Subbly.Model.Product', opts )
+          , view    = this.getViewByPath( 'Subbly.View.ProductEntry' )
+        
+        view.displayTpl()
 
         subbly.fetch( product,
         {
@@ -38,9 +40,10 @@
               json.isNew      = isNew
               json.statusList = [ 'draft', 'active', 'hidden', 'sold_out', 'coming_soon' ]
 
-              scope.getViewByPath( 'Subbly.View.ProductEntry' )
+              view
                 .setValue( 'model', model )
                 .displayTpl( json )
+                .render()
             }
         }, this )
       }
@@ -62,7 +65,7 @@
         this.addEvents( {'click a.js-trigger-categories':  'categoriesPopupOpen'} )
       }
 
-    , onDisplayTpl: function( tplData )
+    , onRenderAfter: function( tplData )
       {
         this.$el.find('ul.sortable').sortable()
 
