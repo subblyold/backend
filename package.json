@@ -7,7 +7,8 @@
   "bugs": {
     "url": "https://github.com/subbly/backend/issues"
   },
-  "dist": "../../../themes/backend/assets/",
+  "dev": "../../../themes/backend/assets/",
+  "dist": "public/assets/",
   "filename": "subbly",
   "devDependencies": {
     "grunt": "~0.4.4",

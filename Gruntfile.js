@@ -221,12 +221,29 @@ module.exports = function(grunt)
             , duration: 3 // the duration of notification in seconds, for `notify-send only
           }
         }
+      , exec: 
+        {
+            devCss: 
+            {
+                cmd: function() 
+                {
+                    return 'cp public/assets/css/* ../../../themes/backend/assets/css'
+                }
+            }
+          , devJs: 
+            {
+                cmd: function() 
+                {
+                    return 'cp public/assets/js/* ../../../themes/backend/assets/js'
+                }
+            }
+        }
       , watch: 
         {
             javascript: 
             {
               files: ['assets/js/*.js', 'assets/js/*/*.js', 'themes/plugins/*.js'] //, 'assets/js/*/*.js'
-            , tasks: ['concat_sourcemap']
+            , tasks: ['concat_sourcemap', 'exec:devJs']
             , options: 
               {
                   debounceDelay: 250
@@ -235,7 +252,7 @@ module.exports = function(grunt)
           , css: 
             {
               files: ['assets/less/*.less']
-            , tasks: ['less-compile']
+            , tasks: ['less-compile', 'exec:devCss']
             , options: 
               {
                   debounceDelay: 250
@@ -257,6 +274,7 @@ module.exports = function(grunt)
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-notify');
     grunt.task.run('notify_hooks');
+    grunt.loadNpmTasks('grunt-exec');
 
     grunt.registerTask('less-compile', ['less:development']);
 
