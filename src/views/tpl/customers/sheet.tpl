@@ -10,12 +10,12 @@
             <ul class="f-lrg customer-nav">
               <li>
                 <a href="#customer-profile" class="active">
-                  Profile
+                  {{i18n 'orderDetails.tabs.profile'}}
                 </a>
               </li>
               <li>
                 <a href="#customer-orders">
-                  Orders ({{count orders}})
+                  {{i18nChoice 'orderDetails.tabs.orders' orders}}
                 </a>
               </li>          
             </ul>
@@ -82,30 +82,30 @@
               </a>
             </p>
           </div><!-- /#customer-profile -->
+          <div id="customer-orders" class="customer-tab">
+            <ul class="cln-lst c-pdg-bas-t user-orders">
+              <li class="cln-lst-rw cust-row js-trigger-goto list-row">
+                <span class="cln-lst-itm cln-lst-blk ordr-sts"> <span class="bullet waiting"></span> </span>
+                <span class="cln-lst-itm cln-lst-blk strong c-blk">
+                  5 products
+                </span>
+                <span class="fl-r">
+                  <span class="cln-lst-itm cln-lst-blk strong c-blk ordr-total">
+                    $ 3 630.00
+                  </span>
+                  <span class="cln-lst-itm cln-lst-blk">
+                    12/02/2014
+                  </span>
+                  <span class="cln-lst-itm cln-lst-blk ordr-btn-rcp">
+                    <a href="javascript:;" class="btn btn-icon">
+                      <i class="icon icon-files"></i>
+                    </a>
+                  </span>
+                </span>
+              </li>
+            </ul>
+          </div><!-- /#customer-orders -->
         </div><!-- /.c-pdg-h -->
-        <div id="customer-orders" class="customer-tab">
-          <ul class="cln-lst c-pdg-bas-t user-orders">
-            <li class="cln-lst-rw cust-row js-trigger-goto list-row">
-              <span class="cln-lst-itm cln-lst-blk ordr-sts"> <span class="bullet waiting"></span> </span>
-              <span class="cln-lst-itm cln-lst-blk strong c-blk">
-                5 products
-              </span>
-              <span class="fl-r">
-                <span class="cln-lst-itm cln-lst-blk strong c-blk ordr-total">
-                  $ 3 630.00
-                </span>
-                <span class="cln-lst-itm cln-lst-blk">
-                  12/02/2014
-                </span>
-                <span class="cln-lst-itm cln-lst-blk ordr-btn-rcp">
-                  <a href="javascript:;" class="btn btn-icon">
-                    <i class="icon icon-files"></i>
-                  </a>
-                </span>
-              </span>
-            </li>
-          </ul>
-        </div><!-- /#customer-orders -->
       </div><!-- /.c-pdg-h -->
     </div><!-- /.fetch-holder -->
   </div><!-- /.nano-content ord-dtls -->

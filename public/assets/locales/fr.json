@@ -28,6 +28,16 @@
     "pageTitle": "Commandes",
     "formPlaceholder": "Chercher par date, nom, etc."
   },
+  "orderDetails": {
+    "tabs": {
+      "profile": "profil",
+      "orders": {
+        "none": "commande",
+        "single": "commande",
+        "plural": "commandes (%1$s)"
+      }
+    }
+  },
   "labels": {
       "item": {
         "single": "%1$s article",

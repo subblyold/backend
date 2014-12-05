@@ -21104,7 +21104,7 @@ i18n.prototype.choice = function( _str, _count )
   {
     str = ( _count > 1 )
           ? str.plural
-          : str.single
+          : ( _count === 1 ) ? str.single : str.none
 
     if( !args.length )
       args.push( _count )
@@ -21131,6 +21131,18 @@ Handlebars.registerHelper( 'i18n', function( str )
   try
   {
     return Subbly.i18n().get( str )
+  }
+  catch( e )
+  {
+    return 'i18n not loaded yet'
+  }
+})
+
+Handlebars.registerHelper( 'i18nChoice', function( str, arr )
+{
+  try
+  {
+    return Subbly.i18n().choice( str, arr )
   }
   catch( e )
   {

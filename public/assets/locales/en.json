@@ -29,6 +29,16 @@
     "pageTitle": "Orders",
     "formPlaceholder": "Search by date, name, etc."
   },
+  "orderDetails": {
+    "tabs": {
+      "profile": "profile",
+      "orders": {
+        "none": "order",
+        "single": "order",
+        "plural": "orders (%1$s)"
+      }
+    }
+  },
   "labels": {
       "item": {
         "single": "%1$s item",

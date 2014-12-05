@@ -13,6 +13,18 @@ Handlebars.registerHelper( 'i18n', function( str )
   }
 })
 
+Handlebars.registerHelper( 'i18nChoice', function( str, arr )
+{
+  try
+  {
+    return Subbly.i18n().choice( str, arr )
+  }
+  catch( e )
+  {
+    return 'i18n not loaded yet'
+  }
+})
+
 // Select/Checkbox/Radio button options helper
 // {{isSelected this default="string or reference" attribute="selected"}}
 Handlebars.registerHelper('isSelected', function( value, options )
