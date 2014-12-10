@@ -8,12 +8,12 @@ Components.Subbly.Model.Settings = Backbone.Model.extend(
 
   , url: function()
     {
-      return subbly.apiUrl( this.serviceName )
+      return Subbly.apiUrl( this.serviceName )
     }
 
   , credentials: function() 
     {
-      return subbly.getCredentials()
+      return Subbly.getCredentials()
     }
 
   , parse: function ( response ) 
@@ -24,8 +24,8 @@ Components.Subbly.Model.Settings = Backbone.Model.extend(
   , getAsObject: function()
     {
       var settings = {
-          siteStatusList: subbly.getConfig('siteStatus')
-        , backendLocales: subbly.getConfig('locales')
+          siteStatusList: Subbly.getConfig('siteStatus')
+        , backendLocales: Subbly.getConfig('locales')
       }
 
       _.each( this.attributes, function( value, key )

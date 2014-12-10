@@ -34,7 +34,7 @@ Components.Subbly.View.FormView = SubblyViewForm = SubblyView.extend(
     {
       this.removeWarning( event )
 
-      subbly.trigger( 'form::changed' )
+      Subbly.trigger( 'form::changed' )
 
       if (event.keyCode != 13) 
           return
@@ -53,7 +53,7 @@ Components.Subbly.View.FormView = SubblyViewForm = SubblyView.extend(
         this.onCancel()
       }
 
-      subbly.trigger( 'form::reset' )
+      Subbly.trigger( 'form::reset' )
     }
 
   , removeWarning: function( event )
@@ -242,7 +242,7 @@ Components.Subbly.View.FormView = SubblyViewForm = SubblyView.extend(
           // ( this.fields[param] ) ? this.fields[param].display : 
           if( param )
             args = param
-          
+
           var _obj = {
                   field:   field
                 , element: this._form.element.querySelector('[name="'+ field.name + '"]')

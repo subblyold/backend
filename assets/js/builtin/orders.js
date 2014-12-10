@@ -54,7 +54,7 @@
       {
         var scope      = this
           , view       = this.getViewByPath( 'Subbly.View.Orders' )
-          , collection = subbly.api('Subbly.Collection.Orders')
+          , collection = Subbly.api('Subbly.Collection.Orders')
 
         view
           .displayTpl()
@@ -73,7 +73,7 @@
         // }, 2500)
         // return
 
-        subbly.fetch( collection,
+        Subbly.fetch( collection,
         {
             data:   {
                 offset:   0
@@ -99,12 +99,12 @@
         this.getViewByPath( 'Subbly.View.Orders' ).setActiveRow( id )
 
         var scope = this
-          , order = subbly.api('Subbly.Model.Order', { id: id })
+          , order = Subbly.api('Subbly.Model.Order', { id: id })
           , view  = scope.getViewByPath( 'Subbly.View.OrderEntry' )
 
         view.showLoading()
 
-        subbly.fetch( order,
+        Subbly.fetch( order,
         {
             data: { includes: ['user', 'shipping_address', 'billing_address', 'products'] }
           , success: function( model, response )
@@ -200,11 +200,11 @@
       {
         var id = event.currentTarget.dataset.id
 
-        subbly.trigger( 'hash::change', 'orders/' + id )
+        Subbly.trigger( 'hash::change', 'orders/' + id )
       }
   }
 
-  subbly.register( 'Subbly', 'Orders', 
+  Subbly.register( 'Subbly', 'Orders', 
   {
       'ViewList:Orders':   OrdersList
     , 'View:OrderEntry':   OrderEntry

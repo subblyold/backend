@@ -24,12 +24,12 @@
       {
         var isNew   = ( sku === '_new' )
           , opts    = ( isNew ) ? {} : { sku: sku }
-          , product = subbly.api('Subbly.Model.Product', opts )
+          , product = Subbly.api('Subbly.Model.Product', opts )
           , view    = this.getViewByPath( 'Subbly.View.ProductEntry' )
         
         view.displayTpl()
 
-        subbly.fetch( product,
+        Subbly.fetch( product,
         {
             data: { includes: ['options', 'images', 'categories'] }
           , success: function( model, response )
@@ -82,7 +82,7 @@
         var scope  = this
           , $modal = $( document.getElementById('modal') )
 
-        this.modal = subbly.api('Subbly.View.Modal', 
+        this.modal = Subbly.api('Subbly.View.Modal', 
         {
             message:  'xhr.responseJSON.message'
           , tpl:      TPL.products.categories
@@ -108,11 +108,11 @@
 
     , onSubmit: function()
       {
-        subbly.store( this.model, this.getFormValues(), 
+        Subbly.store( this.model, this.getFormValues(), 
         {
           onSuccess: function( model, response )
           {
-            subbly.trigger( 'hash::change', 'products' )
+            Subbly.trigger( 'hash::change', 'products' )
           }
         })
       }
@@ -124,7 +124,7 @@
   // --------------------------------
 
 
-  subbly.register( 'Subbly', 'Products', 
+  Subbly.register( 'Subbly', 'Products', 
   {
       'ViewForm:ProductEntry': ProductEntry
     , 'Controller:Product':    Product

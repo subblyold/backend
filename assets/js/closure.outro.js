@@ -27,7 +27,7 @@ console.groupEnd()
 
     if( xhr.status === 401 )
     {
-      subbly.trigger( 'user::logout', message )
+      Subbly.trigger( 'user::logout', message )
       return 
     }
 
@@ -46,7 +46,7 @@ console.groupEnd()
   // On DOMready
   $(function()
   {
-    subbly.init()
+    Subbly.init()
   })
 
 })( window ); // end closure

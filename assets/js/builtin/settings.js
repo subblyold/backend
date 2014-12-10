@@ -21,11 +21,11 @@
 
     , list: function() 
       {
-        var settings = subbly.settings().getAsObject()
+        var settings = Subbly.settings().getAsObject()
 
         this.getViewByPath( this._viewsNames )
           .setValue( 'settings', settings )
-          .setValue( 'model', subbly.settings() )
+          .setValue( 'model', Subbly.settings() )
           .displayTpl( settings )
       }
   }
@@ -76,17 +76,17 @@
           , formData   = $inputs.serializeObject( false )
           , updateI18n =  ( 
                             formData['subbly.backend_language'] 
-                            && subbly.getSetting('subbly.backend_language') != formData['subbly.backend_language']
+                            && Subbly.getSetting('subbly.backend_language') != formData['subbly.backend_language']
                           )
 
-        subbly.store( this.model, formData, 
+        Subbly.store( this.model, formData, 
         {
             type: 'PUT'
           , onSuccess: function( model, response )
             {
               if( updateI18n )
               {
-                subbly.i18n().setLocale( formData['subbly.backend_language'], function()
+                Subbly.i18n().setLocale( formData['subbly.backend_language'], function()
                 {
                   scope.displayTpl( model.getAsObject() )
                 })
@@ -97,7 +97,7 @@
 
     // , addNew: function()
     //   {
-    //     subbly.trigger( 'hash::change', 'products/_new' )
+    //     Subbly.trigger( 'hash::change', 'products/_new' )
     //   }
   }
 

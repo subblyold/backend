@@ -53,7 +53,7 @@
 
     , addNew: function()
       {
-        subbly.trigger( 'hash::change', 'products/_new' )
+        Subbly.trigger( 'hash::change', 'products/_new' )
       }
   }
 

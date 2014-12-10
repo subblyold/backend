@@ -26,11 +26,11 @@
         var scope = this
           , view  = this.getViewByPath( 'Subbly.View.Products' )
 
-        var collection = subbly.api('Subbly.Collection.Products')
+        var collection = Subbly.api('Subbly.Collection.Products')
 
         view.displayTpl()
 
-        subbly.fetch( subbly.api('Subbly.Collection.Products'),
+        Subbly.fetch( Subbly.api('Subbly.Collection.Products'),
         {
             data:   {
                 offset: 0
@@ -112,7 +112,7 @@
 
         // if( !this.collection.length && this._inviteTxt )
         // {
-        //   subbly.trigger( 'loader::hide' )
+        //   Subbly.trigger( 'loader::hide' )
         //   this.displayInviteMsg()
         //   return
         // }
@@ -141,7 +141,7 @@
           {
             this._initialDisplay = true
 
-            var viewMode = subbly.getCookie( this._cookieName )
+            var viewMode = Subbly.getCookie( this._cookieName )
 
             if( !viewMode )
               viewMode = this._displayMode
@@ -163,14 +163,14 @@
       {
         var sku = event.currentTarget.dataset.sku
 
-        subbly.trigger( 'hash::change', 'products/' + sku )
+        Subbly.trigger( 'hash::change', 'products/' + sku )
       }
 
     , toggleView: function( event )
       {
         this._displayMode = event.currentTarget.dataset.view
 
-        subbly.setCookie( this._cookieName, this._displayMode )
+        Subbly.setCookie( this._cookieName, this._displayMode )
 
         this._$viewItems.addClass('dp-n')
         this._$triggers.removeClass('active')
@@ -184,7 +184,7 @@
 
     , addNew: function()
       {
-        subbly.trigger( 'hash::change', 'products/_new' )
+        Subbly.trigger( 'hash::change', 'products/_new' )
       }
   }
 
@@ -192,7 +192,7 @@
   // --------------------------------
 
 
-  subbly.register( 'Subbly', 'Products', 
+  Subbly.register( 'Subbly', 'Products', 
   {
       'ViewList:Products':     ProductsList
     , 'Controller:Products':   Products

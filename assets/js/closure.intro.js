@@ -27,7 +27,6 @@
     , $document     = $( document )
     , $window       = $( window )
     , $body         = $( document.body )
-    , subbly        = false
     , AppRouter     = false
 
   // Extend default 

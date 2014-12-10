@@ -52,7 +52,7 @@ var SubblyController = Backbone.Controller.extend(
   , remove: function() 
     {
       //Stop pending fetch
-      subbly.cleanXhr()
+      Subbly.cleanXhr()
 
       // 
       if( this.onRemove )
@@ -113,7 +113,7 @@ var SubblyController = Backbone.Controller.extend(
 
           this._parentView.appendChild( view )
 
-          this._viewsPointers[ viewId ] = subbly.api( this._viewsNames[ index ], {
+          this._viewsPointers[ viewId ] = Subbly.api( this._viewsNames[ index ], {
               el:         view
             , viewId:     viewId
             , controller: this
@@ -125,7 +125,7 @@ var SubblyController = Backbone.Controller.extend(
       // Single view
       else
       {
-        this._viewsPointers[ parentViewId ] = subbly.api( this._viewsNames, {
+        this._viewsPointers[ parentViewId ] = Subbly.api( this._viewsNames, {
             el:         this._parentView
           , viewId:     parentViewId
           , controller: this

@@ -10,12 +10,12 @@ var SubblyCollection = Backbone.Collection.extend(
 
   , url: function()
     {
-      return subbly.apiUrl( this.serviceName )
+      return Subbly.apiUrl( this.serviceName )
     }
 
   , credentials: function() 
     {
-      return subbly.getCredentials()
+      return Subbly.getCredentials()
     }
 
   , fetch: function( options ) 

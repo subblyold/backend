@@ -5,7 +5,7 @@ var SubblyModel = Backbone.Model.extend(
 {
     url: function()
     {
-      var baseUrl = subbly.apiUrl( this.serviceName )
+      var baseUrl = Subbly.apiUrl( this.serviceName )
 
       if( this.isNew() )
         return baseUrl
@@ -15,7 +15,7 @@ var SubblyModel = Backbone.Model.extend(
 
   , credentials: function() 
     {
-      return subbly.getCredentials()
+      return Subbly.getCredentials()
     }
 
   , parse: function ( response ) 

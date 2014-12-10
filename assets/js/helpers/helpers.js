@@ -82,7 +82,7 @@ var Helpers =
       switch( style )
       {
         case 'currency': 
-          settings = { style: 'currency', currency: subbly.getSetting('subbly.shop_currency') , minimumFractionDigits: 2 }
+          settings = { style: 'currency', currency: Subbly.getSetting('subbly.shop_currency') , minimumFractionDigits: 2 }
           break
         case 'float': 
           settings = { style: 'decimal', minimumFractionDigits: 2 }
@@ -95,7 +95,7 @@ var Helpers =
         switch( style )
         {
           case 'currency': 
-            return value + ' ' + subbly.getSetting('subbly.shop_currency')
+            return value + ' ' + Subbly.getSetting('subbly.shop_currency')
             break
           default:
             return value
@@ -103,7 +103,7 @@ var Helpers =
       }
       else
       {
-        return new Intl.NumberFormat( subbly.getSetting('subbly.backend_language'), settings ).format( value )
+        return new Intl.NumberFormat( Subbly.getSetting('subbly.backend_language'), settings ).format( value )
       }
     }
 }

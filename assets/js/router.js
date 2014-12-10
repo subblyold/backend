@@ -30,8 +30,8 @@ var Router = Backbone.Router.extend(
       }, this )
 
       // Load buil-in controllers
-      this._viewspointer.login   = subbly.api( 'Subbly.View.Login' )
-      this._viewspointer.mainNav = subbly.api( 'Subbly.View.MainNav', {
+      this._viewspointer.login   = Subbly.api( 'Subbly.View.Login' )
+      this._viewspointer.mainNav = Subbly.api( 'Subbly.View.MainNav', {
           items: this._mainNav
       })
 
@@ -39,18 +39,18 @@ var Router = Backbone.Router.extend(
       Backbone.history.start({
           hashChange: true 
         , pushState:  true 
-        , root:       subbly.getConfig( 'baseUrl' )
+        , root:       Subbly.getConfig( 'baseUrl' )
       })
 
       // Router events callback
       Backbone.history.on('route', function( router, route, params )
       {
-        subbly.trigger( 'hash::changed', route, params  )
+        Subbly.trigger( 'hash::changed', route, params  )
       })
 
-      // subbly.on( 'hash::change', this.closeCurrent, this )
+      // Subbly.on( 'hash::change', this.closeCurrent, this )
 
-      subbly.on( 'user::login', this.login, this)
+      Subbly.on( 'user::login', this.login, this)
 
       return this
     }
@@ -90,7 +90,7 @@ var Router = Backbone.Router.extend(
               ctr._mainNavRegister
           &&  ctr._mainNavRegister.defaultUrl
         )
-        subbly.trigger( 'mainnav::hashchanged', ctr._mainNavRegister.defaultUrl )
+        Subbly.trigger( 'mainnav::hashchanged', ctr._mainNavRegister.defaultUrl )
 
       return this
     }
@@ -116,7 +116,7 @@ var Router = Backbone.Router.extend(
   , default: function()
     {
       console.warn('call default router')
-      subbly.trigger( 'hash::change', 'dashboard' )
+      Subbly.trigger( 'hash::change', 'dashboard' )
     }      
 
   , login: function()
@@ -128,12 +128,12 @@ var Router = Backbone.Router.extend(
 
   , logout: function()
     {
-      subbly.logout()
+      Subbly.logout()
     }
 
   , notFound: function( route )
     {
-      subbly.trigger( 'hash::notFound', route )
+      Subbly.trigger( 'hash::notFound', route )
     }
 
     // Main Nav Methods

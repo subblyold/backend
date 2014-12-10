@@ -23,7 +23,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       // console.log( 'initialize list view ' + this._viewName )
 
       this.on( 'view::scrollend', this.nextPage, this )
-      subbly.on( 'pagination::fetch', this.loadMore, this )
+      Subbly.on( 'pagination::fetch', this.loadMore, this )
     }
 
   , onDisplayTpl: function()
@@ -76,7 +76,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         return
       }
 
-      subbly.trigger( 'pagination::fetch' )
+      Subbly.trigger( 'pagination::fetch' )
 
       console.info('call next page')
       console.groupEnd()
@@ -89,7 +89,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       if( !this.collection.prevPage() )
         return
 
-      subbly.trigger( 'pagination::fetch' )
+      Subbly.trigger( 'pagination::fetch' )
     }
 
     // Display the `loading` row
@@ -114,7 +114,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 
       this._$list.append( li )
 
-      subbly.fetch( this.collection,
+      Subbly.fetch( this.collection,
       {
           success: _.bind( this.render, this )
       }, this )
@@ -217,7 +217,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       if( this.onAfterRender )
         this.onAfterRender()
       
-      subbly.trigger( 'loader::hide' )
+      Subbly.trigger( 'loader::hide' )
       console.groupEnd()
     }
 
@@ -303,7 +303,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
     // Allow to override method localy
   , displayRowView: function( model )
     {
-      return subbly.api( this._viewRow, {
+      return Subbly.api( this._viewRow, {
           model:      model
         , parent:     this
         , tpl:        this._tplRowCompiled
@@ -318,7 +318,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       this._viewsPointers[ cid ].close()
       delete this._viewsPointers[ cid ]
 
-      subbly.trigger( 'row::deleted' )
+      Subbly.trigger( 'row::deleted' )
     }
 
     // Remove all rows views
@@ -343,11 +343,11 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 
       SubblyView.prototype.onClose.apply( this, arguments )
 
-      // subbly.off( 'pagination::changed',  this.render, this ) 
-      // subbly.off( 'row::delete',          this.removeRow, this ) 
-      // subbly.off( 'collection::truncate', this.cleanRows, this )
+      // Subbly.off( 'pagination::changed',  this.render, this ) 
+      // Subbly.off( 'row::delete',          this.removeRow, this ) 
+      // Subbly.off( 'collection::truncate', this.cleanRows, this )
       this.off( 'view::scrollend', this.nextPage, this )
-      subbly.off( 'pagination::fetch', this.loadMore, this )
+      Subbly.off( 'pagination::fetch', this.loadMore, this )
 
       this.cleanRows()
     }

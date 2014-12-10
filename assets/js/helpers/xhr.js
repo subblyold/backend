@@ -18,7 +18,7 @@ var xhrCall = function( options )
   if( !options.url )
     throw new Error('no URL provided')
 
-  options.url = subbly.apiUrl( options.url )
+  options.url = Subbly.apiUrl( options.url )
 
   var settings = $.extend( {}, defaults, options )
 

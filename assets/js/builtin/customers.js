@@ -54,7 +54,7 @@
       {
         var scope      = this
           , view       = this.getViewByPath( 'Subbly.View.Customers' )
-          , collection = subbly.api('Subbly.Collection.Users')
+          , collection = Subbly.api('Subbly.Collection.Users')
 
         view.displayTpl()
 
@@ -73,7 +73,7 @@
 //         }, 2500)
 //         return
 
-        subbly.fetch( collection,
+        Subbly.fetch( collection,
         {
             data:   {
                 offset: 0
@@ -98,12 +98,12 @@
         this.getViewByPath( 'Subbly.View.Customers' ).setActiveRow( uid )
 
         var scope = this
-          , user  = subbly.api('Subbly.Model.User', { uid: uid })
+          , user  = Subbly.api('Subbly.Model.User', { uid: uid })
           , view  = this.getViewByPath( 'Subbly.View.CustomerSheet' )
 
         view.showLoading()
         
-        subbly.fetch( user,
+        Subbly.fetch( user,
         {
             data: { includes: ['addresses', 'orders'] }
           , success: function( model, response )
@@ -168,7 +168,7 @@
     , _classlist:    ['view-half-list']
     , _listSelector: '#customers-list'
     , _tplRow:        TPL.customers.listrow
-    // , _viewRow:       'subbly.View.CustomerRow'
+    // , _viewRow:       'Subbly.View.CustomerRow'
 
       // On view initialize
     , onInitialize: function()
@@ -218,7 +218,7 @@
       {
         var uid = event.currentTarget.dataset.uid
 
-        subbly.trigger( 'hash::change', 'customers/' + uid, true )
+        Subbly.trigger( 'hash::change', 'customers/' + uid, true )
         // this.callController( 'sheet', uid )
       }
   }
@@ -270,7 +270,7 @@
   // --------------------------------
 
 
-  subbly.register( 'Subbly', 'Customers', 
+  Subbly.register( 'Subbly', 'Customers', 
   {
       'ViewList:Customers':   CustomersList
     // , 'ViewListRow:CustomerRow':   CustomersRow

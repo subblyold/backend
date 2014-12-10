@@ -28,7 +28,7 @@ Components.Subbly.View.Login = SubblyViewForm.extend(
         , skip:     false
       })
 
-      subbly.on( 'user::loggedIn', function()
+      Subbly.on( 'user::loggedIn', function()
       {
         this.hide()
         this._form.$el.reset()
@@ -44,9 +44,9 @@ Components.Subbly.View.Login = SubblyViewForm.extend(
       {
         // if `getCredentials` didn't throws errors
         // that means that user is already logged in
-        subbly.getCredentials()
+        Subbly.getCredentials()
         // so we send him to default controller
-        subbly.trigger( 'hash::change', '' )
+        Subbly.trigger( 'hash::change', '' )
         // and stop this action to go on
         return
       }
@@ -63,7 +63,7 @@ Components.Subbly.View.Login = SubblyViewForm.extend(
 
         document.getElementById('login-email').focus()
         
-        subbly.trigger( 'loader::hide' )
+        Subbly.trigger( 'loader::hide' )
       }, 500)
     }
 
@@ -107,7 +107,7 @@ Components.Subbly.View.Login = SubblyViewForm.extend(
               }
             , success: function( response )
               {
-                subbly.trigger( 'user::loggedIn', encode )
+                Subbly.trigger( 'user::loggedIn', encode )
               }
             , error:   function( jqXHR, textStatus, errorThrown )
               {

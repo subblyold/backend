@@ -105,6 +105,6 @@
     }
 
     // publish jQuery event + viewport 
-    subbly.trigger( 'window::resize', event, viewport )
+    Subbly.trigger( 'window::resize', event, viewport )
   })
   

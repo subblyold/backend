@@ -657,8 +657,7 @@ SubblyCore.prototype.register = function( vendor, name, plugin )
 console.groupCollapsed( 'Subbly Global Init' )
 // console.group( 'Subbly Global Init' )
 
-subbly = new SubblyCore( subblyConfig )
+window.Subbly = new SubblyCore( subblyConfig )
 
-window.Subbly = subbly
 
 
