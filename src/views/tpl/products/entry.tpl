@@ -124,9 +124,10 @@
         </div>
         <div class="c-pdg-t product-gallery">
           <strong class="strong dp-b" style="margin:50px 0 10px;">Images</strong>
-          <a href="javascript:;" class="btn btn-action dp-b ta-c">
+          <a href="javascript:;" class="btn btn-action dp-b ta-c" id="js-trigger-loadimg">
             Add image
           </a>
+          <input type="file" name="product_image" class="file-upload" id="subbly-product-img-upload">
         </div>
         <div class="c-pdg-h c-pdg-bas-t c-pdg-b ta-c">
           <div class="thmb-col">

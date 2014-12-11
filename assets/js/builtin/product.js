@@ -75,7 +75,27 @@
           , rules:    this.model.getRules()
           , skip:     false
         })
+
+        //bind Uploader
+
+        var $fileupload     = $( document.getElementById('subbly-product-img-upload') )
+          , $uploadButton   = $( document.getElementById('js-trigger-loadimg') )
+          , page            = this
+
+        // callbacks
+        var done = function( e, data )
+        {
+          // TODO: display image into list
+        }
+
+        this.uploader = new Uploader( $fileupload, {
+            $dropZone:              $uploadButton
+          , $trigger:               $uploadButton
+          , done:                   done
+          , url:                    Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
+        })
       }
+
 
     , categoriesPopupOpen: function()
       {

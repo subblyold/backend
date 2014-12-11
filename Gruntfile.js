@@ -130,10 +130,10 @@ module.exports = function(grunt)
                 src: [
                   // Dependencies
                     'assets/lib/jquery/jquery-2.1.1.js'
-                  // , 'assets/lib/jquery/jquery.ui.widget.js'
+                  , 'assets/lib/jquery/jquery.ui.widget.js'
                   , 'assets/lib/jquery/jquery.nanoscroller.js'
                   , 'assets/lib/jquery/jquery.sortable.js'
-                  // , 'assets/lib/jquery/jquery.fileupload.js'
+                  , 'assets/lib/jquery/jquery.fileupload.js'
                   , 'assets/lib/underscore/underscore.js'
                   , 'assets/lib/underscore/underscore.string.js'
                   , 'assets/lib/backbone/backbone.js'
@@ -156,9 +156,9 @@ module.exports = function(grunt)
                   , 'assets/js/helpers/handlebars.js'
                   , 'assets/js/helpers/validation.js'
                   , 'assets/js/helpers/xhr.js'
+                  , 'assets/js/helpers/uploader.js'
                   , 'assets/js/helpers/feedback.js'
                   // , 'assets/js/helpers/delete.js'
-                  // , 'assets/js/helpers/uploader.js'
                   // , 'assets/js/helpers/session.js'
                   // , 'assets/js/helpers/feedback.js'
 

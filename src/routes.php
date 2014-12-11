@@ -20,6 +20,9 @@ Route::group(array(
       , 'currencies'  => Config::get('backend::currencies')
       , 'orderStatus' => Config::get('backend::order')
       , 'siteStatus'  => Config::get('backend::site.status')
+      , 'upload'      => [
+            'maxFileSize' => convertBytes( ini_get('upload_max_filesize') )
+        ]
     ];
 
     return View::make('backend::backend', [
