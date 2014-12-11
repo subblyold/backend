@@ -23060,11 +23060,7 @@ var Helpers =
 
 var i18n = function()
 {
-  this.locales = LOCALES.locales
-  this.path    = LOCALES.resources
   this.keys    = null
-  
-  // this.setLocale( locale )
 }
 
 i18n.prototype.setLocale = function( locale, cb )
@@ -23074,7 +23070,7 @@ i18n.prototype.setLocale = function( locale, cb )
   var scope = this
 
   var xhr = $.ajax({
-      url:         this.path.replace('{{locale}}', this.current ) 
+      url:         Subbly.getConfig('i18nresource').replace('{{locale}}', this.current ) 
     , dataType:    'json'
     , cache:       false
     , success:     function( response )

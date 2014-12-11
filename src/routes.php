@@ -12,15 +12,16 @@ Route::group(array(
   {
     $env    = App::environment();
     $config = [
-        'baseUrl'     => Config::get( 'subbly.backendUri', '/admin' ).'/'
-      , 'apiUrl'      => URL::to('/api/v1') .'/'
-      , 'env'         => $env
-      , 'debug'       => (bool) Config::get('app.debug')
-      , 'locales'     => Config::get('backend::locales.list')
-      , 'currencies'  => Config::get('backend::currencies')
-      , 'orderStatus' => Config::get('backend::order')
-      , 'siteStatus'  => Config::get('backend::site.status')
-      , 'upload'      => [
+        'baseUrl'      => Config::get( 'subbly.backendUri', '/admin' ).'/'
+      , 'apiUrl'       => URL::to('/api/v1') .'/'
+      , 'env'          => $env
+      , 'debug'        => (bool) Config::get('app.debug')
+      , 'locales'      => Config::get('backend::locales.list')
+      , 'i18nresource' => URL::to( Config::get('backend::locales.resources') )
+      , 'currencies'   => Config::get('backend::currencies')
+      , 'orderStatus'  => Config::get('backend::order')
+      , 'siteStatus'   => Config::get('backend::site.status')
+      , 'upload'       => [
             'maxFileSize' => convertBytes( ini_get('upload_max_filesize') )
         ]
     ];
@@ -46,27 +47,6 @@ Route::any('/void', function()
 
   $response->header('Content-Type', 'json');
 
-  return $response;
-});
-
-/*
- * Return locales path
- * Allow natural autocomplete on ajax form
- */
-
-Route::any('/static/locales', function()
-{
-  $config = Config::get('backend::locales');
-
-  $locales = array(
-      'locales'   => array_keys( $config['list'] )
-    , 'resources' => URL::to( $config['resources'] )
-  );
-
-  $contents = 'var LOCALES = ' . json_encode( $locales );
-
-  $response = Response::make($contents, 200 );
-  $response->header('Content-Type', 'application/javascript');
   return $response;
 });
 

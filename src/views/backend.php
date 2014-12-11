@@ -85,7 +85,6 @@
     var subblyConfig = <?= json_encode( $config ) ?>
   </script>
   <script src="<?= URL::to('/static/templates') ?>"></script>
-  <script src="<?= URL::to('/static/locales') ?>"></script>
   <script src="<?= URL::to('/themes/backend/assets/js/subbly.' . $environment . '.js') ?>"></script>
 </body>
 </html>
