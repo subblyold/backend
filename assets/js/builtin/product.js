@@ -93,7 +93,9 @@
           , $trigger:               $uploadButton
           , done:                   done
           , url:                    Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
-        })
+        })  
+
+        this.sortable = new sortable( this.$el.find('ul.sortable') )
       }
 
 
@@ -109,10 +111,7 @@
           , onShown:  function()
             {
               $modal.find('div.nano').nanoScroller()
-              $modal.find('ul.sortable').sortable({
-                  handle: '.js-handle'
-                , items:  'li'
-              })
+              new sortable( $modal.find('ul.sortable') )
             }
           , onCancel: function()
             {

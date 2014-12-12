@@ -72,6 +72,22 @@
         color: @white !important
       }
     }
+
+    &.ui-sortable-helper {
+      background: @bkgd-hover !important;
+      border-top: 1px solid @border-ligth;
+      color: @gray-dark;
+      z-index: ( @zindex-higher + 1000) !important;
+
+      .icon {
+        color: @gray-dark !important;
+      }
+
+      .icon-trash,
+      .badge {
+        display: none !important
+      }
+    }
   }
 
   .icon {
@@ -97,3 +113,4 @@
     margin-left: 5px;
   }
 }
+

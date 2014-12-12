@@ -2079,6 +2079,19 @@ input[type="search"] {
 .modal-catgories-list li.active .icon {
   color: #ffffff !important;
 }
+.modal-catgories-list li.ui-sortable-helper {
+  background: #f3f3f3 !important;
+  border-top: 1px solid #e1e1e1;
+  color: #a6a6a7;
+  z-index: 3000 !important;
+}
+.modal-catgories-list li.ui-sortable-helper .icon {
+  color: #a6a6a7 !important;
+}
+.modal-catgories-list li.ui-sortable-helper .icon-trash,
+.modal-catgories-list li.ui-sortable-helper .badge {
+  display: none !important;
+}
 .modal-catgories-list .icon {
   color: #ffffff;
   font-size: 12px;
