@@ -8,9 +8,18 @@ var xhrCall = function( options )
     , dataType:    'json'
     , data:        {}
     , cache:       false
-    , onSuccess:   _void
-    , onError:     _void
     , queryString: false
+    , setAuth:     false
+    , success:     function( data, textStatus, jqXHR )
+      {
+        if( settings.onSuccess && _.isFunction( settings.onSuccess ) )
+          settings.onSuccess( data, textStatus, jqXHR )
+      }
+    , error:       function( jqXHR, textStatus, errorThrown )
+      {
+        if( settings.onError && _.isFunction( settings.onError ) )
+          settings.onError( jqXHR, textStatus, errorThrown )
+      }
   }
 
   options = options || {}
@@ -30,7 +39,17 @@ var xhrCall = function( options )
     }
   }
 
+  if( settings.setAuth )
+    settings.headers = this.getAuth()
+
   var xhr = $.ajax( settings )
 
   return xhr
+}
+
+xhrCall.prototype.getAuth = function()
+{
+  return {
+    Authorization: 'Basic ' + Subbly.getCredentials()
+  }
 }

@@ -6,7 +6,8 @@
   margin: 0 -@thumbnail-margin;
 }
 
-.thmb {
+.thmb,
+.thmb.ui-sortable-helper {
   .transition(~"border-color ease-in-out .15s");
   background: @white;
   border-radius: @border-radius-large;
@@ -17,9 +18,16 @@
   margin: @thumbnail-margin;
   overflow: hidden;
   position: relative;
+  vertical-align: top;
+  white-space: nowrap;
   width: 210px;
 
   .form-control-focus();
+
+  &.ui-sortable-helper {
+    background: red !important!;
+    z-index: ( @zindex-higher + 1000) !important;
+  }
 
   .icon-handler {
     .opacity(0);

@@ -154,6 +154,58 @@
 
           }
 
+          var scope = this
+          
+          this.sortable = new sortable( this.$el.find('.sortable'), 
+          {
+              start: function( e, ui )
+              {
+                var $element = $( ui.item ).parent('ul').find('li.sortable-placeholder')
+
+                $element.height( ui.helper.outerHeight() )
+                $element.width( ui.helper.outerWidth() )
+              }
+            , update: function( e, ui )
+              {
+                var $sorted    = ui.item
+                  , $previous  = $sorted.prev()
+                  , moveType   = ( $previous.length > 0 )
+                                 ? 'moveAfter'
+                                 : 'moveBefore'
+                  , movedId    = ( $previous.length > 0 )
+                                 ? $previous.data('sku')
+                                 : $sorted.next().data('sku')
+
+                var feedback = Subbly.feedback()
+
+                feedback.add().progress()
+
+                var promise = new xhrCall(
+                {
+                    url:     scope.collection.serviceName + '/' + $sorted.data('sku') + '/sort' 
+                  , setAuth: true
+                  , type:    'POST'
+                  , data: 
+                    {
+                      products: 
+                      {
+                          type:     moveType
+                        , movingId: $sorted.data('sku')
+                        , movedId:  movedId
+                      }
+                    }
+                  , success: function( json )
+                    {
+                      feedback.progressEnd( 'success', 'Products updated' )
+                    }
+                  , error: function( json )
+                    {
+                      feedback.progressEnd( 'success', 'Whoops, problem' )
+                    }
+                })
+              }
+          })
+
           delete this._fragment
         }
       }

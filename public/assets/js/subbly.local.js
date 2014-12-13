@@ -26792,9 +26792,18 @@ var xhrCall = function( options )
     , dataType:    'json'
     , data:        {}
     , cache:       false
-    , onSuccess:   _void
-    , onError:     _void
     , queryString: false
+    , setAuth:     false
+    , success:     function( data, textStatus, jqXHR )
+      {
+        if( settings.onSuccess && _.isFunction( settings.onSuccess ) )
+          settings.onSuccess( data, textStatus, jqXHR )
+      }
+    , error:       function( jqXHR, textStatus, errorThrown )
+      {
+        if( settings.onError && _.isFunction( settings.onError ) )
+          settings.onError( jqXHR, textStatus, errorThrown )
+      }
   }
 
   options = options || {}
@@ -26814,9 +26823,19 @@ var xhrCall = function( options )
     }
   }
 
+  if( settings.setAuth )
+    settings.headers = this.getAuth()
+
   var xhr = $.ajax( settings )
 
   return xhr
+}
+
+xhrCall.prototype.getAuth = function()
+{
+  return {
+    Authorization: 'Basic ' + Subbly.getCredentials()
+  }
 }
 
 var Uploader = function( $fileupload, options )
@@ -30295,6 +30314,58 @@ Components.Subbly.View.Modal = Backbone.View.extend(
             $( document.getElementById( 'products-view-' + viewMode ) ).removeClass('dp-n')
 
           }
+
+          var scope = this
+          
+          this.sortable = new sortable( this.$el.find('.sortable'), 
+          {
+              start: function( e, ui )
+              {
+                var $element = $( ui.item ).parent('ul').find('li.sortable-placeholder')
+
+                $element.height( ui.helper.outerHeight() )
+                $element.width( ui.helper.outerWidth() )
+              }
+            , update: function( e, ui )
+              {
+                var $sorted    = ui.item
+                  , $previous  = $sorted.prev()
+                  , moveType   = ( $previous.length > 0 )
+                                 ? 'moveAfter'
+                                 : 'moveBefore'
+                  , movedId    = ( $previous.length > 0 )
+                                 ? $previous.data('sku')
+                                 : $sorted.next().data('sku')
+
+                var feedback = Subbly.feedback()
+
+                feedback.add().progress()
+
+                var promise = new xhrCall(
+                {
+                    url:     scope.collection.serviceName + '/' + $sorted.data('sku') + '/sort' 
+                  , setAuth: true
+                  , type:    'POST'
+                  , data: 
+                    {
+                      products: 
+                      {
+                          type:     moveType
+                        , movingId: $sorted.data('sku')
+                        , movedId:  movedId
+                      }
+                    }
+                  , success: function( json )
+                    {
+                      feedback.progressEnd( 'success', 'Products updated' )
+                    }
+                  , error: function( json )
+                    {
+                      feedback.progressEnd( 'success', 'Whoops, problem' )
+                    }
+                })
+              }
+          })
 
           delete this._fragment
         }
