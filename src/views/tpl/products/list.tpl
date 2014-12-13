@@ -34,8 +34,7 @@
       <div class="empty-list">
         {{i18n 'products.noEntry'}}
       </div>
-      <ul class="thmb-col js-view-item dp-n sortable" id="products-view-grid"></ul><!-- /.thmb-col -->
-      <ul class="pdt-list js-view-item dp-n sortable" id="products-view-list"></ul><!-- /.pdt-list -->
+      <ul class="thmb-col pdt-list- js-view-item sortable" id="products-view-list"></ul><!-- /.thmb-col -->
     </div><!-- /.c-pdg-h c-pdg-bas-v -->
   </div><!-- /.nano-content -->
 </div><!-- /.nano -->

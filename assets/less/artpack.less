@@ -244,6 +244,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .scrll-stck {
   position: relative;
+  z-index: @zindex-higher;
 }
 
 .scrll-stck-cnt {
@@ -376,86 +377,4 @@ h1, h2, h3, h4, h5, h6 {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-}
-
-//
-// Products list
-// --------------------------------------------------
-
-.pdt-list {
-  background: @white;
-  border-radius: @border-radius-large;
-  border: 1px solid @border;
-  display: table;
-  width: 100%;
-}
-
-.pdt-lst-itm {
-  .clearfix;
-  cursor: pointer;
-  height: 70px;
-  padding: 11px @padding-large-horizontal;
-  line-height: 70px;
-  position: relative;
-  vertical-align: middle;
-  width: 100%;
-
-  & + .pdt-lst-itm:before {
-    border-top: 1px solid @border;
-    content: '';
-    display: block;
-    height: 1px;
-    left: 1%;
-    position: absolute;
-    top: 0;
-    width: 98%;
-  }
-
-  .thmb-list,
-  .pdt-name,
-  .pdt-price,
-  .bullet {
-    margin-left: 20px;
-  }
-
-  .icon-handler,
-  .pdt-name,
-  .pdt-price {
-    line-height: 48px;
-  }
-
-  .icon-handler {
-    cursor: -webkit-grab;
-    cursor: grab;
-  }
-
-  .badge {
-    background: @product;
-    position: relative;
-    top: 12px;
-  }
-
-  .bullet {
-    position: relative;
-    top: 18px;
-  }
-
-  .pdt-price {
-    text-align: right;
-    width: 80px;
-  }
-}
-
-.pdt-name {
-  color: @black;
-  font-weight: bold;
-}
-
-//
-// Products list
-// --------------------------------------------------
-
-.product-gallery {
-  .center-block;
-  width: @thumbnail-witdh
 }

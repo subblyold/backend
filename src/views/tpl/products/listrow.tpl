@@ -1,9 +1,9 @@
-<li class="pdt-lst-itm js-tigger-goto" data-sku="{{sku}}">
-  <i class="icon icon-handler fl-l"></i>
-  <span class="thmb-list alg-l">
-    <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-01.jpg)"></span>
-  </span>
-  <strong class="pdt-name fl-l">{{name}}</strong>
-  <span class="pdt-price fl-r">{{price}}</span>
-  <span class="badge fl-r">{{quantity}}</span>
+<li class="thmb pdt-lst-itm list js-tigger-goto" data-sku="{{sku}}">
+  <i class="icon icon-handler"></i>
+  <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-01.jpg)"></span>
+  <span class="thmb-capt">
+    <strong class="pdt-name">{{name}}</strong>
+    <span class="pdt-price">{{formatNumber price type="currency"}}</span>
+    <span class="badge product">{{quantity}}</span>
+  </span><!-- /.thmb-capt -->
 </li>

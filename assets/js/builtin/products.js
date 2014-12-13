@@ -59,6 +59,8 @@
     , _viewTpl:      TPL.products.list
     , _displayMode:  'grid'
     , _cookieName:   'SubblyProductsViewMode'
+    , _listSelector: '#products-view-list'
+    , _tplRow:        TPL.products.listrow
 
       // On view initialize
     , onInitialize: function()
@@ -66,148 +68,79 @@
         // add view's event
         this.addEvents( {
             'click .js-tigger-goto':  'goTo'
-          , 'click a.js-toggle-view': 'toggleView'
+          , 'click a.js-toggle-view': 'clickToggleView'
           , 'click a.js-trigger-new': 'addNew'
         })
-        
-        this.tplList  = Handlebars.compile( TPL.products.listrow )
-        this.tplGrid  = Handlebars.compile( TPL.products.listgrid )
-        this._$window = $(window)
+
+        this._$window = $( window )
       }
 
-    , onDisplayTpl: function()
+      // Build single list's row
+    , displayRow: function( model )
       {
-        this._$list = $( document.getElementById('products-view-list') )
-        this._$grid = $( document.getElementById('products-view-grid') )
+        var html = this._tplRowCompiled( model.toJSON() )
 
-        this._$viewItems = this._$list.add( this._$grid )
-        this._$triggers  = this.$el.find('a.js-toggle-view')
-
-        // this.render()
-
-        return this
+        return html
       }
 
-      // Render list's row
-    , render: function()
+    , onAfterRender: function()
       {
-        if( !this.collection )
-          return
+        this._$viewItems = $( document.getElementById('products-view-list') )
+        this._$btnViews  = this.$el.find('a[data-view]')
         
-        if( this.collection.isEmpty() )
+        this.getToggleView()
+
+        var scope = this
+        
+        this.sortable = new sortable( this.$el.find('.sortable'), 
         {
-          this._$fetchView.addClass('rendering').addClass('empty').removeClass('loading')
-          return
-        }
+            start: function( e, ui )
+            {
+              var $element = $( ui.item ).parent('ul').find('li.sortable-placeholder')
 
-        this._$fetchView.removeClass('rendering').removeClass('loading')
+              $element.height( ui.helper.outerHeight() )
+              $element.width( ui.helper.outerWidth() )
+            }
+          , update: function( e, ui )
+            {
+              var $sorted    = ui.item
+                , $previous  = $sorted.prev()
+                , moveType   = ( $previous.length > 0 )
+                               ? 'moveAfter'
+                               : 'moveBefore'
+                , movedId    = ( $previous.length > 0 )
+                               ? $previous.data('sku')
+                               : $sorted.next().data('sku')
 
-        // fetch flag
-        this._isLoadingMore = false
+              var feedback = Subbly.feedback()
 
-        // var $loader = $( document.getElementById( 'list-pagination-loader') )
+              feedback.add().progress()
 
-        // if( $loader.length )
-        //   $loader.remove()
-
-        // if( !this.collection.length && this._inviteTxt )
-        // {
-        //   Subbly.trigger( 'loader::hide' )
-        //   this.displayInviteMsg()
-        //   return
-        // }
-
-        this._fragmentGrid = ''
-        this._fragmentList = ''
-
-        this.collection.each( function( model )
-        {
-          var json = model.toJSON()
-
-          this._fragmentGrid += this.tplGrid( json )
-          this._fragmentList += this.tplList( json )
-
-        }, this )
-
-        if( this._fragmentGrid !== '' )
-        {
-          this._$list.append( this._fragmentList )
-          this._$grid.append( this._fragmentGrid )
-
-          this._$listItems = this._$list.find('li.pdt-lst-itm')
-          this._$gridItems = this._$grid.find('a.list')
-
-          if( !this._initialDisplay )
-          {
-            this._initialDisplay = true
-
-            var viewMode = Subbly.getCookie( this._cookieName )
-
-            if( !viewMode )
-              viewMode = this._displayMode
-            else
-              this._displayMode = viewMode
-
-            this._$triggers.filter('[data-view="' + viewMode + '"]').addClass('active')
-
-            $( document.getElementById( 'products-view-' + viewMode ) ).removeClass('dp-n')
-
-          }
-
-          var scope = this
-          
-          this.sortable = new sortable( this.$el.find('.sortable'), 
-          {
-              start: function( e, ui )
+              var promise = new xhrCall(
               {
-                var $element = $( ui.item ).parent('ul').find('li.sortable-placeholder')
-
-                $element.height( ui.helper.outerHeight() )
-                $element.width( ui.helper.outerWidth() )
-              }
-            , update: function( e, ui )
-              {
-                var $sorted    = ui.item
-                  , $previous  = $sorted.prev()
-                  , moveType   = ( $previous.length > 0 )
-                                 ? 'moveAfter'
-                                 : 'moveBefore'
-                  , movedId    = ( $previous.length > 0 )
-                                 ? $previous.data('sku')
-                                 : $sorted.next().data('sku')
-
-                var feedback = Subbly.feedback()
-
-                feedback.add().progress()
-
-                var promise = new xhrCall(
-                {
-                    url:     scope.collection.serviceName + '/' + $sorted.data('sku') + '/sort' 
-                  , setAuth: true
-                  , type:    'POST'
-                  , data: 
+                  url:     scope.collection.serviceName + '/' + $sorted.data('sku') + '/sort' 
+                , setAuth: true
+                , type:    'POST'
+                , data: 
+                  {
+                    products: 
                     {
-                      products: 
-                      {
-                          type:     moveType
-                        , movingId: $sorted.data('sku')
-                        , movedId:  movedId
-                      }
+                        type:     moveType
+                      , movingId: $sorted.data('sku')
+                      , movedId:  movedId
                     }
-                  , success: function( json )
-                    {
-                      feedback.progressEnd( 'success', 'Products updated' )
-                    }
-                  , error: function( json )
-                    {
-                      feedback.progressEnd( 'success', 'Whoops, problem' )
-                    }
-                })
-              }
-          })
-
-          delete this._fragment
-        }
+                  }
+                , success: function( json )
+                  {
+                    feedback.progressEnd( 'success', 'Products updated' )
+                  }
+                , error: function( json )
+                  {
+                    feedback.progressEnd( 'success', 'Whoops, problem' )
+                  }
+              })
+            }
+        })        
       }
 
       // go to customer profile
@@ -218,20 +151,44 @@
         Subbly.trigger( 'hash::change', 'products/' + sku )
       }
 
-    , toggleView: function( event )
+    , getToggleView: function()
+      {
+        this._displayMode = Subbly.getCookie( this._cookieName )
+
+        this.toggleView()
+      }
+
+    , clickToggleView: function( event )
       {
         this._displayMode = event.currentTarget.dataset.view
 
         Subbly.setCookie( this._cookieName, this._displayMode )
 
-        this._$viewItems.addClass('dp-n')
-        this._$triggers.removeClass('active')
+        this.toggleView()
+      }
 
-        $( document.getElementById( 'products-view-' + this._displayMode ) ).removeClass('dp-n')
+    , toggleView: function()
+      {
+        if( this._displayMode == 'list' )
+          this.displayList()
+        else
+          this.displayThumb()
 
-        $( event.currentTarget ).addClass('active')
+        this._$btnViews.removeClass('active')
+
+        this._$btnViews.filter('[data-view="' + this._displayMode + '"]').addClass('active')
 
         this._$window.trigger('resize')
+      }
+
+    , displayList: function()
+      {
+        this._$viewItems.addClass('pdt-list')
+      }
+
+    , displayThumb: function()
+      {
+        this._$viewItems.removeClass('pdt-list')
       }
 
     , addNew: function()
