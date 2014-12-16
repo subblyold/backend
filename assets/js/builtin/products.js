@@ -118,7 +118,7 @@
 
               var promise = new xhrCall(
               {
-                  url:     scope.collection.serviceName + '/' + $sorted.data('sku') + '/sort' 
+                  url:     scope.collection.serviceName + '/sort' 
                 , setAuth: true
                 , type:    'POST'
                 , data: 
