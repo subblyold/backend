@@ -28334,6 +28334,19 @@ Components.Subbly.Model.Product = SubblyModel.extend(
       return false
     }
 
+  , toJSON: function()
+    {
+      // get the standard json for the object
+      var json = Backbone.Model.prototype.toJSON.apply( this, arguments )
+
+      // add methods
+      json.getImages       = this.getImages()
+      json.getDefaultImage = this.getDefaultImage()
+
+      // send it all back
+      return json
+    }
+
   // Rules
   // -------------------
 
@@ -30320,8 +30333,9 @@ Components.Subbly.View.Modal = Backbone.View.extend(
         Subbly.fetch( Subbly.api('Subbly.Collection.Products'),
         {
             data:   {
-                offset: 0
-              , limit:  5
+                offset:   0
+              , limit:    5
+              , includes: [ 'images']
             }
           , success: function( collection, response )
             {

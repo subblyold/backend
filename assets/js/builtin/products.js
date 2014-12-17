@@ -33,8 +33,9 @@
         Subbly.fetch( Subbly.api('Subbly.Collection.Products'),
         {
             data:   {
-                offset: 0
-              , limit:  5
+                offset:   0
+              , limit:    5
+              , includes: [ 'images']
             }
           , success: function( collection, response )
             {
