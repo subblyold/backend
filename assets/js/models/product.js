@@ -5,6 +5,26 @@ Components.Subbly.Model.Product = SubblyModel.extend(
   , serviceName:  'products'
   , singleResult: 'product'
 
+  , getImages: function()
+    {
+      if( this.get('images') )
+      {
+        return this.get('images')
+      }
+
+      return false
+    }
+
+  , getDefaultImage: function()
+    {
+      var imgs = this.getImages()
+
+      if( imgs )
+        return imgs[0]
+
+      return false
+    }
+
   // Rules
   // -------------------
 

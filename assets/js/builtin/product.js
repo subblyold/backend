@@ -67,6 +67,8 @@
 
     , onRenderAfter: function( tplData )
       {
+        this.thumbTpl = Handlebars.compile( TPL.products.thumb )
+
         this.$el.find('ul.sortable').sortable()
 
         // !! always set form after html render
@@ -77,24 +79,77 @@
         })
 
         //bind Uploader
-
         var $fileupload     = $( document.getElementById('subbly-product-img-upload') )
           , $uploadButton   = $( document.getElementById('js-trigger-loadimg') )
+          , $imagesList     = $( document.getElementById('product-images-list') )
+          , _feedback       = Subbly.feedback()
           , page            = this
 
-        // callbacks
-        var done = function( e, data )
-        {
-          // TODO: display image into list
+        // Images upload
+        // ---------------------
+
+        // additional form data
+        var formData = {
+            sku:       ( this.model.isNew() ) ? false : this.model.get('sku')
+          , file_type: 'product_image'
         }
 
+        // upload callbacks
+        var done = function( e, data )
+        {
+          var response = data.jqXHR.responseJSON.response
+
+          if( response.file )
+          {
+            if( response.file.sku == 'false' )
+            {
+              page.model.setAdditonalParams( 'product_image[]', {
+                filename: response.file.filename
+              })
+            }
+
+            // TODO: find a solution to mix upload/data display
+            var thumb = page.thumbTpl({
+              filename: response.file.file_path
+            })
+
+            $imagesList.append( thumb )
+
+            $( document.getElementById('product-images') ).find('div.nano').nanoScroller({ scroll: 'bottom' })
+          }
+
+          // TODO: display image into list
+          _feedback.progressEnd( 'success', 'Upload done' )
+        }
+
+        var add = function( e, data )
+        {
+          // Call parent `add` method
+          Uploader.prototype.add.apply( this, arguments )
+
+          _feedback.add()
+
+          //this.thumbTpl
+        }
+
+        var progress = function( e, data )
+        {
+          var progress = parseInt( data.loaded / data.total * 100, 10 )
+
+          _feedback.setProgress( progress )
+        }
+
+        // bind upload
         this.uploader = new Uploader( $fileupload, {
-            $dropZone:              $uploadButton
-          , $trigger:               $uploadButton
-          , done:                   done
-          , url:                    Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
+            $dropZone: $uploadButton
+          , done:      done
+          , add:       add
+          , progress:  progress
+          , formData:  formData
+          , url:       Subbly.apiUrl('uploader') //Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
         })  
 
+        // allow to sort images
         this.sortable = new sortable( this.$el.find('ul.sortable') )
       }
 

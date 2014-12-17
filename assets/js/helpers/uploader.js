@@ -5,7 +5,7 @@ var Uploader = function( $fileupload, options )
     , defaults = 
       {
           $dropZone:              false
-        , $trigger:               false // click element
+        // , $trigger:               false // click element
         , $progress:              false // progress bar
         , singleFileUploads:      true
         , limitMultiFileUploads:  5
@@ -13,8 +13,10 @@ var Uploader = function( $fileupload, options )
         , acceptFileTypes:        /(\.|\/)(gif|jpe?g|png)$/i
         , drop:                   noop
         , progressall:            noop
+        , add:                    this.add
         , done:                   noop
         , always:                 this.always
+        , progress:               noop
         , processfail:            noop
         , dragover:               noop
         , submit:                 this.submit
@@ -25,13 +27,13 @@ var Uploader = function( $fileupload, options )
   
   var settings = this.settings = $.extend( {}, defaults, options || {} )
 
-  if( settings.$trigger )
-  {
-    settings.$trigger.click( function()
-    {
-      $fileupload.click()
-    })    
-  }
+  // if( settings.$trigger )
+  // {
+  //   settings.$trigger.click( function()
+  //   {
+  //     $fileupload.click()
+  //   })    
+  // }
 
   $fileupload.fileupload({
       dataType:               'json'
@@ -41,15 +43,19 @@ var Uploader = function( $fileupload, options )
     , limitConcurrentUploads: settings.limitConcurrentUploads
     , dropZone:               settings.$dropZone
     , replaceFileInput:       false
-    , add:                    this.add
+    , add:                    settings.add
     , drop:                   settings.drop
     , progressall:            settings.progressall
     , done:                   settings.done
     , always:                 settings.always
+    , progress:               settings.progress
     , processfail:            settings.processfail
     , submit:                 settings.submit
     , formData:               settings.formData
     , maxFileSize:            Subbly.getConfig('subbly.maxFileSize')
+    , headers:                {
+        Authorization: 'Basic ' + Subbly.getCredentials()
+      }
   })
 
   $document.on( 'dragover', settings.dragover )
@@ -74,7 +80,6 @@ Uploader.prototype.add = function( e, data )
 
   if( valid )
     data.submit()
-
 }
 
 Uploader.prototype.submit = function( )
@@ -85,7 +90,7 @@ Uploader.prototype.submit = function( )
 Uploader.prototype.always = function( e, data )
 {
   Subbly.trigger( 'loader::hide' )
-
+  
   var valid = true 
 
   $.each( data.result, function( index, file )

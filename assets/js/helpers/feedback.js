@@ -108,6 +108,20 @@ Feedback.prototype.progress = function()
 /*
  * 
  */
+Feedback.prototype.setProgress = function( percentage )
+{
+  this.$entry
+    .css({
+        width:  percentage + '%'
+      , height: '12px'
+    })
+
+  return this
+}
+
+/*
+ * 
+ */
 Feedback.prototype.progressEnd = function( state, message )
 {
   if( this.ended || _.isUndefined( this.$entry ) )

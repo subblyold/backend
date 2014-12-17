@@ -115,7 +115,7 @@
     </div><!-- /.nano-content -->
   </div><!-- /.nano -->
 </div><!-- /.view-third -->
-<div class="view-third">
+<div class="view-third" id="product-images">
   <div class="nano">
     <div class="nano-content">
       <div class="fetch-holder rendering loading order-entry">
@@ -124,38 +124,21 @@
         </div>
         <div class="c-pdg-t product-gallery">
           <strong class="strong dp-b" style="margin:50px 0 10px;">Images</strong>
-          <a href="javascript:;" class="btn btn-action dp-b ta-c" id="js-trigger-loadimg">
+          <label class="btn btn-action dp-b ta-c cur-p pos-r" id="js-trigger-loadimg" data-loading-text="loading">
             Add image
-          </a>
-          <input type="file" name="product_image" class="file-upload" id="subbly-product-img-upload">
+            <input type="file" name="file" class="file-upload" id="subbly-product-img-upload">
+          </label>
         </div>
         <div class="c-pdg-h c-pdg-bas-t c-pdg-b ta-c">
           <div class="thmb-col">
-            <ul class="sortable">
+            <ul class="sortable" id="product-images-list">
+              {{#each images}}
               <li class="thmb product">
                 <i class="icon icon-handler js-handle"></i>
-                <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-01.jpg)"></span>
+                <div class="loader large"></div>
+                <span class="thmb-img" style="background-image:url({{filename}})"></span>
               </li>
-              <li class="thmb product">
-                <i class="icon icon-handler js-handle"></i>
-                <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-02.jpg)"></span>
-              </li>
-              <li class="thmb product">
-                <i class="icon icon-handler js-handle"></i>
-                <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-02.jpg)"></span>
-              </li>
-              <li class="thmb product">
-                <i class="icon icon-handler js-handle"></i>
-                <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-02.jpg)"></span>
-              </li>
-              <li class="thmb product">
-                <i class="icon icon-handler js-handle"></i>
-                <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-02.jpg)"></span>
-              </li>
-              <li  class="thmb product">
-                <i class="icon icon-handler js-handle"></i>
-                <span class="thmb-img" style="background-image:url(/vendor/subbly/backend/assets/fixtures/img/product-02.jpg)"></span>
-              </li>
+              {{/each}}
             </ul>
           </div><!-- /.thmb-col  -->
         </div><!-- /.c-pdg-h -->

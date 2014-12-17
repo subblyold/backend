@@ -26844,7 +26844,7 @@ var Uploader = function( $fileupload, options )
     , defaults = 
       {
           $dropZone:              false
-        , $trigger:               false // click element
+        // , $trigger:               false // click element
         , $progress:              false // progress bar
         , singleFileUploads:      true
         , limitMultiFileUploads:  5
@@ -26852,8 +26852,10 @@ var Uploader = function( $fileupload, options )
         , acceptFileTypes:        /(\.|\/)(gif|jpe?g|png)$/i
         , drop:                   noop
         , progressall:            noop
+        , add:                    this.add
         , done:                   noop
         , always:                 this.always
+        , progress:               noop
         , processfail:            noop
         , dragover:               noop
         , submit:                 this.submit
@@ -26864,13 +26866,13 @@ var Uploader = function( $fileupload, options )
   
   var settings = this.settings = $.extend( {}, defaults, options || {} )
 
-  if( settings.$trigger )
-  {
-    settings.$trigger.click( function()
-    {
-      $fileupload.click()
-    })    
-  }
+  // if( settings.$trigger )
+  // {
+  //   settings.$trigger.click( function()
+  //   {
+  //     $fileupload.click()
+  //   })    
+  // }
 
   $fileupload.fileupload({
       dataType:               'json'
@@ -26880,15 +26882,19 @@ var Uploader = function( $fileupload, options )
     , limitConcurrentUploads: settings.limitConcurrentUploads
     , dropZone:               settings.$dropZone
     , replaceFileInput:       false
-    , add:                    this.add
+    , add:                    settings.add
     , drop:                   settings.drop
     , progressall:            settings.progressall
     , done:                   settings.done
     , always:                 settings.always
+    , progress:               settings.progress
     , processfail:            settings.processfail
     , submit:                 settings.submit
     , formData:               settings.formData
     , maxFileSize:            Subbly.getConfig('subbly.maxFileSize')
+    , headers:                {
+        Authorization: 'Basic ' + Subbly.getCredentials()
+      }
   })
 
   $document.on( 'dragover', settings.dragover )
@@ -26913,7 +26919,6 @@ Uploader.prototype.add = function( e, data )
 
   if( valid )
     data.submit()
-
 }
 
 Uploader.prototype.submit = function( )
@@ -26924,7 +26929,7 @@ Uploader.prototype.submit = function( )
 Uploader.prototype.always = function( e, data )
 {
   Subbly.trigger( 'loader::hide' )
-
+  
   var valid = true 
 
   $.each( data.result, function( index, file )
@@ -27059,6 +27064,20 @@ Feedback.prototype.progress = function()
 /*
  * 
  */
+Feedback.prototype.setProgress = function( percentage )
+{
+  this.$entry
+    .css({
+        width:  percentage + '%'
+      , height: '12px'
+    })
+
+  return this
+}
+
+/*
+ * 
+ */
 Feedback.prototype.progressEnd = function( state, message )
 {
   if( this.ended || _.isUndefined( this.$entry ) )
@@ -27183,7 +27202,9 @@ sortable.prototype.destroy = function()
 
 var SubblyModel = Backbone.Model.extend(
 {
-    url: function()
+    additonalParams: {}
+
+  , url: function()
     {
       var baseUrl = Subbly.apiUrl( this.serviceName )
 
@@ -27206,6 +27227,34 @@ var SubblyModel = Backbone.Model.extend(
 
       // collection fetch
       return response
+    }
+
+  , setAdditonalParams: function( key, value )
+    {
+      var isArray = ( key.indexOf( '[]', key.length - 2 ) !== -1 )
+        , scope   = this
+
+      if( isArray )
+      {
+        key = key.substring( 0, key.length - 2 )
+
+        if( _.isUndefined( this.additonalParams[ key ] ) )
+          this.additonalParams[ key ] = []
+      }
+
+      if( isArray )
+      {
+        this.additonalParams[ key ].push( value )
+      }
+      else
+      {
+        this.additonalParams[ key ] = value
+      }
+    }
+
+  , getAdditonalParams: function()
+    {
+      return this.additonalParams || {}
     }
 
   , getNested: function( property, defaults )
@@ -28061,6 +28110,8 @@ SubblyCore.prototype.store = function( model, data, options, context )
 
   options.json[ model.singleResult ] = data 
 
+  options.json = $.extend( {}, options.json, model.getAdditonalParams() )
+
   model.save( options.json, settings )
 }
 
@@ -28262,6 +28313,26 @@ Components.Subbly.Model.Product = SubblyModel.extend(
     idAttribute:  'sku'
   , serviceName:  'products'
   , singleResult: 'product'
+
+  , getImages: function()
+    {
+      if( this.get('images') )
+      {
+        return this.get('images')
+      }
+
+      return false
+    }
+
+  , getDefaultImage: function()
+    {
+      var imgs = this.getImages()
+
+      if( imgs )
+        return imgs[0]
+
+      return false
+    }
 
   // Rules
   // -------------------
@@ -30077,6 +30148,8 @@ Components.Subbly.View.Modal = Backbone.View.extend(
 
     , onRenderAfter: function( tplData )
       {
+        this.thumbTpl = Handlebars.compile( TPL.products.thumb )
+
         this.$el.find('ul.sortable').sortable()
 
         // !! always set form after html render
@@ -30087,24 +30160,77 @@ Components.Subbly.View.Modal = Backbone.View.extend(
         })
 
         //bind Uploader
-
         var $fileupload     = $( document.getElementById('subbly-product-img-upload') )
           , $uploadButton   = $( document.getElementById('js-trigger-loadimg') )
+          , $imagesList     = $( document.getElementById('product-images-list') )
+          , _feedback       = Subbly.feedback()
           , page            = this
 
-        // callbacks
-        var done = function( e, data )
-        {
-          // TODO: display image into list
+        // Images upload
+        // ---------------------
+
+        // additional form data
+        var formData = {
+            sku:       ( this.model.isNew() ) ? false : this.model.get('sku')
+          , file_type: 'product_image'
         }
 
+        // upload callbacks
+        var done = function( e, data )
+        {
+          var response = data.jqXHR.responseJSON.response
+
+          if( response.file )
+          {
+            if( response.file.sku == 'false' )
+            {
+              page.model.setAdditonalParams( 'product_image[]', {
+                filename: response.file.filename
+              })
+            }
+
+            // TODO: find a solution to mix upload/data display
+            var thumb = page.thumbTpl({
+              filename: response.file.file_path
+            })
+
+            $imagesList.append( thumb )
+
+            $( document.getElementById('product-images') ).find('div.nano').nanoScroller({ scroll: 'bottom' })
+          }
+
+          // TODO: display image into list
+          _feedback.progressEnd( 'success', 'Upload done' )
+        }
+
+        var add = function( e, data )
+        {
+          // Call parent `add` method
+          Uploader.prototype.add.apply( this, arguments )
+
+          _feedback.add()
+
+          //this.thumbTpl
+        }
+
+        var progress = function( e, data )
+        {
+          var progress = parseInt( data.loaded / data.total * 100, 10 )
+
+          _feedback.setProgress( progress )
+        }
+
+        // bind upload
         this.uploader = new Uploader( $fileupload, {
-            $dropZone:              $uploadButton
-          , $trigger:               $uploadButton
-          , done:                   done
-          , url:                    Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
+            $dropZone: $uploadButton
+          , done:      done
+          , add:       add
+          , progress:  progress
+          , formData:  formData
+          , url:       Subbly.apiUrl('uploader') //Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
         })  
 
+        // allow to sort images
         this.sortable = new sortable( this.$el.find('ul.sortable') )
       }
 
@@ -30279,7 +30405,7 @@ Components.Subbly.View.Modal = Backbone.View.extend(
 
               var promise = new xhrCall(
               {
-                  url:     scope.collection.serviceName + '/' + $sorted.data('sku') + '/sort' 
+                  url:     scope.collection.serviceName + '/sort' 
                 , setAuth: true
                 , type:    'POST'
                 , data: 

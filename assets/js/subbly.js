@@ -475,6 +475,8 @@ SubblyCore.prototype.store = function( model, data, options, context )
 
   options.json[ model.singleResult ] = data 
 
+  options.json = $.extend( {}, options.json, model.getAdditonalParams() )
+
   model.save( options.json, settings )
 }
 
