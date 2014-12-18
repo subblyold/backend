@@ -9,7 +9,7 @@ Components.Subbly.Model.Product = SubblyModel.extend(
     {
       if( this.get('images') )
       {
-        return this.get('images')
+        return _.sortBy( this.get('images'), function( image ){ return image.position })
       }
 
       return false
@@ -32,7 +32,7 @@ Components.Subbly.Model.Product = SubblyModel.extend(
 
       // add methods
       json.getImages       = this.getImages()
-      json.getDefaultImage = this.getDefaultImage()
+      json.getDefaultImage = ( json.getImages ) ? json.getImages[0] : false
 
       // send it all back
       return json

@@ -129,15 +129,11 @@
             <input type="file" name="file" class="file-upload" id="subbly-product-img-upload">
           </label>
         </div>
-        <div class="c-pdg-h c-pdg-bas-t c-pdg-b ta-c">
+        <div class="product-gallery c-pdg-bas-t c-pdg-b ta-c">
           <div class="thmb-col">
             <ul class="sortable" id="product-images-list">
-              {{#each images}}
-              <li class="thmb product">
-                <i class="icon icon-handler js-handle"></i>
-                <div class="loader large"></div>
-                <span class="thmb-img" style="background-image:url({{filename}})"></span>
-              </li>
+              {{#each getImages}}
+              {{> productThumb}}
               {{/each}}
             </ul>
           </div><!-- /.thmb-col  -->

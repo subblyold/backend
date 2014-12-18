@@ -63,14 +63,13 @@
       {
         // add view's event
         this.addEvents( {'click a.js-trigger-categories':  'categoriesPopupOpen'} )
+        
+        this.thumbTpl = Handlebars.compile( TPL.products.thumb )
+        Handlebars.registerPartial( 'productThumb', TPL.products.thumb )
       }
 
     , onRenderAfter: function( tplData )
       {
-        this.thumbTpl = Handlebars.compile( TPL.products.thumb )
-
-        this.$el.find('ul.sortable').sortable()
-
         // !! always set form after html render
         this.setForm({
             id:       'subbly-product-entry'
@@ -150,7 +149,48 @@
         })  
 
         // allow to sort images
-        this.sortable = new sortable( this.$el.find('ul.sortable') )
+        this.sortable = new sortable( this.$el.find('ul.sortable'), 
+        {
+            update: function( e, ui )
+            {
+              var $sorted    = ui.item
+                , $previous  = $sorted.prev()
+                , moveType   = ( $previous.length > 0 )
+                               ? 'moveAfter'
+                               : 'moveBefore'
+                , movedId    = ( $previous.length > 0 )
+                               ? $previous.data('uid')
+                               : $sorted.next().data('uid')
+
+              var feedback = Subbly.feedback()
+
+              feedback.add().progress()
+
+              var promise = new xhrCall(
+              {
+                  url:     page.model.serviceName + '/' +  page.model.get('sku') + '/images/sort' 
+                , setAuth: true
+                , type:    'POST'
+                , data: 
+                  {
+                    images: 
+                    {
+                        type:     moveType
+                      , movingId: $sorted.data('uid')
+                      , movedId:  movedId
+                    }
+                  }
+                , success: function( json )
+                  {
+                    feedback.progressEnd( 'success', 'Product images updated' )
+                  }
+                , error: function( json )
+                  {
+                    feedback.progressEnd( 'success', 'Whoops, problem' )
+                  }
+              })
+            }
+        })
       }
 
 

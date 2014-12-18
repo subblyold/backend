@@ -27177,7 +27177,11 @@ var sortable = function( $el, options )
         , placeholder: 'sortable-placeholder'
         , start:       function( e, ui )
           {
-            scope.$el.find('li.sortable-placeholder').height( ui.helper.outerHeight() )
+            // scope.$el.find('li.sortable-placeholder').height( ui.helper.outerHeight() )
+            var $element = $( ui.item ).parent('ul').find('li.sortable-placeholder')
+
+            $element.height( ui.helper.outerHeight() )
+            $element.width( ui.helper.outerWidth() )
           }
         , stop:        function()
           {
@@ -28318,7 +28322,7 @@ Components.Subbly.Model.Product = SubblyModel.extend(
     {
       if( this.get('images') )
       {
-        return this.get('images')
+        return _.sortBy( this.get('images'), function( image ){ return image.position })
       }
 
       return false
@@ -28341,7 +28345,7 @@ Components.Subbly.Model.Product = SubblyModel.extend(
 
       // add methods
       json.getImages       = this.getImages()
-      json.getDefaultImage = this.getDefaultImage()
+      json.getDefaultImage = ( json.getImages ) ? json.getImages[0] : false
 
       // send it all back
       return json
@@ -30157,14 +30161,13 @@ Components.Subbly.View.Modal = Backbone.View.extend(
       {
         // add view's event
         this.addEvents( {'click a.js-trigger-categories':  'categoriesPopupOpen'} )
+        
+        this.thumbTpl = Handlebars.compile( TPL.products.thumb )
+        Handlebars.registerPartial( 'productThumb', TPL.products.thumb )
       }
 
     , onRenderAfter: function( tplData )
       {
-        this.thumbTpl = Handlebars.compile( TPL.products.thumb )
-
-        this.$el.find('ul.sortable').sortable()
-
         // !! always set form after html render
         this.setForm({
             id:       'subbly-product-entry'
@@ -30244,7 +30247,48 @@ Components.Subbly.View.Modal = Backbone.View.extend(
         })  
 
         // allow to sort images
-        this.sortable = new sortable( this.$el.find('ul.sortable') )
+        this.sortable = new sortable( this.$el.find('ul.sortable'), 
+        {
+            update: function( e, ui )
+            {
+              var $sorted    = ui.item
+                , $previous  = $sorted.prev()
+                , moveType   = ( $previous.length > 0 )
+                               ? 'moveAfter'
+                               : 'moveBefore'
+                , movedId    = ( $previous.length > 0 )
+                               ? $previous.data('uid')
+                               : $sorted.next().data('uid')
+
+              var feedback = Subbly.feedback()
+
+              feedback.add().progress()
+
+              var promise = new xhrCall(
+              {
+                  url:     page.model.serviceName + '/' +  page.model.get('sku') + '/images/sort' 
+                , setAuth: true
+                , type:    'POST'
+                , data: 
+                  {
+                    images: 
+                    {
+                        type:     moveType
+                      , movingId: $sorted.data('uid')
+                      , movedId:  movedId
+                    }
+                  }
+                , success: function( json )
+                  {
+                    feedback.progressEnd( 'success', 'Product images updated' )
+                  }
+                , error: function( json )
+                  {
+                    feedback.progressEnd( 'success', 'Whoops, problem' )
+                  }
+              })
+            }
+        })
       }
 
 
@@ -30393,7 +30437,7 @@ Components.Subbly.View.Modal = Backbone.View.extend(
 
         var scope = this
         
-        this.sortable = new sortable( this.$el.find('.sortable'), 
+        this.sortable = new sortable( this.$el.find('ul.sortable'), 
         {
             start: function( e, ui )
             {

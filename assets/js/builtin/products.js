@@ -93,7 +93,7 @@
 
         var scope = this
         
-        this.sortable = new sortable( this.$el.find('.sortable'), 
+        this.sortable = new sortable( this.$el.find('ul.sortable'), 
         {
             start: function( e, ui )
             {

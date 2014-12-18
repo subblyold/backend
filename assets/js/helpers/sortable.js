@@ -12,7 +12,11 @@ var sortable = function( $el, options )
         , placeholder: 'sortable-placeholder'
         , start:       function( e, ui )
           {
-            scope.$el.find('li.sortable-placeholder').height( ui.helper.outerHeight() )
+            // scope.$el.find('li.sortable-placeholder').height( ui.helper.outerHeight() )
+            var $element = $( ui.item ).parent('ul').find('li.sortable-placeholder')
+
+            $element.height( ui.helper.outerHeight() )
+            $element.width( ui.helper.outerWidth() )
           }
         , stop:        function()
           {
