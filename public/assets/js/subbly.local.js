@@ -27167,9 +27167,11 @@ Feedback.prototype.dismiss = function()
 var sortable = function( $el, options )
 {
   var scope    = this
+    , promise  = false
     , defaults = {
           helper:      'clone'
         , cursor:      'move'
+        , idAttribute: 'id'
         // , handle:      '.js-handle'
         , containment: 'parent'
         , cursorAt:    { top:1 }
@@ -27188,12 +27190,57 @@ var sortable = function( $el, options )
             Subbly.trigger( 'form::changed' )
             Subbly.trigger( 'document::change' )
           }
+        , update:      function( e, ui )
+          {
+            var $sorted    = ui.item
+              , $previous  = $sorted.prev()
+              , moveType   = ( $previous.length > 0 )
+                             ? 'moveAfter'
+                             : 'moveBefore'
+              , movedId    = ( $previous.length > 0 )
+                             ? $previous.data( scope.settings.idAttribute )
+                             : $sorted.next().data( scope.settings.idAttribute )
+
+            if( scope.settings.onUpdate && _.isFunction( scope.settings.onUpdate ) )
+              scope.settings.onUpdate()
+
+            promise = new xhrCall(
+            {
+                url:     scope.settings.url
+              , setAuth: true
+              , type:    'PUT'
+              , data: 
+                {
+                  sortable: 
+                  {
+                      type:     moveType
+                    , movingId: $sorted.data( scope.settings.idAttribute )
+                    , movedId:  movedId
+                  }
+                }
+              , success: function( json )
+                {
+                  if( scope.settings.onSuccess && _.isFunction( scope.settings.onSuccess ) )
+                    scope.settings.onSuccess()
+                }
+              , error: function( json )
+                {
+                  if( scope.settings.onError && _.isFunction( scope.settings.onError ) )
+                    scope.settings.onError()
+                }
+            })
+          }
       }
 
   this.$el      = $el
   this.settings = $.extend( {}, defaults, options || {} )
 
+  if( !this.settings.url )
+    throw new Error( 'sortable need an URL' )
+
   this.$el.sortable( this.settings )
+
+  return promise
 }
 
 sortable.prototype.destroy = function()
@@ -30244,49 +30291,26 @@ Components.Subbly.View.Modal = Backbone.View.extend(
           , progress:  progress
           , formData:  formData
           , url:       Subbly.apiUrl('uploader') //Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
-        })  
+        })
+
+        var feedback = Subbly.feedback()
 
         // allow to sort images
         this.sortable = new sortable( this.$el.find('ul.sortable'), 
         {
-            update: function( e, ui )
+            idAttribute: 'uid'
+          , url:         this.model.serviceName + '/' +  this.model.get('sku') + '/images/sort' 
+          , onSuccess:   function( json )
             {
-              var $sorted    = ui.item
-                , $previous  = $sorted.prev()
-                , moveType   = ( $previous.length > 0 )
-                               ? 'moveAfter'
-                               : 'moveBefore'
-                , movedId    = ( $previous.length > 0 )
-                               ? $previous.data('uid')
-                               : $sorted.next().data('uid')
-
-              var feedback = Subbly.feedback()
-
+              feedback.progressEnd( 'success', 'Product images updated' )
+            }
+          , onError: function( json )
+            {
+              feedback.progressEnd( 'success', 'Whoops, problem' )
+            }
+          , onUpdate: function( json )
+            {
               feedback.add().progress()
-
-              var promise = new xhrCall(
-              {
-                  url:     page.model.serviceName + '/' +  page.model.get('sku') + '/images/sort' 
-                , setAuth: true
-                , type:    'POST'
-                , data: 
-                  {
-                    images: 
-                    {
-                        type:     moveType
-                      , movingId: $sorted.data('uid')
-                      , movedId:  movedId
-                    }
-                  }
-                , success: function( json )
-                  {
-                    feedback.progressEnd( 'success', 'Product images updated' )
-                  }
-                , error: function( json )
-                  {
-                    feedback.progressEnd( 'success', 'Whoops, problem' )
-                  }
-              })
             }
         })
       }
@@ -30436,54 +30460,24 @@ Components.Subbly.View.Modal = Backbone.View.extend(
         this.getToggleView()
 
         var scope = this
-        
+
+        var feedback = Subbly.feedback()
+
         this.sortable = new sortable( this.$el.find('ul.sortable'), 
         {
-            start: function( e, ui )
+            idAttribute: 'sku'
+          , url:         scope.collection.serviceName + '/sort' 
+          , onSuccess:   function( json )
             {
-              var $element = $( ui.item ).parent('ul').find('li.sortable-placeholder')
-
-              $element.height( ui.helper.outerHeight() )
-              $element.width( ui.helper.outerWidth() )
+              feedback.progressEnd( 'success', 'Products updated' )
             }
-          , update: function( e, ui )
+          , onError: function( json )
             {
-              var $sorted    = ui.item
-                , $previous  = $sorted.prev()
-                , moveType   = ( $previous.length > 0 )
-                               ? 'moveAfter'
-                               : 'moveBefore'
-                , movedId    = ( $previous.length > 0 )
-                               ? $previous.data('sku')
-                               : $sorted.next().data('sku')
-
-              var feedback = Subbly.feedback()
-
+              feedback.progressEnd( 'success', 'Whoops, problem' )
+            }
+          , onUpdate: function( json )
+            {
               feedback.add().progress()
-
-              var promise = new xhrCall(
-              {
-                  url:     scope.collection.serviceName + '/sort' 
-                , setAuth: true
-                , type:    'POST'
-                , data: 
-                  {
-                    products: 
-                    {
-                        type:     moveType
-                      , movingId: $sorted.data('sku')
-                      , movedId:  movedId
-                    }
-                  }
-                , success: function( json )
-                  {
-                    feedback.progressEnd( 'success', 'Products updated' )
-                  }
-                , error: function( json )
-                  {
-                    feedback.progressEnd( 'success', 'Whoops, problem' )
-                  }
-              })
             }
         })        
       }

@@ -146,49 +146,26 @@
           , progress:  progress
           , formData:  formData
           , url:       Subbly.apiUrl('uploader') //Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
-        })  
+        })
+
+        var feedback = Subbly.feedback()
 
         // allow to sort images
         this.sortable = new sortable( this.$el.find('ul.sortable'), 
         {
-            update: function( e, ui )
+            idAttribute: 'uid'
+          , url:         this.model.serviceName + '/' +  this.model.get('sku') + '/images/sort' 
+          , onSuccess:   function( json )
             {
-              var $sorted    = ui.item
-                , $previous  = $sorted.prev()
-                , moveType   = ( $previous.length > 0 )
-                               ? 'moveAfter'
-                               : 'moveBefore'
-                , movedId    = ( $previous.length > 0 )
-                               ? $previous.data('uid')
-                               : $sorted.next().data('uid')
-
-              var feedback = Subbly.feedback()
-
+              feedback.progressEnd( 'success', 'Product images updated' )
+            }
+          , onError: function( json )
+            {
+              feedback.progressEnd( 'success', 'Whoops, problem' )
+            }
+          , onUpdate: function( json )
+            {
               feedback.add().progress()
-
-              var promise = new xhrCall(
-              {
-                  url:     page.model.serviceName + '/' +  page.model.get('sku') + '/images/sort' 
-                , setAuth: true
-                , type:    'POST'
-                , data: 
-                  {
-                    images: 
-                    {
-                        type:     moveType
-                      , movingId: $sorted.data('uid')
-                      , movedId:  movedId
-                    }
-                  }
-                , success: function( json )
-                  {
-                    feedback.progressEnd( 'success', 'Product images updated' )
-                  }
-                , error: function( json )
-                  {
-                    feedback.progressEnd( 'success', 'Whoops, problem' )
-                  }
-              })
             }
         })
       }

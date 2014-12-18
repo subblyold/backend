@@ -92,54 +92,24 @@
         this.getToggleView()
 
         var scope = this
-        
+
+        var feedback = Subbly.feedback()
+
         this.sortable = new sortable( this.$el.find('ul.sortable'), 
         {
-            start: function( e, ui )
+            idAttribute: 'sku'
+          , url:         scope.collection.serviceName + '/sort' 
+          , onSuccess:   function( json )
             {
-              var $element = $( ui.item ).parent('ul').find('li.sortable-placeholder')
-
-              $element.height( ui.helper.outerHeight() )
-              $element.width( ui.helper.outerWidth() )
+              feedback.progressEnd( 'success', 'Products updated' )
             }
-          , update: function( e, ui )
+          , onError: function( json )
             {
-              var $sorted    = ui.item
-                , $previous  = $sorted.prev()
-                , moveType   = ( $previous.length > 0 )
-                               ? 'moveAfter'
-                               : 'moveBefore'
-                , movedId    = ( $previous.length > 0 )
-                               ? $previous.data('sku')
-                               : $sorted.next().data('sku')
-
-              var feedback = Subbly.feedback()
-
+              feedback.progressEnd( 'success', 'Whoops, problem' )
+            }
+          , onUpdate: function( json )
+            {
               feedback.add().progress()
-
-              var promise = new xhrCall(
-              {
-                  url:     scope.collection.serviceName + '/sort' 
-                , setAuth: true
-                , type:    'POST'
-                , data: 
-                  {
-                    products: 
-                    {
-                        type:     moveType
-                      , movingId: $sorted.data('sku')
-                      , movedId:  movedId
-                    }
-                  }
-                , success: function( json )
-                  {
-                    feedback.progressEnd( 'success', 'Products updated' )
-                  }
-                , error: function( json )
-                  {
-                    feedback.progressEnd( 'success', 'Whoops, problem' )
-                  }
-              })
             }
         })        
       }
