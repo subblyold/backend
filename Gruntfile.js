@@ -244,6 +244,17 @@ module.exports = function(grunt)
                 }
             }
         }
+      , docco: 
+        {
+            dist: 
+            {
+                src: ['assets/js/subbly.js']
+              , options: 
+                {
+                  output: 'docs/'
+                }
+            }
+        }
       , watch: 
         {
             javascript: 
@@ -281,6 +292,7 @@ module.exports = function(grunt)
     grunt.loadNpmTasks('grunt-notify');
     grunt.task.run('notify_hooks');
     grunt.loadNpmTasks('grunt-exec');
+    grunt.loadNpmTasks('grunt-docco');
 
     grunt.registerTask('less-compile', ['less:development']);
 
@@ -293,6 +305,7 @@ module.exports = function(grunt)
       , 'uglify'
       , 'less'
       , 'cssmin'
+      , 'docco'
     ]);
     grunt.registerTask('dev', [
         'watch'

@@ -1,5 +1,5 @@
 {
-  "name": "Subbly Backend",
+  "name": "subbly-backend",
   "description": "subbly backend",
   "version": "0.1.0",
   "homepage": "https://github.com/subbly/backend",
@@ -26,6 +26,7 @@
     "grunt-contrib-uglify": "~0.4.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-csscomb": "~2.0.1",
+    "grunt-docco": "^0.3.3",
     "grunt-exec": "~0.4.5",
     "grunt-notify": "^0.4.1"
   }
