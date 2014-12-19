@@ -146,9 +146,9 @@ SubblyCore.prototype.init = function()
 
 //  Get enviroment config' value
 // 
-//     @param   {string}   dot.notation path to the asked value
-//     @param   {mixed}    default value
-//     @return  {mixed}
+//      @param   {string}   dot.notation path to the asked value
+//      @param   {mixed}    default value
+//      @return  {mixed}
 //
 SubblyCore.prototype.getConfig = function( path, defaults )
 {
@@ -157,9 +157,9 @@ SubblyCore.prototype.getConfig = function( path, defaults )
 
 //  Set enviroment config' value
 // 
-//     @param   {string}   path to the value
-//     @param   {mixed}    the value
-//     @return  {void}
+//      @param   {string}   path to the value
+//      @param   {mixed}    the value
+//      @return  {void}
 //
 SubblyCore.prototype.setConfig = function( path, value )
 {
@@ -175,10 +175,10 @@ SubblyCore.prototype.setConfig = function( path, value )
 // Bind an event to a `callback` function. Passing `"all"` will bind
 // the callback to all events fired.
 // 
-//     @param   {string}   event's name
-//     @param   {function} the callback
-//     @param   {function} scope context
-//     @return  {void}
+//      @param   {string}   event's name
+//      @param   {function} the callback
+//      @param   {function} scope context
+//      @return  {void}
 //
 SubblyCore.prototype.on = function( name, callback, context )
 {
@@ -188,10 +188,10 @@ SubblyCore.prototype.on = function( name, callback, context )
 // Bind an event to only be triggered a single time. After the first time
 // the callback is invoked, it will be removed.
 // 
-//     @param   {string}   event's name
-//     @param   {function} the callback
-//     @param   {function} scope context
-//     @return  {void}
+//      @param   {string}   event's name
+//      @param   {function} the callback
+//      @param   {function} scope context
+//      @return  {void}
 //
 SubblyCore.prototype.once = function( name, callback, context )
 {
@@ -204,7 +204,7 @@ SubblyCore.prototype.once = function( name, callback, context )
 // callbacks for the event. If `name` is null, removes all bound
 // callbacks for all events.
 //
-//     @return  {void}
+//      @return  {void}
 //
 
 SubblyCore.prototype.off = function( name, callback, context )
@@ -217,7 +217,7 @@ SubblyCore.prototype.off = function( name, callback, context )
 // (unless you're listening on `"all"`, which will cause your callback to
 // receive the true name of the event as the first argument).
 // 
-//     @return  {void}
+//      @return  {void}
 //
 // TODO: `args1... oh my god ! need to find a better solution
 SubblyCore.prototype.trigger = function( args1, args2, args3, args4, args5, args6, args7 )
@@ -237,7 +237,7 @@ this._event.trigger.apply( this, arguments )
 
 // `Feedback`'s class instance shortcust
 //
-//    @return  {object}
+//      @return  {object}
 //
 SubblyCore.prototype.feedback = function()
 {
@@ -246,7 +246,7 @@ SubblyCore.prototype.feedback = function()
 
 // `I18n`'s class instance shortcust
 //
-//    @return  {string}
+//     @return  {object}
 //
 SubblyCore.prototype.i18n = function()
 {
@@ -255,7 +255,7 @@ SubblyCore.prototype.i18n = function()
 
 // Store settings shortcuts access
 // 
-//    @return  {object}
+//     @return  {object}
 //
 SubblyCore.prototype.storeSettings = function()
 {
@@ -271,8 +271,8 @@ SubblyCore.prototype.storeSettings = function()
 // Set user credentials.
 // Load user settings and locales
 //
-//     @param   {string}   `Basic Auth` encoded string
-//     @return  {void}
+//      @param   {string}   `Basic Auth` encoded string
+//      @return  {void}
 //
 SubblyCore.prototype.setCredentials = function( credentials )
 {
@@ -286,12 +286,15 @@ SubblyCore.prototype.setCredentials = function( credentials )
 
   var scope = this
 
+  // Fetch Store's settings
   this.fetch( this._storeSettings,
   {
     success: function( model, response )
     {
+      // on Success, load store UI language
       scope.i18n().setLocale( scope.getSetting('subbly.backend_language'), function()
       {
+        // Trigger App's router
         scope._router.ready(function( route )
         {
           scope.trigger( 'hash::changed', route )
@@ -304,7 +307,7 @@ SubblyCore.prototype.setCredentials = function( credentials )
 
 // Return current user `Basic Auth` encoded credentials
 //
-//     @return  {object}
+//      @return  {object}
 //
 SubblyCore.prototype.getCredentials = function()
 {
@@ -318,7 +321,7 @@ SubblyCore.prototype.getCredentials = function()
 // Check if current user is logged in
 // If `true`, trigger `user::loggedIn` event
 //
-//     @return  {boolean}
+//      @return  {boolean}
 //
 SubblyCore.prototype.isLogin = function()
 {
@@ -336,7 +339,7 @@ SubblyCore.prototype.isLogin = function()
 // Unset user credentials. 
 // Trigger `user::login` event
 //
-//     @return  {void}
+//      @return  {void}
 //
 SubblyCore.prototype.logout = function()
 {
@@ -358,8 +361,8 @@ SubblyCore.prototype.logout = function()
 // Format full URL to API service
 // based on evironement config'
 //
-//     @params  {string}  service's URL
-//     @return  {string}
+//      @params  {string}  service's URL
+//      @return  {string}
 //
 SubblyCore.prototype.apiUrl = function( url )
 {
@@ -369,7 +372,7 @@ SubblyCore.prototype.apiUrl = function( url )
 
 // Return formated user's `Basic Auth` Header
 //
-//     @return  {object}
+//      @return  {object}
 //
 SubblyCore.prototype.apiHeader = function()
 {
@@ -381,9 +384,9 @@ SubblyCore.prototype.apiHeader = function()
 
 // Call a service protected by closure
 //
-//     @params  {string}  service name
-//     @params  {object}  service arguments
-//     @return  {mixed}
+//      @params  {string}  service name
+//      @params  {object}  service arguments
+//      @return  {mixed}
 //
 SubblyCore.prototype.api = function( serviceName, args )
 {
@@ -406,10 +409,10 @@ SubblyCore.prototype.api = function( serviceName, args )
 // Stores the XHR call which allows the abort on route change.
 // Trigger local loading event
 //
-//     @params  {object}  object to fetch
-//     @params  {object}  data and callbacks options
-//     @params  {object}  call context
-//     @return  {object}
+//      @params  {object}  object to fetch
+//      @params  {object}  data and callbacks options
+//      @params  {object}  call context
+//      @return  {object}
 //
 SubblyCore.prototype.fetch = function( obj, options, context )
 {
@@ -446,11 +449,11 @@ SubblyCore.prototype.fetch = function( obj, options, context )
 // Format json aand
 // stores the XHR call to prevent cancel
 //
-//     @params  {object}  model to save
-//     @params  {object}  data to set
-//     @params  {object}  callbacks options
-//     @params  {object}  call context
-//     @return  {object}
+//      @params  {object}  model to save
+//      @params  {object}  data to set
+//      @params  {object}  callbacks options
+//      @params  {object}  call context
+//      @return  {object}
 //
 SubblyCore.prototype.store = function( model, data, options, context )
 {
@@ -497,7 +500,7 @@ SubblyCore.prototype.store = function( model, data, options, context )
 
 // Abort unfinish XHR call on route change
 //
-//     @return  {void}
+//      @return  {void}
 //
 SubblyCore.prototype.cleanXhr = function()
 {
@@ -518,8 +521,8 @@ SubblyCore.prototype.cleanXhr = function()
 
 // Get current settings 
 //
-//     params  {string}  settings key (optional)
-//     return  {mixed}
+//      params  {string}  settings key (optional)
+//      return  {mixed}
 //
 SubblyCore.prototype.getSetting = function( key, defaults )
 {
@@ -537,7 +540,7 @@ SubblyCore.prototype.getSetting = function( key, defaults )
 
 // get Cookie
 //
-//     return  {mixed}
+//      return  {mixed}
 //
 SubblyCore.prototype.getCookie = function( cookieName )
 {
@@ -570,7 +573,7 @@ SubblyCore.prototype.getCookie = function( cookieName )
 
 // set Cookie
 //
-//     return  {void}
+//      return  {void}
 //
 SubblyCore.prototype.setCookie = function( cookieName, value, expire )
 {
@@ -584,10 +587,10 @@ SubblyCore.prototype.setCookie = function( cookieName, value, expire )
 
 // Extend Subbly Components
 //
-//     params  {string}  component type
-//     params  {string}  component name
-//     params  {object}  component object
-//     return  {void}
+//      params  {string}  component type
+//      params  {string}  component name
+//      params  {object}  component object
+//      return  {void}
 //
 SubblyCore.prototype.extend = function( vendor, type, name, obj )
 {
@@ -642,8 +645,8 @@ SubblyCore.prototype.extend = function( vendor, type, name, obj )
 
 // Register Plugin
 //
-//     params  {object}  plugin object
-//     return  {void}
+//      params  {object}  plugin object
+//      return  {void}
 //
 SubblyCore.prototype.register = function( vendor, name, plugin )
 {

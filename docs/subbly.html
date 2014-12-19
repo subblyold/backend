@@ -551,9 +551,9 @@ trigger <code>user::login</code></p>
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p> Get enviroment config’ value</p>
-<pre><code>@param   {string}   dot.notation path to the asked value
-@param   {mixed}    <span class="hljs-keyword">default</span> value
-@<span class="hljs-keyword">return</span>  {mixed}
+<pre><code> @param   {string}   dot.notation path to the asked value
+ @param   {mixed}    <span class="hljs-keyword">default</span> value
+ @<span class="hljs-keyword">return</span>  {mixed}
 </code></pre>
             </div>
             
@@ -572,9 +572,9 @@ trigger <code>user::login</code></p>
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p> Set enviroment config’ value</p>
-<pre><code>@param   {string}   path to the value
-@param   {mixed}    the value
-@<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> @param   {string}   path to the value
+ @param   {mixed}    the value
+ @<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre>
             </div>
             
@@ -632,10 +632,10 @@ trigger <code>user::login</code></p>
               </div>
               <p>Bind an event to a <code>callback</code> function. Passing <code>&quot;all&quot;</code> will bind
 the callback to all events fired.</p>
-<pre><code>@param   {string}   event&#39;s name
-@param   {function} the callback
-@param   {function} scope context
-@return  {void}
+<pre><code> @param   {string}   event&#39;s name
+ @param   {function} the callback
+ @param   {function} scope context
+ @return  {void}
 </code></pre>
             </div>
             
@@ -655,10 +655,10 @@ the callback to all events fired.</p>
               </div>
               <p>Bind an event to only be triggered a single time. After the first time
 the callback is invoked, it will be removed.</p>
-<pre><code>@param   {string}   event&#39;s name
-@param   {function} the callback
-@param   {function} scope context
-@return  {void}
+<pre><code> @param   {string}   event&#39;s name
+ @param   {function} the callback
+ @param   {function} scope context
+ @return  {void}
 </code></pre>
             </div>
             
@@ -680,7 +680,7 @@ the callback is invoked, it will be removed.</p>
 callbacks with that function. If <code>callback</code> is null, removes all
 callbacks for the event. If <code>name</code> is null, removes all bound
 callbacks for all events.</p>
-<pre><code>@<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> @<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre>
             </div>
             
@@ -703,7 +703,7 @@ SubblyCore.prototype.off = <span class="hljs-function"><span class="hljs-keyword
 passed the same arguments as <code>trigger</code> is, apart from the event name
 (unless you’re listening on <code>&quot;all&quot;</code>, which will cause your callback to
 receive the true name of the event as the first argument).</p>
-<pre><code>@<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> @<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre><p>TODO: `args1… oh my god ! need to find a better solution</p>
 
             </div>
@@ -754,8 +754,8 @@ this._event.trigger.apply( this, arguments )
                 <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p><code>Feedback</code>‘s class instance shortcust</p>
-<p>   @return  {object}</p>
-
+<pre><code> @<span class="hljs-keyword">return</span>  {object}
+</code></pre>
             </div>
             
             <div class="content"><div class='highlight'><pre>SubblyCore.prototype.feedback = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>
@@ -773,8 +773,8 @@ this._event.trigger.apply( this, arguments )
                 <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p><code>I18n</code>‘s class instance shortcust</p>
-<p>   @return  {string}</p>
-
+<pre><code>@<span class="hljs-keyword">return</span>  {object}
+</code></pre>
             </div>
             
             <div class="content"><div class='highlight'><pre>SubblyCore.prototype.i18n = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>
@@ -792,8 +792,8 @@ this._event.trigger.apply( this, arguments )
                 <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>Store settings shortcuts access</p>
-<p>   @return  {object}</p>
-
+<pre><code>@<span class="hljs-keyword">return</span>  {object}
+</code></pre>
             </div>
             
             <div class="content"><div class='highlight'><pre>SubblyCore.prototype.storeSettings = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>
@@ -837,8 +837,8 @@ this._event.trigger.apply( this, arguments )
               </div>
               <p>Set user credentials.
 Load user settings and locales</p>
-<pre><code>@param   {string}   `Basic Auth` encoded string
-@<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> @param   {string}   `Basic Auth` encoded string
+ @<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre>
             </div>
             
@@ -852,15 +852,56 @@ Load user settings and locales</p>
 
   <span class="hljs-keyword">this</span>._storeSettings = <span class="hljs-keyword">this</span>.api(<span class="hljs-string">'Subbly.Model.Settings'</span>)
 
-  <span class="hljs-keyword">var</span> scope = <span class="hljs-keyword">this</span>
+  <span class="hljs-keyword">var</span> scope = <span class="hljs-keyword">this</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>Fetch Store’s settings</p>
 
-  <span class="hljs-keyword">this</span>.fetch( <span class="hljs-keyword">this</span>._storeSettings,
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.fetch( <span class="hljs-keyword">this</span>._storeSettings,
   {
     success: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( model, response )</span>
-    </span>{
-      scope.i18n().setLocale( scope.getSetting(<span class="hljs-string">'subbly.backend_language'</span>), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>
-      </span>{
-        scope._router.ready(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( route )</span>
+    </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>on Success, load store UI language</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      scope.i18n().setLocale( scope.getSetting(<span class="hljs-string">'subbly.backend_language'</span>), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>
+      </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>Trigger App’s router</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        scope._router.ready(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( route )</span>
         </span>{
           scope.trigger( <span class="hljs-string">'hash::changed'</span>, route )
         })
@@ -872,14 +913,14 @@ Load user settings and locales</p>
         </li>
         
         
-        <li id="section-50">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>Return current user <code>Basic Auth</code> encoded credentials</p>
-<pre><code>@<span class="hljs-keyword">return</span>  {object}
+<pre><code> @<span class="hljs-keyword">return</span>  {object}
 </code></pre>
             </div>
             
@@ -894,15 +935,15 @@ Load user settings and locales</p>
         </li>
         
         
-        <li id="section-51">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>Check if current user is logged in
 If <code>true</code>, trigger <code>user::loggedIn</code> event</p>
-<pre><code>@<span class="hljs-keyword">return</span>  {boolean}
+<pre><code> @<span class="hljs-keyword">return</span>  {boolean}
 </code></pre>
             </div>
             
@@ -921,15 +962,15 @@ If <code>true</code>, trigger <code>user::loggedIn</code> event</p>
         </li>
         
         
-        <li id="section-52">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>Unset user credentials. 
 Trigger <code>user::login</code> event</p>
-<pre><code>@<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> @<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre>
             </div>
             
@@ -947,11 +988,11 @@ Trigger <code>user::login</code> event</p>
         </li>
         
         
-        <li id="section-53">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <h2 id="api">API</h2>
 
@@ -960,11 +1001,11 @@ Trigger <code>user::login</code> event</p>
         </li>
         
         
-        <li id="section-54">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               
             </div>
@@ -972,16 +1013,16 @@ Trigger <code>user::login</code> event</p>
         </li>
         
         
-        <li id="section-55">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>Format full URL to API service
 based on evironement config’</p>
-<pre><code>@params  {string}  service&#39;s URL
-@return  {string}
+<pre><code> @params  {string}  service&#39;s URL
+ @return  {string}
 </code></pre>
             </div>
             
@@ -993,14 +1034,14 @@ based on evironement config’</p>
         </li>
         
         
-        <li id="section-56">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p>Return formated user’s <code>Basic Auth</code> Header</p>
-<pre><code>@<span class="hljs-keyword">return</span>  {object}
+<pre><code> @<span class="hljs-keyword">return</span>  {object}
 </code></pre>
             </div>
             
@@ -1014,16 +1055,16 @@ based on evironement config’</p>
         </li>
         
         
-        <li id="section-57">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p>Call a service protected by closure</p>
-<pre><code>@params  {string}  service name
-@params  {object}  service <span class="hljs-built_in">arguments</span>
-@<span class="hljs-keyword">return</span>  {mixed}
+<pre><code> @params  {string}  service name
+ @params  {object}  service <span class="hljs-built_in">arguments</span>
+ @<span class="hljs-keyword">return</span>  {mixed}
 </code></pre>
             </div>
             
@@ -1038,11 +1079,11 @@ based on evironement config’</p>
         </li>
         
         
-        <li id="section-58">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p>if it’s a Backbone’s element ( a.k.a. a model, collection or view)
 we create a new instance</p>
@@ -1058,19 +1099,19 @@ we create a new instance</p>
         </li>
         
         
-        <li id="section-59">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p>Generic method to fetch model/collection.
 Stores the XHR call which allows the abort on route change.
 Trigger local loading event</p>
-<pre><code>@params  {object}  object to fetch
-@params  {object}  data and callbacks options
-@params  {object}  call context
-@<span class="hljs-keyword">return</span>  {object}
+<pre><code> @params  {object}  object to fetch
+ @params  {object}  data and callbacks options
+ @params  {object}  call context
+ @<span class="hljs-keyword">return</span>  {object}
 </code></pre>
             </div>
             
@@ -1107,20 +1148,20 @@ Trigger local loading event</p>
         </li>
         
         
-        <li id="section-60">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p>Generic method to save a model.
 Format json aand
 stores the XHR call to prevent cancel</p>
-<pre><code>@params  {object}  model to save
-@params  {object}  data to set
-@params  {object}  callbacks options
-@params  {object}  call context
-@<span class="hljs-keyword">return</span>  {object}
+<pre><code> @params  {object}  model to save
+ @params  {object}  data to set
+ @params  {object}  callbacks options
+ @params  {object}  call context
+ @<span class="hljs-keyword">return</span>  {object}
 </code></pre>
             </div>
             
@@ -1169,14 +1210,14 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-61">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>Abort unfinish XHR call on route change</p>
-<pre><code>@<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> @<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre>
             </div>
             
@@ -1195,11 +1236,11 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-62">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <h2 id="settings">SETTINGS</h2>
 
@@ -1208,11 +1249,11 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-63">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               
             </div>
@@ -1220,15 +1261,15 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-64">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>Get current settings </p>
-<pre><code>params  {string}  settings key (optional)
-<span class="hljs-keyword">return</span>  {mixed}
+<pre><code> params  {string}  settings key (optional)
+ <span class="hljs-keyword">return</span>  {mixed}
 </code></pre>
             </div>
             
@@ -1242,11 +1283,11 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-65">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>return Helpers.getNested( this._storeSettings, key, defaults || false )</p>
 
@@ -1257,11 +1298,11 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <h2 id="cookies">COOKIES</h2>
 
@@ -1270,11 +1311,11 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-67">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               
             </div>
@@ -1282,14 +1323,14 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-68">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>get Cookie</p>
-<pre><code><span class="hljs-keyword">return</span>  {mixed}
+<pre><code> <span class="hljs-keyword">return</span>  {mixed}
 </code></pre>
             </div>
             
@@ -1307,11 +1348,11 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-69">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p>retrive data from cookies</p>
 
@@ -1337,14 +1378,14 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-70">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <p>set Cookie</p>
-<pre><code><span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> <span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre>
             </div>
             
@@ -1356,11 +1397,11 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <h2 id="plugins">PLUGINS</h2>
 
@@ -1369,11 +1410,11 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-72">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               
             </div>
@@ -1381,17 +1422,17 @@ stores the XHR call to prevent cancel</p>
         </li>
         
         
-        <li id="section-73">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <p>Extend Subbly Components</p>
-<pre><code>params  {string}  component type
-params  {string}  component name
-params  {object}  component object
-<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> params  {string}  component type
+ params  {string}  component name
+ params  {object}  component object
+ <span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre>
             </div>
             
@@ -1403,11 +1444,11 @@ params  {object}  component object
         </li>
         
         
-        <li id="section-74">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p>create a new Vendor</p>
 
@@ -1455,11 +1496,11 @@ params  {object}  component object
         </li>
         
         
-        <li id="section-75">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p>TODO: extend existing components + log </p>
 
@@ -1474,15 +1515,15 @@ params  {object}  component object
         </li>
         
         
-        <li id="section-76">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p>Register Plugin</p>
-<pre><code>params  {object}  plugin object
-<span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
+<pre><code> params  {object}  plugin object
+ <span class="hljs-keyword">return</span>  {<span class="hljs-keyword">void</span>}
 </code></pre>
             </div>
             
@@ -1503,11 +1544,11 @@ params  {object}  component object
         </li>
         
         
-        <li id="section-77">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p>Global Init</p>
 
@@ -1519,11 +1560,11 @@ params  {object}  component object
         </li>
         
         
-        <li id="section-78">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p>console.group( ‘Subbly Global Init’ )</p>
 
