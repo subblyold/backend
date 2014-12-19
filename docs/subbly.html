@@ -246,7 +246,7 @@ if user leave the page without save his change</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>._settings          = <span class="hljs-literal">false</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>._storeSettings     = <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
@@ -796,9 +796,9 @@ this._event.trigger.apply( this, arguments )
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>SubblyCore.prototype.settings = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>
+            <div class="content"><div class='highlight'><pre>SubblyCore.prototype.storeSettings = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>
 </span>{
-  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._settings
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._storeSettings
 }</pre></div></div>
             
         </li>
@@ -850,11 +850,11 @@ Load user settings and locales</p>
 
   <span class="hljs-keyword">this</span>.setCookie( <span class="hljs-keyword">this</span>._CREDENTIALSCOOKIE, <span class="hljs-keyword">this</span>._credentials )
 
-  <span class="hljs-keyword">this</span>._settings = <span class="hljs-keyword">this</span>.api(<span class="hljs-string">'Subbly.Model.Settings'</span>)
+  <span class="hljs-keyword">this</span>._storeSettings = <span class="hljs-keyword">this</span>.api(<span class="hljs-string">'Subbly.Model.Settings'</span>)
 
   <span class="hljs-keyword">var</span> scope = <span class="hljs-keyword">this</span>
 
-  <span class="hljs-keyword">this</span>.fetch( <span class="hljs-keyword">this</span>._settings,
+  <span class="hljs-keyword">this</span>.fetch( <span class="hljs-keyword">this</span>._storeSettings,
   {
     success: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( model, response )</span>
     </span>{
@@ -1235,9 +1235,9 @@ stores the XHR call to prevent cancel</p>
             <div class="content"><div class='highlight'><pre>SubblyCore.prototype.getSetting = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( key, defaults )</span>
 </span>{
   <span class="hljs-keyword">if</span>( _.isUndefined( key ) )
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._settings.attributes
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._storeSettings.attributes
 
-  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._settings.get( key )</pre></div></div>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._storeSettings.get( key )</pre></div></div>
             
         </li>
         
@@ -1248,7 +1248,7 @@ stores the XHR call to prevent cancel</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
-              <p>return Helpers.getNested( this._settings, key, defaults || false )</p>
+              <p>return Helpers.getNested( this._storeSettings, key, defaults || false )</p>
 
             </div>
             

@@ -243,6 +243,13 @@ module.exports = function(grunt)
                     return 'cp public/assets/js/* ../../../themes/backend/assets/js'
                 }
             }
+          , docco: 
+            {
+                cmd: function() 
+                {
+                    return 'docco assets/js/subbly.js '
+                }
+            }
         }
       , docco: 
         {
@@ -305,7 +312,7 @@ module.exports = function(grunt)
       , 'uglify'
       , 'less'
       , 'cssmin'
-      , 'docco'
+      , 'exec:docco'
     ]);
     grunt.registerTask('dev', [
         'watch'
