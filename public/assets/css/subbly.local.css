@@ -977,6 +977,12 @@ a.badge:focus {
 .cln-lst-rw:hover {
   background: #f3f3f3;
 }
+.cln-lst-rw.cln-lst-load {
+  border-top: none;
+}
+.cln-lst-rw.cln-lst-load:hover {
+  background: none;
+}
 .cln-lst-rw.active .bullet {
   background-color: #ffffff;
 }
@@ -993,6 +999,7 @@ a.badge:focus {
 }
 .cln-lst-load {
   text-align: center;
+  position: relative;
 }
 .cln-lst-load span {
   line-height: 100px;

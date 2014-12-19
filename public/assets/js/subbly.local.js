@@ -28996,24 +28996,29 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
     // on pagination
   , loadMore: function()
     {
+      // prevent next call
       if( this._isLoadingMore )
         return
 
       this._isLoadingMore = true
 
-      var li   = document.createElement('li')
-        , span = document.createElement('span')
-        , txt  = document.createTextNode( 'loading' )
+      // <li class="cln-lst-rw cln-lst-load">
+      //   <div class="loader large"></div>
+      // </li>
 
-      span.className = 'f-lrg strong'
-      span.appendChild( txt )
+      var li   = document.createElement('li')
+        , div  = document.createElement('div')
+
+      div.className = 'loader large'
 
       li.className = 'cln-lst-rw cln-lst-load'
       li.id        = 'list-pagination-loader'
-      li.appendChild( span )
+      li.appendChild( div )
 
+      // append loader to the list
       this._$list.append( li )
 
+      // Fetch collection 
       Subbly.fetch( this.collection,
       {
           success: _.bind( this.render, this )
