@@ -21,11 +21,11 @@
 
     , list: function() 
       {
-        var settings = Subbly.settings().getAsObject()
+        var settings = Subbly.storeSettings().getAsObject()
 
         this.getViewByPath( this._viewsNames )
           .setValue( 'settings', settings )
-          .setValue( 'model', Subbly.settings() )
+          .setValue( 'model', Subbly.storeSettings() )
           .displayTpl( settings )
       }
   }

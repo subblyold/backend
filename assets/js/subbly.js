@@ -39,7 +39,7 @@ var SubblyCore = function( config )
   this._fetchXhr          = {}
 
   // Store settings
-  this._settings          = false
+  this._storeSettings     = false
 
   // `i18n` class instance
   this._i18n = new i18n()
@@ -257,9 +257,9 @@ SubblyCore.prototype.i18n = function()
 // 
 //    @return  {object}
 //
-SubblyCore.prototype.settings = function()
+SubblyCore.prototype.storeSettings = function()
 {
-  return this._settings
+  return this._storeSettings
 }
 
 
@@ -282,11 +282,11 @@ SubblyCore.prototype.setCredentials = function( credentials )
 
   this.setCookie( this._CREDENTIALSCOOKIE, this._credentials )
 
-  this._settings = this.api('Subbly.Model.Settings')
+  this._storeSettings = this.api('Subbly.Model.Settings')
 
   var scope = this
 
-  this.fetch( this._settings,
+  this.fetch( this._storeSettings,
   {
     success: function( model, response )
     {
@@ -524,10 +524,10 @@ SubblyCore.prototype.cleanXhr = function()
 SubblyCore.prototype.getSetting = function( key, defaults )
 {
   if( _.isUndefined( key ) )
-    return this._settings.attributes
+    return this._storeSettings.attributes
 
-  return this._settings.get( key )
-  // return Helpers.getNested( this._settings, key, defaults || false )
+  return this._storeSettings.get( key )
+  // return Helpers.getNested( this._storeSettings, key, defaults || false )
 }
 
 
