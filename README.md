@@ -9,7 +9,7 @@ Subbly Backend
 
 ## Your Subbly's Back office
 
-[![screenshot](http://gget.it/adkw548b/05_addproduct.jpg)]
+[screenshot](http://gget.it/adkw548b/05_addproduct.jpg)
 
 Built on top of Backbone and Handlebars, powered by Subbly's REST API, a minimalist but powerful back office for your store.
 
