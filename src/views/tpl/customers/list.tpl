@@ -9,9 +9,10 @@
         </h4>
       </div><!-- /.column-title -->
       <div class="scrll-stck">
-        <form class="scrll-stck-cnt c-pdg-h c-pdg-bas-v -sticky">
+        <form class="scrll-stck-cnt c-pdg-h c-pdg-bas-v" id="customers-search">
           <p class="input-search-holder">
             <input type="search" class="form-input input-search" placeholder="{{i18n 'customers.formPlaceholder'}}">
+            <a href="javascript:;" class="btn-reset-search js-reset-search"></a>
           </p>
         </form><!-- /.scrll-stck-cnt -->
       </div><!-- /.scrll-stck -->
@@ -22,6 +23,9 @@
       </div>
       <div class="empty-list">
         {{{i18n 'customers.noEntry'}}}
+      </div>
+      <div class="no-results">
+        {{{i18n 'labels.noResults'}}}
       </div>
       <ul class="cln-lst c-pdg-bas-t customers-list" id="customers-list">
         <!--<li class="cln-lst-rw cust-row active">

@@ -422,7 +422,7 @@ SubblyCore.prototype.fetch = function( obj, options, context )
   if( context )
     context.trigger( 'fetch::calling' )
   
-  this._fetchXhr[ xhrId ] = obj.fetch({
+  var promise = obj.fetch({
       data:    options.data || {} 
     , xhrId:   xhrId
     , success: function( bbObj, response, opts )
@@ -442,6 +442,10 @@ SubblyCore.prototype.fetch = function( obj, options, context )
           options.error( bbObj, response, opts  )
       }
   })
+
+  this._fetchXhr[ xhrId ] = promise
+
+  return promise
 }
 
 

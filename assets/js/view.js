@@ -3,14 +3,17 @@
 
 var SubblyView = Backbone.View.extend(
 {
-    _viewId:     false
-  , _viewName:   false
-  , _viewTpl:    false
-  , _classlist:  []
-  , _controller: false
-  , _$nano:      false
-  , _sticky:     false
-  , _$fetchView: false
+    _viewId:          false
+  , _viewName:        false
+  , _viewTpl:         false
+  , _controller:      false
+  , _$nano:           false
+  , _sticky:          false
+  , _$fetchView:      false
+  , _isRendering:     false
+  , _classlist:       []
+  , _renderingStates: 'loading empty search idle'
+  , _renderingClass:  'rendering'
 
   , initialize: function( options )
     {
@@ -51,11 +54,16 @@ var SubblyView = Backbone.View.extend(
       // this.on( 'fetch::responds', ..., ... 
     }
 
+  , getControllerName: function()
+    {
+      return this._controller.getName()
+    }
+
     // Call controller method from view
   , callController: function( method )
     {
       if( !this._controller[ method ] )
-        throw new Error( 'controller "' + this._controllerName + '" does not have  "' + method + '" method' )
+        throw new Error( 'controller "' + this.getControllerName() + '" does not have  "' + method + '" method' )
 
       var args = [].slice.call( arguments, 1 )
 
@@ -69,26 +77,100 @@ var SubblyView = Backbone.View.extend(
       return this
     }
 
+    // Display view's 'state.
+    // E.G.: loading, empty, etc.
+  , displayRendering: function( state )
+    {
+      this._$fetchView
+        .removeClass( this._renderingStates )
+
+      var klass = this._renderingClass
+
+      if( !_.isUndefined( state ) )
+        klass += ' ' + state
+
+      this._$fetchView
+        .addClass( klass  )
+
+      return this
+    }
+
+    // Remove rendering state
+    // to display view's content
+  , removeRendering: function()
+    {
+      this._$fetchView
+        .removeClass( this._renderingClass + ' ' + this._renderingStates )
+
+      return this
+    }
+
+    // Rendering shortcuts
+    // --------------------
+
   , showLoading: function()
     {
-      this._$fetchView.addClass('rendering').addClass('loading')
+      this.displayRendering( 'loading' )
 
       return this
     }
 
+  , showIdle: function()
+    {
+      this.displayRendering( 'idle' )
+
+      return this
+    }
+
+  , showEmpty: function()
+    {
+      // this._$fetchView.addClass('rendering').addClass('empty')
+      this.displayRendering( 'empty' )
+
+      return this
+    }
+
+  , showSearch: function()
+    {
+      this.displayRendering( 'search' )
+
+      return this
+    }
+
+    // TO REMOVE SOON BEGING 
   , removeLoading: function()
     {
-      this._$fetchView.removeClass('rendering').removeClass('loading')
+console.log( 'call removeLoading')
 
       return this
     }
+
+  , removeIdle: function()
+    {
+console.log( 'call removeIdle')
+
+      return this
+    }
+
+  , removeEmpty: function()
+    {
+console.log( 'call removeEmpty')
+
+      return this
+    }
+
+  , removeNoResults: function()
+    {
+console.log( 'call removeNoResults')
+
+      return this
+    }
+    // TO REMOVE SOON END 
 
   , displayTpl: function( tplData )
     {
       if( !this._viewTpl )
         return
-
-      // this.$el.find('div.fetch-holder').removeClass('rendering').removeClass('loading')
 
       tplData = tplData || {}
 
@@ -120,7 +202,7 @@ var SubblyView = Backbone.View.extend(
 
   , render: function()
     {
-      this.removeLoading()
+      this.removeRendering()
 
       if( this.onRenderAfter )
         this.onRenderAfter()

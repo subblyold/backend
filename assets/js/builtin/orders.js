@@ -117,7 +117,7 @@
               view
                 .setValue( 'model', model )
                 .displayTpl( json )
-                .removeLoading()
+                .removeRendering()
             }
         }, this )
       }

@@ -135,6 +135,11 @@ var SubblyController = Backbone.Controller.extend(
       }
     }
 
+  , getName: function()
+    {
+      return this._controllerName
+    }
+
     // returns view object by its path
   , getViewByPath: function( index )
     {

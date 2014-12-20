@@ -45,6 +45,7 @@
         "plural": "%1$s items"
       },
       "cancel": "cancel",
-      "save": "save"
+      "save": "save",
+      "noResults": "no results found"
   }
 }

@@ -4,6 +4,9 @@
       <div class="loading-list">
         <div class="loader large"></div>
       </div>
+      <div class="no-entry-selected">
+        aucune fiche sélectionnée
+      </div>
       <div class="ordr-cnt">
         <div class="c-pdg-h c-pdg-t">
           <div class="customer-title">

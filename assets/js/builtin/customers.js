@@ -16,8 +16,9 @@
       }
 
     , routes: {
-          'customers':      'display'
-        , 'customers/:uid': 'display'
+          'customers':               'display'
+        , 'customers/:uid':          'display'
+        , 'customers/search/:query': 'search'
       }
 
     , onRemove: function()
@@ -50,11 +51,28 @@
             .onInitialRender()
       }
 
+    , search: function( query ) 
+      {
+        var scope      = this
+          , view       = this.getViewByPath( 'Subbly.View.Customers' )
+          , collection = Subbly.api('Subbly.Collection.Users')
+
+        // call sub-view display
+        this.getViewByPath( 'Subbly.View.CustomerSheet' )
+          .displayTpl()
+
+        view.displayTpl()
+          .doSearch( query )
+
+      }
+
     , displayView: function( sheetCB )
       {
         var scope      = this
           , view       = this.getViewByPath( 'Subbly.View.Customers' )
           , collection = Subbly.api('Subbly.Collection.Users')
+
+        this._listDisplayed = true
 
         view.displayTpl()
 
@@ -62,7 +80,7 @@
         this.getViewByPath( 'Subbly.View.CustomerSheet' )
           .displayTpl()
 
-//         // test zero customers return
+        // test zero customers return
 //         window.setTimeout(function()
 //         {
 // console.log( collection )
@@ -70,7 +88,7 @@
 //                 .setValue( 'collection', collection )
 //                 .render()
 
-//         }, 2500)
+//         }, 500)
 //         return
 
         Subbly.fetch( collection,
@@ -116,9 +134,36 @@
               view
                 .setValue( 'model', model )
                 .displayTpl( json )
-                .removeLoading()
+                .removeRendering()
             }
         }, this )
+      }
+
+    , searching: function()
+      {
+        this.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+      }
+
+    , noResults: function()
+      {
+        this.getViewByPath( 'Subbly.View.Customers' ).noResults()
+        this.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+      }
+
+    , resetSearch: function()
+      {
+        this._listDisplayed = false
+
+        var listView = this.getViewByPath( 'Subbly.View.Customers' )
+
+        listView
+          .resetList()
+
+        this.displayView( function()
+        {
+          listView
+            .onInitialRender()
+        })
       }
   }
 
@@ -186,6 +231,16 @@
         this.callController( 'sheet', uid )
       }
 
+    , onDisplayTpl: function()
+      {
+        // Bind search form
+        this._searchForm = Subbly.api('Subbly.View.Search', {
+            collection: 'Subbly.Collection.Users'
+          , element:    '#customers-search'
+          , context:    this
+        })
+      }
+
       // Build single list's row
     , displayRow: function( model )
       {
@@ -200,7 +255,17 @@
 
     , onDetailIsEmpty: function()
       {
-        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).noResult()
+        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+      }
+
+    , doSearch: function( query )
+      {
+        this._searchForm.preFill( query )
+      }
+
+    , noResults: function()
+      {
+        this.showSearch()
       }
 
       // Higthligth active row
@@ -216,10 +281,11 @@
       // go to customer profile
     , goTo: function( event )
       {
+        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).showLoading()
+
         var uid = event.currentTarget.dataset.uid
 
         Subbly.trigger( 'hash::change', 'customers/' + uid, true )
-        // this.callController( 'sheet', uid )
       }
   }
 
@@ -238,9 +304,9 @@
         })
       }
 
-    , noResult: function()
+    , noResults: function()
       {
-        this.$el.find('div.fetch-holder').removeClass('loading')
+        this.displayRendering()
       }
 
     , onDisplayTpl: function()
@@ -262,7 +328,6 @@
 
         document.getElementById( id ).classList.add('active')
       }
-
   }
 
 
@@ -273,7 +338,6 @@
   Subbly.register( 'Subbly', 'Customers', 
   {
       'ViewList:Customers':   CustomersList
-    // , 'ViewListRow:CustomerRow':   CustomersRow
     , 'View:CustomerSheet':   CustomerSheet
     , 'Controller:Customers': Customers
   })

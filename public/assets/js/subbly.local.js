@@ -27251,9 +27251,16 @@ sortable.prototype.destroy = function()
 
 // Subbly's Backbone base model
 
+// static access Components.Subbly.Model.User.prototype.getServiceName()
+
 var SubblyModel = Backbone.Model.extend(
 {
     additonalParams: {}
+
+  , getServiceName: function()
+    {
+      return this.serviceName
+    }
 
   , url: function()
     {
@@ -27365,14 +27372,17 @@ var SubblyCollection = Backbone.Collection.extend(
 
 var SubblyView = Backbone.View.extend(
 {
-    _viewId:     false
-  , _viewName:   false
-  , _viewTpl:    false
-  , _classlist:  []
-  , _controller: false
-  , _$nano:      false
-  , _sticky:     false
-  , _$fetchView: false
+    _viewId:          false
+  , _viewName:        false
+  , _viewTpl:         false
+  , _controller:      false
+  , _$nano:           false
+  , _sticky:          false
+  , _$fetchView:      false
+  , _isRendering:     false
+  , _classlist:       []
+  , _renderingStates: 'loading empty search idle'
+  , _renderingClass:  'rendering'
 
   , initialize: function( options )
     {
@@ -27413,11 +27423,16 @@ var SubblyView = Backbone.View.extend(
       // this.on( 'fetch::responds', ..., ... 
     }
 
+  , getControllerName: function()
+    {
+      return this._controller.getName()
+    }
+
     // Call controller method from view
   , callController: function( method )
     {
       if( !this._controller[ method ] )
-        throw new Error( 'controller "' + this._controllerName + '" does not have  "' + method + '" method' )
+        throw new Error( 'controller "' + this.getControllerName() + '" does not have  "' + method + '" method' )
 
       var args = [].slice.call( arguments, 1 )
 
@@ -27431,26 +27446,100 @@ var SubblyView = Backbone.View.extend(
       return this
     }
 
+    // Display view's 'state.
+    // E.G.: loading, empty, etc.
+  , displayRendering: function( state )
+    {
+      this._$fetchView
+        .removeClass( this._renderingStates )
+
+      var klass = this._renderingClass
+
+      if( !_.isUndefined( state ) )
+        klass += ' ' + state
+
+      this._$fetchView
+        .addClass( klass  )
+
+      return this
+    }
+
+    // Remove rendering state
+    // to display view's content
+  , removeRendering: function()
+    {
+      this._$fetchView
+        .removeClass( this._renderingClass + ' ' + this._renderingStates )
+
+      return this
+    }
+
+    // Rendering shortcuts
+    // --------------------
+
   , showLoading: function()
     {
-      this._$fetchView.addClass('rendering').addClass('loading')
+      this.displayRendering( 'loading' )
 
       return this
     }
 
+  , showIdle: function()
+    {
+      this.displayRendering( 'idle' )
+
+      return this
+    }
+
+  , showEmpty: function()
+    {
+      // this._$fetchView.addClass('rendering').addClass('empty')
+      this.displayRendering( 'empty' )
+
+      return this
+    }
+
+  , showSearch: function()
+    {
+      this.displayRendering( 'search' )
+
+      return this
+    }
+
+    // TO REMOVE SOON BEGING 
   , removeLoading: function()
     {
-      this._$fetchView.removeClass('rendering').removeClass('loading')
+console.log( 'call removeLoading')
 
       return this
     }
+
+  , removeIdle: function()
+    {
+console.log( 'call removeIdle')
+
+      return this
+    }
+
+  , removeEmpty: function()
+    {
+console.log( 'call removeEmpty')
+
+      return this
+    }
+
+  , removeNoResults: function()
+    {
+console.log( 'call removeNoResults')
+
+      return this
+    }
+    // TO REMOVE SOON END 
 
   , displayTpl: function( tplData )
     {
       if( !this._viewTpl )
         return
-
-      // this.$el.find('div.fetch-holder').removeClass('rendering').removeClass('loading')
 
       tplData = tplData || {}
 
@@ -27482,7 +27571,7 @@ var SubblyView = Backbone.View.extend(
 
   , render: function()
     {
-      this.removeLoading()
+      this.removeRendering()
 
       if( this.onRenderAfter )
         this.onRenderAfter()
@@ -27635,6 +27724,11 @@ var SubblyController = Backbone.Controller.extend(
         
         this._reversedPointer[ this._viewsNames ] = this._viewsPointers[ parentViewId ]
       }
+    }
+
+  , getName: function()
+    {
+      return this._controllerName
     }
 
     // returns view object by its path
@@ -28108,7 +28202,7 @@ SubblyCore.prototype.fetch = function( obj, options, context )
   if( context )
     context.trigger( 'fetch::calling' )
   
-  this._fetchXhr[ xhrId ] = obj.fetch({
+  var promise = obj.fetch({
       data:    options.data || {} 
     , xhrId:   xhrId
     , success: function( bbObj, response, opts )
@@ -28128,6 +28222,10 @@ SubblyCore.prototype.fetch = function( obj, options, context )
           options.error( bbObj, response, opts  )
       }
   })
+
+  this._fetchXhr[ xhrId ] = promise
+
+  return promise
 }
 
 
@@ -28631,6 +28729,16 @@ Components.Subbly.Collection.Products = Components.Subbly.Collection.List.extend
         return model.get('position')
     }
 })
+var SubblyCollectionSearch
+
+Components.Subbly.Collection.Search = SubblyCollectionSearch = 
+{
+    url: function()
+    {
+      return Subbly.apiUrl( this.serviceName + '/search' )
+    }
+}
+
 
 Components.Subbly.Collection.Users = Components.Subbly.Collection.List.extend(
 {
@@ -28917,20 +29025,21 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
   , _$listItems:     false
   , collection:      false
 
-  // , onSubblyInitialize: function()
+  // on Subbly View Initialize override
   , initialize: function( options )
     {
       // Call parent `initialize` method
       SubblyView.prototype.initialize.apply( this, arguments )
 
-      // console.log( 'initialize list view ' + this._viewName )
-
       this.on( 'view::scrollend', this.nextPage, this )
       Subbly.on( 'pagination::fetch', this.loadMore, this )
     }
 
-  , onDisplayTpl: function()
+  , displayTpl: function()
     {
+      // Call parent `displayTpl` method
+      SubblyView.prototype.displayTpl.apply( this, arguments )
+
       if( !this._listSelector )
         throw new Error( 'List view "' + this._viewName + '" miss _listSelector param' )
 
@@ -28939,8 +29048,6 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       // Compile row template
       if( this._tplRow )
         this._tplRowCompiled = Handlebars.compile( this._tplRow )
-
-      // this.render()
 
       return this
     }
@@ -29044,7 +29151,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       {
         console.warn('ABORT, collection is empty')
         console.groupEnd()
-        this._$fetchView.addClass('rendering').addClass('empty').removeClass('loading')
+        this.showEmpty()
 
         if( this.onDetailIsEmpty )
           this.onDetailIsEmpty()
@@ -29052,7 +29159,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         return
       }
 
-      this._$fetchView.removeClass('rendering').removeClass('loading')
+      this.removeRendering()
 
       // fetch flag
       this._isLoadingMore = false
@@ -29075,6 +29182,8 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         console.groupEnd()
         return
       }
+
+      // TODO: clean with el.insertAdjacentHTML( 'beforeend', handlebars str ); 
 
       this._fragment = ( !this._fragment && this._viewRow )
                        ? document.createDocumentFragment()
@@ -29127,6 +29236,8 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       
       Subbly.trigger( 'loader::hide' )
       console.groupEnd()
+
+      return this
     }
 
     // TODO: to design
@@ -29227,6 +29338,14 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       delete this._viewsPointers[ cid ]
 
       Subbly.trigger( 'row::deleted' )
+    }
+
+  , resetList: function()
+    {
+      this.cleanRows()
+      this._$list.html('')
+
+      return this
     }
 
     // Remove all rows views
@@ -29598,6 +29717,152 @@ Components.Subbly.View.Modal = Backbone.View.extend(
     }
 })
 
+var SubblyViewSearch
+
+Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
+{
+    _viewName:   'ListSearch'
+
+  , _xhrPromise: false
+
+  // on Subbly View Initialize override
+  , initialize: function( options )
+    {
+      // reference to the parent view
+      this._context      = options.context
+
+      // model's relations to include
+      this._includes     = options.includes || []
+
+      // Controller reference is needed 
+      // to initialize view
+      options.controller = options.context._controller
+
+      // Call parent `initialize` method
+      SubblyView.prototype.initialize.apply( this, arguments )
+
+      // set DOM element
+      this.setElement( options.element )
+
+      // extend list collection with search's properties
+      var baseCollection = Helpers.getNested( Components, options.collection , false )
+        , collection     = baseCollection.extend( SubblyCollectionSearch )
+
+      this.collection = new collection()
+
+      // collect DOM's elements
+      this._$input   = this.$el.find('input[type="search"]')
+      this._$btnRest = this.$el.find('a.js-reset-search') 
+
+      // Create the listener function
+      var scope      = this
+        , prevQuery  = false
+        , lazySearch = _.debounce( function( query )
+          {
+            if( query === prevQuery )
+              return
+            
+            prevQuery = query
+
+            scope.doSearch( query )
+          }, 500)
+
+      // Attach form event
+      this._$btnRest.on( 'click', _.bind( this.resetSearch, this ) )
+      this._$input.on( 'keyup', function( event )
+      {
+        // prevent arrow key move, form validation and bubbling
+        if( [ 13,37,38,39,40 ].indexOf( event.keyCode ) != -1 )
+        {
+          event.stopPropagation()
+          event.preventDefault()
+          return
+        }
+
+        var query  = $.trim( event.currentTarget.value )
+
+        if( _.isBlank( query ) )
+        {
+          scope.resetSearch()
+          return
+        }
+
+        Subbly.trigger( 'hash::change', 'customers/search/' + query, false )
+
+        // TODO: set as callback
+        scope._context.showLoading()
+        // scope._context.callController('noResults')
+
+        // scope.$el.addClass('searching')
+        // scope._context.callController('searching')
+        scope.searching()
+
+        lazySearch( query )
+      })
+
+      return this
+    }
+
+  , searching: function()
+    {
+      this.$el.addClass('searching')
+      this._context.callController('searching')      
+    }
+
+  , preFill: function( query )
+    {
+      this._$input.val( query )
+      this.searching()
+      this.doSearch( query )
+    }
+
+  , doSearch: function( query )
+    {
+      // if running search, abort active request
+      if( 
+          this._xhrPromise
+          && this._xhrPromise.readyState > 0 
+          && this._xhrPromise.readyState < 4 
+        )
+        this._xhrPromise.abort()
+
+      var scope = this
+
+      this._xhrPromise = Subbly.fetch( this.collection,
+      {
+          data: { includes: this._includes, q: query }
+        , success: function( collection, response )
+          {
+            scope._xhrPromise = false
+
+            if( !collection.length )
+            {
+              scope._context.callController('noResults')
+              return
+            }
+
+            scope._context
+              .resetList()
+              .setValue( 'collection', collection )
+              .render()
+              .onInitialRender()
+          }
+      }, this )
+    }
+
+  , resetSearch: function()
+    {
+      this._xhrPromise = false
+      this.$el.removeClass('searching')
+      this._$input.val('')
+
+      Subbly.trigger( 'hash::change', 'customers', true )
+
+      this._context
+        .resetList()
+        .callController('resetSearch')
+    }
+})
 
   // CONTROLLER
   // --------------------------------
@@ -29616,8 +29881,9 @@ Components.Subbly.View.Modal = Backbone.View.extend(
       }
 
     , routes: {
-          'customers':      'display'
-        , 'customers/:uid': 'display'
+          'customers':               'display'
+        , 'customers/:uid':          'display'
+        , 'customers/search/:query': 'search'
       }
 
     , onRemove: function()
@@ -29650,11 +29916,28 @@ Components.Subbly.View.Modal = Backbone.View.extend(
             .onInitialRender()
       }
 
+    , search: function( query ) 
+      {
+        var scope      = this
+          , view       = this.getViewByPath( 'Subbly.View.Customers' )
+          , collection = Subbly.api('Subbly.Collection.Users')
+
+        // call sub-view display
+        this.getViewByPath( 'Subbly.View.CustomerSheet' )
+          .displayTpl()
+
+        view.displayTpl()
+          .doSearch( query )
+
+      }
+
     , displayView: function( sheetCB )
       {
         var scope      = this
           , view       = this.getViewByPath( 'Subbly.View.Customers' )
           , collection = Subbly.api('Subbly.Collection.Users')
+
+        this._listDisplayed = true
 
         view.displayTpl()
 
@@ -29662,7 +29945,7 @@ Components.Subbly.View.Modal = Backbone.View.extend(
         this.getViewByPath( 'Subbly.View.CustomerSheet' )
           .displayTpl()
 
-//         // test zero customers return
+        // test zero customers return
 //         window.setTimeout(function()
 //         {
 // console.log( collection )
@@ -29670,7 +29953,7 @@ Components.Subbly.View.Modal = Backbone.View.extend(
 //                 .setValue( 'collection', collection )
 //                 .render()
 
-//         }, 2500)
+//         }, 500)
 //         return
 
         Subbly.fetch( collection,
@@ -29716,9 +29999,36 @@ Components.Subbly.View.Modal = Backbone.View.extend(
               view
                 .setValue( 'model', model )
                 .displayTpl( json )
-                .removeLoading()
+                .removeRendering()
             }
         }, this )
+      }
+
+    , searching: function()
+      {
+        this.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+      }
+
+    , noResults: function()
+      {
+        this.getViewByPath( 'Subbly.View.Customers' ).noResults()
+        this.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+      }
+
+    , resetSearch: function()
+      {
+        this._listDisplayed = false
+
+        var listView = this.getViewByPath( 'Subbly.View.Customers' )
+
+        listView
+          .resetList()
+
+        this.displayView( function()
+        {
+          listView
+            .onInitialRender()
+        })
       }
   }
 
@@ -29786,6 +30096,16 @@ Components.Subbly.View.Modal = Backbone.View.extend(
         this.callController( 'sheet', uid )
       }
 
+    , onDisplayTpl: function()
+      {
+        // Bind search form
+        this._searchForm = Subbly.api('Subbly.View.Search', {
+            collection: 'Subbly.Collection.Users'
+          , element:    '#customers-search'
+          , context:    this
+        })
+      }
+
       // Build single list's row
     , displayRow: function( model )
       {
@@ -29800,7 +30120,17 @@ Components.Subbly.View.Modal = Backbone.View.extend(
 
     , onDetailIsEmpty: function()
       {
-        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).noResult()
+        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+      }
+
+    , doSearch: function( query )
+      {
+        this._searchForm.preFill( query )
+      }
+
+    , noResults: function()
+      {
+        this.showSearch()
       }
 
       // Higthligth active row
@@ -29816,10 +30146,11 @@ Components.Subbly.View.Modal = Backbone.View.extend(
       // go to customer profile
     , goTo: function( event )
       {
+        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).showLoading()
+
         var uid = event.currentTarget.dataset.uid
 
         Subbly.trigger( 'hash::change', 'customers/' + uid, true )
-        // this.callController( 'sheet', uid )
       }
   }
 
@@ -29838,9 +30169,9 @@ Components.Subbly.View.Modal = Backbone.View.extend(
         })
       }
 
-    , noResult: function()
+    , noResults: function()
       {
-        this.$el.find('div.fetch-holder').removeClass('loading')
+        this.displayRendering()
       }
 
     , onDisplayTpl: function()
@@ -29862,7 +30193,6 @@ Components.Subbly.View.Modal = Backbone.View.extend(
 
         document.getElementById( id ).classList.add('active')
       }
-
   }
 
 
@@ -29873,7 +30203,6 @@ Components.Subbly.View.Modal = Backbone.View.extend(
   Subbly.register( 'Subbly', 'Customers', 
   {
       'ViewList:Customers':   CustomersList
-    // , 'ViewListRow:CustomerRow':   CustomersRow
     , 'View:CustomerSheet':   CustomerSheet
     , 'Controller:Customers': Customers
   })
@@ -30062,7 +30391,7 @@ Components.Subbly.View.Modal = Backbone.View.extend(
               view
                 .setValue( 'model', model )
                 .displayTpl( json )
-                .removeLoading()
+                .removeRendering()
             }
         }, this )
       }

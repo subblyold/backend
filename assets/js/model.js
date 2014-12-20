@@ -1,9 +1,16 @@
 
 // Subbly's Backbone base model
 
+// static access Components.Subbly.Model.User.prototype.getServiceName()
+
 var SubblyModel = Backbone.Model.extend(
 {
     additonalParams: {}
+
+  , getServiceName: function()
+    {
+      return this.serviceName
+    }
 
   , url: function()
     {

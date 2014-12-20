@@ -14,20 +14,21 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
   , _$listItems:     false
   , collection:      false
 
-  // , onSubblyInitialize: function()
+  // on Subbly View Initialize override
   , initialize: function( options )
     {
       // Call parent `initialize` method
       SubblyView.prototype.initialize.apply( this, arguments )
 
-      // console.log( 'initialize list view ' + this._viewName )
-
       this.on( 'view::scrollend', this.nextPage, this )
       Subbly.on( 'pagination::fetch', this.loadMore, this )
     }
 
-  , onDisplayTpl: function()
+  , displayTpl: function()
     {
+      // Call parent `displayTpl` method
+      SubblyView.prototype.displayTpl.apply( this, arguments )
+
       if( !this._listSelector )
         throw new Error( 'List view "' + this._viewName + '" miss _listSelector param' )
 
@@ -36,8 +37,6 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       // Compile row template
       if( this._tplRow )
         this._tplRowCompiled = Handlebars.compile( this._tplRow )
-
-      // this.render()
 
       return this
     }
@@ -141,7 +140,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       {
         console.warn('ABORT, collection is empty')
         console.groupEnd()
-        this._$fetchView.addClass('rendering').addClass('empty').removeClass('loading')
+        this.showEmpty()
 
         if( this.onDetailIsEmpty )
           this.onDetailIsEmpty()
@@ -149,7 +148,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         return
       }
 
-      this._$fetchView.removeClass('rendering').removeClass('loading')
+      this.removeRendering()
 
       // fetch flag
       this._isLoadingMore = false
@@ -172,6 +171,8 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         console.groupEnd()
         return
       }
+
+      // TODO: clean with el.insertAdjacentHTML( 'beforeend', handlebars str ); 
 
       this._fragment = ( !this._fragment && this._viewRow )
                        ? document.createDocumentFragment()
@@ -224,6 +225,8 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       
       Subbly.trigger( 'loader::hide' )
       console.groupEnd()
+
+      return this
     }
 
     // TODO: to design
@@ -324,6 +327,14 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       delete this._viewsPointers[ cid ]
 
       Subbly.trigger( 'row::deleted' )
+    }
+
+  , resetList: function()
+    {
+      this.cleanRows()
+      this._$list.html('')
+
+      return this
     }
 
     // Remove all rows views

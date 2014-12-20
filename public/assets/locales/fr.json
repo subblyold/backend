@@ -44,6 +44,7 @@
         "plural": "%1$s articles"
       },
       "cancel": "annuler",
-      "save": "sauvegarder"
+      "save": "sauvegarder",
+      "noResults": "aucun résultat<br>ne correspond à votre recherche"
   }
 }
