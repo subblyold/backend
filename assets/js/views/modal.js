@@ -1,5 +1,6 @@
+var SubblyViewModal
 
-Components.Subbly.View.Modal = Backbone.View.extend(
+Components.Subbly.View.Modal = SubblyViewModal = Backbone.View.extend(
 {
     el:       '#modal'
   , defaults: 

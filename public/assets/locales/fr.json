@@ -38,6 +38,10 @@
       }
     }
   },
+  "categories": {
+    "noEntry": "Aucune catégories",
+    "noSelection": "Selectionnez une categorie"
+  },
   "labels": {
       "item": {
         "single": "%1$s article",
@@ -45,6 +49,10 @@
       },
       "cancel": "annuler",
       "save": "sauvegarder",
-      "noResults": "aucun résultat<br>ne correspond à votre recherche"
+      "noResults": "aucun résultat<br>pour votre recherche",
+      "categories": "Catégories",
+      "subcategories": "Sous-Catégories",
+      "newCategory": "nouvelle catégorie",
+      "newSubCategory": "nouvelle sous catégorie"
   }
 }

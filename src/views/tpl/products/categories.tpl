@@ -2,65 +2,103 @@
   <div class="modal-content">
     <a href="javascript:;" class="modal-close" data-dismiss="modal"></a>
     <div class="modal-catgories">
-      <div class="modal-main-catgories">
+      <div class="modal-main-catgories" data-list="modal-main-catgories">
         <h3>
-          main
-          <a href="javascript:;">+</a>
+          {{i18n 'labels.categories'}}
+          <a href="javascript:;" class="js-add-category">+</a>
         </h3>
         <div class="modal-catgories-list">
           <div class="nano">
             <div class="nano-content">
-              <ul class="sortable">
-                <li class="active">
-                  <i class="icon icon-handler js-handle"></i>
-                  Women
-                  <span class="badge">2</span>
-                  <i class="icon icon-trash"></i>
-                </li>
-                <li>
-                  <i class="icon icon-handler js-handle"></i>
-                  Men
-                  <i class="icon icon-trash"></i>
-                </li>
-                <li>
-                  <i class="icon icon-handler js-handle"></i>
-                  Baby
-                  <i class="icon icon-trash"></i>
-                </li>
-                <li>
-                  <i class="icon icon-handler js-handle"></i>
-                  Wootlet
-                  <i class="icon icon-trash"></i>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div><!-- /.modal-catgories-list -->
-      <div class="modal-sub-catgories">
+              <div class="fetch-holder rendering loading">
+                <div class="loading-list">
+                  <div class="loader large"></div>
+                </div>
+                <ul class="sortable catgories-list">
+<!--                   <li class="active">
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li>
+                  <li>
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li>
+                  <li>
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li>
+                  <li>
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li>
+                  <li>
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li>
+                  <li>
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li>
+                  <li>
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li>
+                  <li>
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li>
+                  <li>
+                    <i class="icon icon-handler js-handle"></i>
+                    Women
+                    <span class="badge">2</span>
+                    <i class="icon icon-trash"></i>
+                  </li> -->
+                </ul>
+              </div><!-- /.fetch-holder -->
+            </div><!-- /.nano-content -->
+          </div><!-- /.nano --> 
+        </div><!-- /.modal-catgories-list -->
+      </div><!-- /.modal-main-catgories -->
+      <div class="modal-sub-catgories" data-list="modal-sub-catgories">
         <h3>
-          submenu
-          <a href="javascript:;">+</a>
+          {{i18n 'labels.subcategories'}}
+          <a href="javascript:;" class="js-add-subcategory dp-n">+</a>
         </h3>
         <div class="modal-catgories-list">
           <div class="nano">
             <div class="nano-content">
-              <ul class="sortable">
-                <li>
-                  <i class="icon icon-handler js-handle"></i>
-                  Shirts
-                  <i class="icon icon-trash"></i>
-                </li>
-                <li class="active">
-                  <i class="icon icon-handler js-handle"></i>
-                  Shoes
-                  <i class="icon icon-trash"></i>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+              <div class="fetch-holder">
+                <div class="loading-list">
+                  <div class="loader large"></div>
+                </div>
+                <div class="no-entry-selected">
+                  {{{i18n 'categories.noSelection'}}}
+                </div>
+                <div class="empty-list">
+                  {{{i18n 'categories.noEntry'}}}
+                </div>
+                <ul class="sortable catgories-list">
+              </div><!-- /.fetch-holder -->
+            </div><!-- /.nano-content -->
+          </div><!-- /.nano -->
+        </div><!-- /.modal-catgories-list -->
       </div><!-- /.modal-subcatgories-list -->
-    </div>
+    </div><!-- /.modal-catgories -->
   </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->

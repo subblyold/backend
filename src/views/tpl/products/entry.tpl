@@ -47,7 +47,15 @@
                 <a href="javascript:;" class="btn btn-action js-trigger-categories">
                   Edit category
                 </a>
+                {{#if getCategories}}
+                <ul>
+                  {{#each getCategories}}
+                    <li>{{asString}}</li>
+                  {{/each}}
+                </ul>
+                {{else}}
                 <span class="f-sml c-pdg-bas-l">Select where in your store's menu that you want your customers to find your product.</span>
+                {{/if}}
               </p>
             </div><!-- /.form-field -->
           </div><!-- /.form-row -->

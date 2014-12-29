@@ -391,7 +391,7 @@ SubblyCore.prototype.apiHeader = function()
 SubblyCore.prototype.api = function( serviceName, args )
 {
   var service = Helpers.getNested( Components, serviceName, false )
-    , args    = args || {}
+    , args    = args || null
 
   if( !service )
     throw new Error( 'Subbly API do not include ' + serviceName )

@@ -62,10 +62,12 @@
     , onInitialize: function()
       {
         // add view's event
-        this.addEvents( {'click a.js-trigger-categories':  'categoriesPopupOpen'} )
+        this.addEvents( {'click a.js-trigger-categories':  'categoriesOpenPopup'} )
         
         this.thumbTpl = Handlebars.compile( TPL.products.thumb )
         Handlebars.registerPartial( 'productThumb', TPL.products.thumb )
+
+        Subbly.on( 'categories::close', this.categoriesClosePopup, this )
       }
 
     , onRenderAfter: function( tplData )
@@ -77,6 +79,13 @@
           , skip:     false
         })
 
+        // Images upload
+        // ---------------------
+        this.initUploader()
+      }
+
+    , initUploader: function()
+      {
         //bind Uploader
         var $fileupload     = $( document.getElementById('subbly-product-img-upload') )
           , $uploadButton   = $( document.getElementById('js-trigger-loadimg') )
@@ -84,71 +93,59 @@
           , _feedback       = Subbly.feedback()
           , page            = this
 
-        // Images upload
-        // ---------------------
-
         // additional form data
         var formData = {
             sku:       ( this.model.isNew() ) ? false : this.model.get('sku')
           , file_type: 'product_image'
         }
 
-        // upload callbacks
-        var done = function( e, data )
-        {
-          var response = data.jqXHR.responseJSON.response
-
-          if( response.file )
-          {
-            if( response.file.sku == 'false' )
-            {
-              page.model.setAdditonalParams( 'product_image[]', {
-                filename: response.file.filename
-              })
-            }
-
-            // TODO: find a solution to mix upload/data display
-            var thumb = page.thumbTpl({
-              filename: response.file.file_path
-            })
-
-            $imagesList.append( thumb )
-
-            $( document.getElementById('product-images') ).find('div.nano').nanoScroller({ scroll: 'bottom' })
-          }
-
-          // TODO: display image into list
-          _feedback.progressEnd( 'success', 'Upload done' )
-        }
-
-        var add = function( e, data )
-        {
-          // Call parent `add` method
-          Uploader.prototype.add.apply( this, arguments )
-
-          _feedback.add()
-
-          //this.thumbTpl
-        }
-
-        var progress = function( e, data )
-        {
-          var progress = parseInt( data.loaded / data.total * 100, 10 )
-
-          _feedback.setProgress( progress )
-        }
-
-        // bind upload
+        // bind upload and callbacks
         this.uploader = new Uploader( $fileupload, {
             $dropZone: $uploadButton
-          , done:      done
-          , add:       add
-          , progress:  progress
+          , done:      function( e, data )
+            {
+              var response = data.jqXHR.responseJSON.response
+
+              if( response.file )
+              {
+                if( response.file.sku == 'false' )
+                {
+                  page.model.setAdditonalParams( 'product_image[]', {
+                    filename: response.file.filename
+                  })
+                }
+
+                // TODO: find a solution to mix upload/data display
+                var thumb = page.thumbTpl({
+                  filename: response.file.file_path
+                })
+
+                $imagesList.append( thumb )
+
+                $( document.getElementById('product-images') ).find('div.nano').nanoScroller({ scroll: 'bottom' })
+              }
+
+              // TODO: display image into list
+              _feedback.progressEnd( 'success', 'Upload done' )
+            }
+          , add:       function( e, data )
+            {
+              // Call parent `add` method
+              Uploader.prototype.add.apply( this, arguments )
+
+              _feedback.add()
+
+              //this.thumbTpl
+            }
+          , progress:  function( e, data )
+            {
+              var progress = parseInt( data.loaded / data.total * 100, 10 )
+
+              _feedback.setProgress( progress )
+            }
           , formData:  formData
           , url:       Subbly.apiUrl('uploader') //Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
         })
-
-        var feedback = Subbly.feedback()
 
         // allow to sort images
         this.sortable = new sortable( this.$el.find('ul.sortable'), 
@@ -157,43 +154,25 @@
           , url:         this.model.serviceName + '/' +  this.model.get('sku') + '/images/sort' 
           , onSuccess:   function( json )
             {
-              feedback.progressEnd( 'success', 'Product images updated' )
+              _feedback.progressEnd( 'success', 'Product images updated' )
             }
           , onError: function( json )
             {
-              feedback.progressEnd( 'success', 'Whoops, problem' )
+              _feedback.progressEnd( 'success', 'Whoops, problem' )
             }
           , onUpdate: function( json )
             {
-              feedback.add().progress()
+              _feedback.add().progress()
             }
         })
       }
 
-
-    , categoriesPopupOpen: function()
+    , categoriesOpenPopup: function()
       {
-        var scope  = this
-          , $modal = $( document.getElementById('modal') )
-
-        this.modal = Subbly.api('Subbly.View.Modal', 
-        {
-            message:  'xhr.responseJSON.message'
-          , tpl:      TPL.products.categories
-          , onShown:  function()
-            {
-              $modal.find('div.nano').nanoScroller()
-              new sortable( $modal.find('ul.sortable') )
-            }
-          , onCancel: function()
-            {
-              // scope.settings.onCancel()
-              scope.modal.close()
-            }
-          , onSubmit: function()
-            {
-              // scope.callXhr()
-            }
+        this.modal = Subbly.api('Subbly.View.Categories', {
+            product: this.model
+          , selectedIds: this.model.getCategoriesIds()
+          , view:    this
         })
       }
 
@@ -206,6 +185,38 @@
             Subbly.trigger( 'hash::change', 'products' )
           }
         })
+      }
+
+    , categoriesClosePopup: function( categories )
+      {
+        var productId       = this.model.get('id')
+          , categoriesData  = []
+
+        _.each( categories.models, function( category )
+        {
+          categoriesData.push( category.get('id') )
+
+          return category
+        })
+
+        if( !categoriesData.length )
+          return
+
+        if( this.model.isNew() )
+        {
+          this.model.setAdditonalParams( 'product_category[]', categoriesData )
+        }
+        else
+        {
+console.log('POST new categories')
+        }
+
+console.log( this.model.getAdditonalParams())
+      }
+
+    , onClose: function()
+      {
+        Subbly.off( 'categories::close', this.categoriesClosePopup, this )
       }
   }
 

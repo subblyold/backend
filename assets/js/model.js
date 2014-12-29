@@ -52,7 +52,10 @@ var SubblyModel = Backbone.Model.extend(
 
       if( isArray )
       {
-        this.additonalParams[ key ].push( value )
+        _.each( value, function( v )
+        {
+          this.additonalParams[ key ].push( v )
+        }, this )
       }
       else
       {

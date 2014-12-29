@@ -39,6 +39,10 @@
       }
     }
   },
+  "categories": {
+    "noEntry": "no entries",
+    "noSelection": "Select a category"
+  },
   "labels": {
       "item": {
         "single": "%1$s item",
@@ -46,6 +50,10 @@
       },
       "cancel": "cancel",
       "save": "save",
-      "noResults": "no results found"
+      "noResults": "no results found",
+      "categories": "Main",
+      "subcategories": "Submenu",
+      "newCategory": "new category",
+      "newSubCategory": "new sub category"
   }
 }

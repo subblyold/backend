@@ -160,6 +160,47 @@
 .modal-catgories-list {
   height: calc( 100% - 80px );
 
+  .loading-list {
+    background: @white;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+  }
+
+  .input-label {
+    border: none;
+    height: 55px;
+    outline: none;
+    padding: 0 15px;
+    width: 100%;
+  }
+
+  label {
+    // display: inline-block;
+    // // height: 16px;
+    // margin: 0 5px;
+    // // position: relative;
+    // width: 16px;
+
+    // &:before {
+    //   content: "\e600";
+    //   position: relative;
+    // }
+
+    // input {
+    //   -webkit-appearance: none;
+    //   appearance: none;
+    //   background: @product;
+    //   border-radius: 16px;
+    //   outline: none;
+    //   height: 16px;
+    //   width: 16px;
+    // }
+  }
+
   li {
     border-bottom: 1px solid @border-ligth;
     height: 55px;
@@ -220,6 +261,10 @@
     background: @white;
     color: @gray-dark;
     margin-left: 5px;
+
+    &[data-selected="0"] {
+      display: none;
+    }
   }
 }
 

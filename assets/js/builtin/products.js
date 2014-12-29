@@ -101,11 +101,11 @@
           , url:         scope.collection.serviceName + '/sort' 
           , onSuccess:   function( json )
             {
-              feedback.progressEnd( 'success', 'Products updated' )
+              feedback.progressEnd()
             }
           , onError: function( json )
             {
-              feedback.progressEnd( 'success', 'Whoops, problem' )
+              feedback.progressEnd( 'error', 'Whoops, problem' )
             }
           , onUpdate: function( json )
             {
