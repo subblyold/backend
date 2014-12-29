@@ -727,32 +727,35 @@ ol {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.icon-edit:before {
+.icon-checkbox:before {
   content: "\e600";
 }
-.icon-files:before {
+.icon-edit:before {
   content: "\e601";
 }
-.icon-handler:before {
+.icon-files:before {
   content: "\e602";
 }
-.icon-mail:before {
+.icon-handler:before {
   content: "\e603";
 }
-.icon-print:before {
+.icon-mail:before {
   content: "\e604";
 }
-.icon-search:before {
+.icon-print:before {
   content: "\e605";
 }
-.icon-trash:before {
+.icon-search:before {
   content: "\e606";
 }
-.icon-view-grid:before {
+.icon-trash:before {
   content: "\e607";
 }
-.icon-view-list:before {
+.icon-view-grid:before {
   content: "\e608";
+}
+.icon-view-list:before {
+  content: "\e609";
 }
 h1,
 h2,
@@ -1285,7 +1288,7 @@ input[type="search"] {
   position: relative;
 }
 .input-search-holder:before {
-  content: "\e605";
+  content: "\e606";
   display: block;
   height: 22px;
   left: 16px;
@@ -2166,6 +2169,22 @@ input[type="search"] {
 .modal-catgories-list {
   height: calc(100% - 80px);
 }
+.modal-catgories-list .loading-list {
+  background: #ffffff;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+.modal-catgories-list .input-label {
+  border: none;
+  height: 55px;
+  outline: none;
+  padding: 0 15px;
+  width: 100%;
+}
 .modal-catgories-list li {
   border-bottom: 1px solid #e1e1e1;
   height: 55px;
@@ -2215,5 +2234,8 @@ input[type="search"] {
   background: #ffffff;
   color: #a6a6a7;
   margin-left: 5px;
+}
+.modal-catgories-list .badge[data-selected="0"] {
+  display: none;
 }
 /*# sourceMappingURL=subbly.local.css.map */

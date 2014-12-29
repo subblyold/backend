@@ -26405,7 +26405,7 @@ i18n.prototype.choice = function( _str, _count )
 // shortcut ala gettext
 var __ = function( _str )
 {
-  Subbly.i18n().get( _str )
+  return Subbly.i18n().get( _str )
 }
 
 
@@ -27302,7 +27302,10 @@ var SubblyModel = Backbone.Model.extend(
 
       if( isArray )
       {
-        this.additonalParams[ key ].push( value )
+        _.each( value, function( v )
+        {
+          this.additonalParams[ key ].push( v )
+        }, this )
       }
       else
       {
@@ -28171,7 +28174,7 @@ SubblyCore.prototype.apiHeader = function()
 SubblyCore.prototype.api = function( serviceName, args )
 {
   var service = Helpers.getNested( Components, serviceName, false )
-    , args    = args || {}
+    , args    = args || null
 
   if( !service )
     throw new Error( 'Subbly API do not include ' + serviceName )
@@ -28457,6 +28460,14 @@ window.Subbly = new SubblyCore( subblyConfig )
 
 
 
+Components.Subbly.Model.Category = SubblyModel.extend(
+{
+    idAttribute:  'id'
+  , serviceName:  'categories'
+  , singleResult: 'category'
+})
+
+
 Components.Subbly.Model.Order = SubblyModel.extend(
 {
     idAttribute:  'id'
@@ -28467,9 +28478,70 @@ Components.Subbly.Model.Order = SubblyModel.extend(
 
 Components.Subbly.Model.Product = SubblyModel.extend(
 {
-    idAttribute:  'sku'
-  , serviceName:  'products'
-  , singleResult: 'product'
+    idAttribute:           'sku'
+  , serviceName:           'products'
+  , singleResult:          'product'
+  , categoriesIds:         false
+  , onCreateAddCategories: false
+
+    // Product categories
+    // ------------------------
+
+  , getCategories: function()
+    {
+      var categories = this.get('categories')
+
+      if( !categories || !categories.length )
+        return false
+
+      categories = _.each( categories, function( category )
+      {
+        category.asString = ''
+
+        if( !_.isNull( category.parent ) )
+        {
+          var parentId = +category.parent
+            , parent   = _.filter( categories, function( cat ) { return cat.id == parentId })
+
+          if( parent.length == 1 )
+          category.asString = parent[0].label + ' > '
+        }
+
+        category.asString += category.label
+      })
+
+      return categories
+    }
+
+  , getCategoriesIds: function()
+    {
+      var categories = this.getCategories()
+
+      if( !categories )
+        return false
+
+      // set cache
+      this.categoriesIds = _.pluck( categories, 'id')
+
+      return this.categoriesIds
+    }
+
+  , belongToCategory: function( catId )
+    {
+      if( !this.categoriesIds )
+        this.categoriesIds = this.getCategoriesIds()
+
+      if( !this.categoriesIds )
+      {
+        this.categoriesIds = []
+        return false
+      }
+
+      return ( this.categoriesIds.indexOf( catId ) !== -1 )
+    }
+
+    // Product images
+    // ------------------------
 
   , getImages: function()
     {
@@ -28491,6 +28563,11 @@ Components.Subbly.Model.Product = SubblyModel.extend(
       return false
     }
 
+    // Product JSON
+    // ------------------------
+
+    // override native method and
+    // add customs objects to Handelbars
   , toJSON: function()
     {
       // get the standard json for the object
@@ -28499,6 +28576,7 @@ Components.Subbly.Model.Product = SubblyModel.extend(
       // add methods
       json.getImages       = this.getImages()
       json.getDefaultImage = ( json.getImages ) ? json.getImages[0] : false
+      json.getCategories   = this.getCategories()
 
       // send it all back
       return json
@@ -28594,6 +28672,33 @@ Components.Subbly.Model.User = SubblyModel.extend(
     }
 })
 
+
+Components.Subbly.Collection.Categories = SubblyCollection.extend(
+{
+    model:       Components.Subbly.Model.Category
+  , serviceName: 'categories'
+
+  , comparator: function( model )
+    {
+        return model.get('position')
+    }
+
+  , getParent: function()
+    {
+      return _.filter( this.models, function( category )
+      {
+        return ( _.isNull( category.get('parent') ) )
+      })
+    }
+
+  , getChildren: function( id )
+    {
+      return _.filter( this.models, function( category )
+      {
+        return ( category.get('parent') == id )
+      })
+    }
+})
 
 // Base collection with pagination
 
@@ -28750,6 +28855,466 @@ Components.Subbly.Collection.Users = Components.Subbly.Collection.List.extend(
         return model.displayName()
     }
 })
+
+Components.Subbly.View.Categories = Backbone.View.extend(
+{
+    el:                 '#modal'
+  , parentCategory:     null
+  , modelCategories:    []
+
+  , initialize: function( options )
+    {
+      // this.$el = $( document.getElementById('modal') )
+
+      this.product = options.product
+      this.selectedIds = options.selectedIds || []
+
+      this.modelCategories = this.product.getCategoriesIds()
+
+      this.product = options.product
+
+      var tpl  = Handlebars.compile( TPL.products.categories )
+        , html = tpl( {} )
+
+      this.$el.on( 'shown.bs.modal',  _.bind( this.display, this ) )
+      this.$el.on( 'hidden.bs.modal', _.bind( this.onClose, this ) )
+
+      this.$el.html( html ).modal('show')
+
+      return this
+    }
+
+  , events: {
+        'click button.btn-success':                       'onSuccess'
+      , 'click button.btn-default':                       'onDefault'
+      , 'click ul.catgories-list li[data-parent="null"]': 'renderSubCategory'
+      , 'blur li.js-new-item input':                      'blurInput'
+      , 'keypress li.js-new-item input':                  'onEnter'
+      , 'click a.js-add-category':                        'addCategory'
+      , 'click a.js-add-subcategory':                     'addSubCategory'
+      , 'click i.js-delete':                              'deleteCategory'
+      , 'change input.js-manage-categories':              'manageCategory'
+    }
+
+  , showScroller: function()
+    {
+      this.$el.find('div.nano').nanoScroller()      
+    }
+
+  , scrollBottom: function( $holder )
+    {
+      $holder
+        .find('div.nano')
+        .nanoScroller({ scroll: 'bottom' })
+    }
+
+  , removeFocus: function()
+    {
+      this.$categoriesList.find('li').removeClass('active')
+      this.$subCategoriesList.find('li').removeClass('active')
+    }
+
+  , display:  function()
+    {
+      this.showScroller()
+
+      this.sortable = new sortable( this.$el.find('ul.sortable'), 
+      {
+          idAttribute: 'id'
+        , url:         'categories/sort' 
+        , onSuccess:   function( json )
+          {
+            // feedback.progressEnd()
+          }
+        , onError: function( json )
+          {
+            // feedback.progressEnd( 'error', 'Whoops, problem' )
+          }
+        , onUpdate: function( json )
+          {
+            // feedback.add().progress()
+          }
+      })   
+
+      var categories = Subbly.api('Subbly.Collection.Categories')
+        , scope      = this
+
+      this.$categoriesList       = this.$el.find('div.modal-main-catgories')
+      this.$subCategoriesList    = this.$el.find('div.modal-sub-catgories')
+      this.$subCategoriesTrigger = this.$el.find('a.js-add-subcategory') 
+
+      Subbly.fetch( categories, {
+        success: function( collection, response )
+        {
+          scope.collection = collection
+
+          scope.renderCategories( collection )
+
+          scope.$subCategoriesList
+            .find('div.fetch-holder')
+            .addClass('rendering idle')
+        }
+      })
+    }
+
+  , renderCategories: function( collection )
+    {
+      this.fragment = document.createDocumentFragment()
+
+      _.each( collection.getParent(), this.renderItem, this )
+
+      this.$categoriesList
+        .find('ul.sortable')
+        .html( this.fragment )
+
+      this.fragment = false
+
+      this.$categoriesList
+        .find('div.fetch-holder')
+        .removeClass('rendering loading')
+    }
+
+  , renderSubCategory: function( event )
+    {
+      var target = event.currentTarget
+        , id     = target.getAttribute('data-id')
+
+      if( _.isNull( id ) )
+        return
+
+      var fetcher = this.$subCategoriesList.find('div.fetch-holder')
+
+      fetcher.removeClass('rendering idle empty')
+
+      fetcher.addClass('rendering loading')
+
+      this.cleanSubCategories()
+      target.classList.add('active')
+
+      this.parentCategory = id
+
+      var children = this.collection.getChildren( id )
+
+      if( children.length )
+      {
+        this.fragment = document.createDocumentFragment()
+
+        _.each( children, this.renderItem, this )
+
+        this.$subCategoriesList
+          .find('ul.sortable')
+          .html( this.fragment )
+        
+        this.fragment = false
+      }
+
+      fetcher.removeClass('rendering loading')
+
+      if( !children.length )
+        fetcher.addClass('rendering empty')
+
+      this.$subCategoriesTrigger
+        .removeClass('dp-n')
+    }
+
+  , cleanSubCategories: function()
+    {
+      this.$subCategoriesList
+        .find('ul.sortable')
+        .html('')
+
+      this.removeFocus()
+
+      this.$subCategoriesTrigger
+        .addClass('dp-n')
+    }
+
+  , renderItem: function( model )
+    {
+      // <li>
+      //   <i class="icon icon-handler js-handle"></i>
+      //   <label>
+      //     <input type="checkbox">
+      //   </label>
+      //   Women
+      //   <span class="badge">2</span>
+      //   <i class="icon icon-trash"></i>
+      // </li>
+
+      var liItem     = document.createElement('li')
+        , handler    = document.createElement('i')
+        , checkLabel = document.createElement('label')
+        , checkbox   = document.createElement('input')
+        , trash      = document.createElement('i')
+        , parent     = model.get('parent')
+
+
+      handler.className = 'icon icon-handler js-handle'
+      trash.className   = 'icon icon-trash js-delete'
+
+      checkbox.type       = 'checkbox'
+      checkbox.className  = 'js-manage-categories'
+      checkbox.dataset.id = model.id
+
+      if( this.modelCategories && this.modelCategories.indexOf( model.id ) != -1 )
+        checkbox.checked = true
+
+      if( !_.isNull( parent ) )
+        checkbox.dataset.parent = parent
+
+      checkLabel.appendChild( checkbox )
+
+      liItem.appendChild( handler )
+      liItem.appendChild( checkLabel )
+      liItem.appendChild( document.createTextNode( model.get('label') ) )
+
+      if( _.isNull( parent ) )
+      {
+        var badge = document.createElement('span')
+
+        var children = this.collection.getChildren( model.id )
+          , selected = 0
+
+        _.each( children, function( child )
+        {
+          if( this.product.belongToCategory( child.id ) )
+            ++selected
+        }, this )
+
+        badge.className         = 'badge'
+        badge.dataset.selected  = selected
+        badge.dataset.id        = model.id
+
+        badge.appendChild( document.createTextNode( selected ) )
+        
+        liItem.dataset.parent   = 'null'
+
+        liItem.appendChild( badge )
+      }
+      else
+      {
+        liItem.dataset.parent   = model.get('parent')
+      }
+
+      liItem.appendChild( trash )
+
+      liItem.dataset.id = model.get('id')
+
+      if( this.fragment )
+        this.fragment.appendChild( liItem )
+      else
+        return liItem
+    }
+
+  , displayItemForm: function( $list, $holder )
+    {
+      var liItem = document.createElement('li')
+        , input  = document.createElement('input') 
+
+      input.type           = 'text'
+      input.className      = 'input-label'
+      input.placeholder    = __('labels.newCategory')
+      input.dataset.list   = $holder[0].getAttribute('data-list')
+      input.dataset.parent = 'null' 
+
+      if( this.parentCategory )
+        input.dataset.parent = this.parentCategory
+
+      liItem.appendChild( input )
+
+      liItem.className = 'js-new-item'
+
+      $holder
+        .find('ul.sortable')
+        .append( liItem )
+
+      this.scrollBottom( $holder )
+
+      input.focus()
+    }
+
+  , addCategory: function()
+    {
+      this.displayItemForm( this.$categoriesList, this.$categoriesList )
+      this.cleanSubCategories()
+    }
+
+  , addSubCategory: function()
+    {
+      this.$subCategoriesList
+        .find('div.fetch-holder')
+        .removeClass('rendering idle empty loading')
+
+      this.displayItemForm( this.$categoriesList, this.$subCategoriesList )
+    }
+
+  , blurInput: function( event )
+    {
+      var target = event.target
+
+      if( _.isBlank( target.value ) )
+      {
+        // $( target ).parents('li').remove()
+      }
+    }
+
+  , onEnter: function( event )
+    {
+      if (event.keyCode != 13) 
+        return
+
+      var value = event.target.value
+
+      if( _.isBlank( value ) )
+        return
+
+      // prevent bubbling
+      event.stopPropagation()
+      event.preventDefault()
+
+      var newCategory = Subbly.api('Subbly.Model.Category')
+        , $target     = $( event.target )
+        , $list       = $( 'div.' + $target.attr('data-list') )
+        , scope       = this
+        , data        = {
+              label:  value
+            , slug:   _.slugify( value )
+          }
+
+      var parent = $target.attr('data-parent')
+
+      if( parent != 'null' )
+        data.parent = parent
+
+      Subbly.store( 
+          newCategory
+        , data
+        , {
+            onSuccess: function( model, response, opts )
+            {
+              scope.collection.add( model )
+
+              var html = scope.renderItem( model )
+
+              $target
+                .parents('li')
+                .remove()
+
+              $list
+                .find('ul.sortable')
+                .append( html )
+
+              scope.scrollBottom( $list )
+            }
+        })
+    }
+
+  , deleteCategory: function( event )
+    {
+      // prevent bubbling
+      event.stopPropagation()
+      event.preventDefault()
+
+      var $target = $( event.currentTarget ) 
+        , id      = $target.parents('li').attr('data-id')
+        , model   = this.collection.get( id )
+
+      model.destroy()
+
+      // this.xhr = $.ajax({
+      //       url:  this.url
+      //     , type: 'DELETE'
+      //   })
+    }
+
+  , manageCategory: function( event )
+    {
+      var target  = event.currentTarget
+        , catId   = target.getAttribute('data-id')
+        , parent  = target.getAttribute('data-parent')
+        , $parent = false
+
+      if( parent )
+        $parent = this.$el.find('li[data-id="' + parent + '"]')
+
+      if( target.checked )
+      {
+        this.addToSeleted( catId )
+      }
+      else
+      {
+        this.removeFromSelected( catId )
+      }
+
+      if( $parent )
+      {
+        var $badge   = $parent.find('span.badge')
+          , selected = +$badge.attr('data-selected')
+
+        selected = ( target.checked ) ? ( selected + 1 ) : ( selected - 1 )
+
+        $badge
+          .attr('data-selected', selected )
+          .html( selected ) 
+
+        $parent
+          .find('input.js-manage-categories')[0]
+          .checked = selected
+      }
+    }
+
+  , addToSeleted: function( catId )
+    {
+      if( this.selectedIds.indexOf( catId ) === -1 )
+      {
+        this.selectedIds.push( +catId )
+      }
+    }
+
+  , removeFromSelected: function( catId )
+    {
+      this.selectedIds = _.reject( this.selectedIds, function( id )
+      {
+        return id == catId 
+      })
+    }
+
+  , onClose: function()
+    {
+      var collection = Subbly.api('Subbly.Collection.Categories')
+
+      _.each( this.selectedIds, function( modelId )
+      {
+        collection.add( Subbly.api('Subbly.Model.Category', {
+          id: modelId
+        }) )
+      }, this)
+
+      Subbly.trigger( 'categories::close', collection )
+
+      this.$el.html('')
+      this.$el.unbind()
+      this.unbind()
+      this.undelegateEvents()
+    }
+
+  , onSuccess: function()
+    {
+      this.$el.modal('hide')
+    }
+
+  , onCancel: function()
+    {
+      // scope.settings.onCancel()
+      // scope.modal.close()
+    }
+
+  , onSubmit: function()
+    {
+      // scope.callXhr()
+    }
+})
+
 var SubblyViewForm
 
 Components.Subbly.View.FormView = SubblyViewForm = SubblyView.extend(
@@ -29640,8 +30205,9 @@ Components.Subbly.View.MainNav = Backbone.View.extend(
     }
 })
 
+var SubblyViewModal
 
-Components.Subbly.View.Modal = Backbone.View.extend(
+Components.Subbly.View.Modal = SubblyViewModal = Backbone.View.extend(
 {
     el:       '#modal'
   , defaults: 
@@ -29717,6 +30283,15 @@ Components.Subbly.View.Modal = Backbone.View.extend(
     }
 })
 
+
+Components.Subbly.View.ProductCategories = Components.Subbly.View.Modal.extend(
+{
+    initialize: function( options )
+    {
+
+      //Call parent
+    } 
+})
 var SubblyViewSearch
 
 Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
@@ -30549,10 +31124,12 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , onInitialize: function()
       {
         // add view's event
-        this.addEvents( {'click a.js-trigger-categories':  'categoriesPopupOpen'} )
+        this.addEvents( {'click a.js-trigger-categories':  'categoriesOpenPopup'} )
         
         this.thumbTpl = Handlebars.compile( TPL.products.thumb )
         Handlebars.registerPartial( 'productThumb', TPL.products.thumb )
+
+        Subbly.on( 'categories::close', this.categoriesClosePopup, this )
       }
 
     , onRenderAfter: function( tplData )
@@ -30564,6 +31141,13 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
           , skip:     false
         })
 
+        // Images upload
+        // ---------------------
+        this.initUploader()
+      }
+
+    , initUploader: function()
+      {
         //bind Uploader
         var $fileupload     = $( document.getElementById('subbly-product-img-upload') )
           , $uploadButton   = $( document.getElementById('js-trigger-loadimg') )
@@ -30571,71 +31155,59 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
           , _feedback       = Subbly.feedback()
           , page            = this
 
-        // Images upload
-        // ---------------------
-
         // additional form data
         var formData = {
             sku:       ( this.model.isNew() ) ? false : this.model.get('sku')
           , file_type: 'product_image'
         }
 
-        // upload callbacks
-        var done = function( e, data )
-        {
-          var response = data.jqXHR.responseJSON.response
-
-          if( response.file )
-          {
-            if( response.file.sku == 'false' )
-            {
-              page.model.setAdditonalParams( 'product_image[]', {
-                filename: response.file.filename
-              })
-            }
-
-            // TODO: find a solution to mix upload/data display
-            var thumb = page.thumbTpl({
-              filename: response.file.file_path
-            })
-
-            $imagesList.append( thumb )
-
-            $( document.getElementById('product-images') ).find('div.nano').nanoScroller({ scroll: 'bottom' })
-          }
-
-          // TODO: display image into list
-          _feedback.progressEnd( 'success', 'Upload done' )
-        }
-
-        var add = function( e, data )
-        {
-          // Call parent `add` method
-          Uploader.prototype.add.apply( this, arguments )
-
-          _feedback.add()
-
-          //this.thumbTpl
-        }
-
-        var progress = function( e, data )
-        {
-          var progress = parseInt( data.loaded / data.total * 100, 10 )
-
-          _feedback.setProgress( progress )
-        }
-
-        // bind upload
+        // bind upload and callbacks
         this.uploader = new Uploader( $fileupload, {
             $dropZone: $uploadButton
-          , done:      done
-          , add:       add
-          , progress:  progress
+          , done:      function( e, data )
+            {
+              var response = data.jqXHR.responseJSON.response
+
+              if( response.file )
+              {
+                if( response.file.sku == 'false' )
+                {
+                  page.model.setAdditonalParams( 'product_image[]', {
+                    filename: response.file.filename
+                  })
+                }
+
+                // TODO: find a solution to mix upload/data display
+                var thumb = page.thumbTpl({
+                  filename: response.file.file_path
+                })
+
+                $imagesList.append( thumb )
+
+                $( document.getElementById('product-images') ).find('div.nano').nanoScroller({ scroll: 'bottom' })
+              }
+
+              // TODO: display image into list
+              _feedback.progressEnd( 'success', 'Upload done' )
+            }
+          , add:       function( e, data )
+            {
+              // Call parent `add` method
+              Uploader.prototype.add.apply( this, arguments )
+
+              _feedback.add()
+
+              //this.thumbTpl
+            }
+          , progress:  function( e, data )
+            {
+              var progress = parseInt( data.loaded / data.total * 100, 10 )
+
+              _feedback.setProgress( progress )
+            }
           , formData:  formData
           , url:       Subbly.apiUrl('uploader') //Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
         })
-
-        var feedback = Subbly.feedback()
 
         // allow to sort images
         this.sortable = new sortable( this.$el.find('ul.sortable'), 
@@ -30644,43 +31216,25 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
           , url:         this.model.serviceName + '/' +  this.model.get('sku') + '/images/sort' 
           , onSuccess:   function( json )
             {
-              feedback.progressEnd( 'success', 'Product images updated' )
+              _feedback.progressEnd( 'success', 'Product images updated' )
             }
           , onError: function( json )
             {
-              feedback.progressEnd( 'success', 'Whoops, problem' )
+              _feedback.progressEnd( 'success', 'Whoops, problem' )
             }
           , onUpdate: function( json )
             {
-              feedback.add().progress()
+              _feedback.add().progress()
             }
         })
       }
 
-
-    , categoriesPopupOpen: function()
+    , categoriesOpenPopup: function()
       {
-        var scope  = this
-          , $modal = $( document.getElementById('modal') )
-
-        this.modal = Subbly.api('Subbly.View.Modal', 
-        {
-            message:  'xhr.responseJSON.message'
-          , tpl:      TPL.products.categories
-          , onShown:  function()
-            {
-              $modal.find('div.nano').nanoScroller()
-              new sortable( $modal.find('ul.sortable') )
-            }
-          , onCancel: function()
-            {
-              // scope.settings.onCancel()
-              scope.modal.close()
-            }
-          , onSubmit: function()
-            {
-              // scope.callXhr()
-            }
+        this.modal = Subbly.api('Subbly.View.Categories', {
+            product: this.model
+          , selectedIds: this.model.getCategoriesIds()
+          , view:    this
         })
       }
 
@@ -30693,6 +31247,38 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
             Subbly.trigger( 'hash::change', 'products' )
           }
         })
+      }
+
+    , categoriesClosePopup: function( categories )
+      {
+        var productId       = this.model.get('id')
+          , categoriesData  = []
+
+        _.each( categories.models, function( category )
+        {
+          categoriesData.push( category.get('id') )
+
+          return category
+        })
+
+        if( !categoriesData.length )
+          return
+
+        if( this.model.isNew() )
+        {
+          this.model.setAdditonalParams( 'product_category[]', categoriesData )
+        }
+        else
+        {
+console.log('POST new categories')
+        }
+
+console.log( this.model.getAdditonalParams())
+      }
+
+    , onClose: function()
+      {
+        Subbly.off( 'categories::close', this.categoriesClosePopup, this )
       }
   }
 
@@ -30811,11 +31397,11 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
           , url:         scope.collection.serviceName + '/sort' 
           , onSuccess:   function( json )
             {
-              feedback.progressEnd( 'success', 'Products updated' )
+              feedback.progressEnd()
             }
           , onError: function( json )
             {
-              feedback.progressEnd( 'success', 'Whoops, problem' )
+              feedback.progressEnd( 'error', 'Whoops, problem' )
             }
           , onUpdate: function( json )
             {

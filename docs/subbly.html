@@ -1071,7 +1071,7 @@ based on evironement config’</p>
             <div class="content"><div class='highlight'><pre>SubblyCore.prototype.api = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( serviceName, args )</span>
 </span>{
   <span class="hljs-keyword">var</span> service = Helpers.getNested( Components, serviceName, <span class="hljs-literal">false</span> )
-    , args    = args || {}
+    , args    = args || <span class="hljs-literal">null</span>
 
   <span class="hljs-keyword">if</span>( !service )
     <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>( <span class="hljs-string">'Subbly API do not include '</span> + serviceName )</pre></div></div>
@@ -1123,7 +1123,7 @@ Trigger local loading event</p>
   <span class="hljs-keyword">if</span>( context )
     context.trigger( <span class="hljs-string">'fetch::calling'</span> )
   
-  <span class="hljs-keyword">this</span>._fetchXhr[ xhrId ] = obj.fetch({
+  <span class="hljs-keyword">var</span> promise = obj.fetch({
       data:    options.data || {} 
     , xhrId:   xhrId
     , success: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( bbObj, response, opts )</span>
@@ -1143,6 +1143,10 @@ Trigger local loading event</p>
           options.error( bbObj, response, opts  )
       }
   })
+
+  <span class="hljs-keyword">this</span>._fetchXhr[ xhrId ] = promise
+
+  <span class="hljs-keyword">return</span> promise
 }</pre></div></div>
             
         </li>
