@@ -11,6 +11,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     {
       // reference to the parent view
       this._context      = options.context
+      this._pathContext  = options.pathContext
 
       // model's relations to include
       this._includes     = options.includes || []
@@ -68,7 +69,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
           return
         }
 
-        Subbly.trigger( 'hash::change', 'customers/search/' + query, false )
+        Subbly.trigger( 'hash::change', scope._pathContext + '/search/' + query, false )
 
         // TODO: set as callback
         scope._context.showLoading()
@@ -137,7 +138,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
       this.$el.removeClass('searching')
       this._$input.val('')
 
-      Subbly.trigger( 'hash::change', 'customers', true )
+      Subbly.trigger( 'hash::change', this._pathContext, true )
 
       this._context
         .resetList()

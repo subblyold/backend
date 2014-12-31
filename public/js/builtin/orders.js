@@ -16,8 +16,9 @@
       }
       
     , routes: {
-          'orders':     'display'
-        , 'orders/:id': 'display'
+          'orders':                 'display'
+        , 'orders/:id':             'display'
+        , 'orders/search/:query': 'search'
       }
 
     , onRemove: function()
@@ -50,14 +51,30 @@
             .onInitialRender()
       }
 
-    , displayView: function( sheetCB )
+    , search: function( query ) 
       {
         var scope      = this
           , view       = this.getViewByPath( 'Subbly.View.Orders' )
           , collection = Subbly.api('Subbly.Collection.Orders')
 
-        view
+        // call sub-view display
+        this.getViewByPath( 'Subbly.View.OrderEntry' )
           .displayTpl()
+
+        view.displayTpl()
+          .doSearch( query )
+
+      }
+
+    , displayView: function( sheetCB )
+      {
+        var scope      = this
+          , view       = this.getViewByPath( 'Subbly.View.Orders' )
+          , collection = Subbly.api('Subbly.Collection.Orders')
+        
+        this._listDisplayed = true
+
+        view.displayTpl()
 
         // call sub-view display
         this.getViewByPath( 'Subbly.View.OrderEntry' )
@@ -121,6 +138,33 @@
             }
         }, this )
       }
+
+    , searching: function()
+      {
+        this.getViewByPath( 'Subbly.View.OrderEntry' ).noResults()
+      }
+
+    , noResults: function()
+      {
+        this.getViewByPath( 'Subbly.View.Orders' ).noResults()
+        this.getViewByPath( 'Subbly.View.OrderEntry' ).noResults()
+      }
+
+    , resetSearch: function()
+      {
+        this._listDisplayed = false
+
+        var listView = this.getViewByPath( 'Subbly.View.Orders' )
+
+        listView
+          .resetList()
+
+        this.displayView( function()
+        {
+          listView
+            .onInitialRender()
+        })
+      }
   }
 
 
@@ -133,6 +177,11 @@
     , noResult: function()
       {
         this.$el.find('div.fetch-holder').removeClass('loading')
+      }
+
+    , noResults: function()
+      {
+        this.displayRendering()
       }
 
     , onDisplayTpl: function()
@@ -165,15 +214,27 @@
         this.callController( 'sheet', id )
       }
 
+    , onDisplayTpl: function()
+      {
+        // Bind search form
+        this._searchForm = Subbly.api('Subbly.View.Search', {
+            collection:  'Subbly.Collection.Orders'
+          , element:     '#orders-search'
+          , pathContext: 'orders'
+          , context:     this
+        })
+      }
+
       // Build single list's row
     , displayRow: function( model )
       {
+console.log( model )
         var html = this._tplRowCompiled({
             id:           model.get('id')
           , totalPrice:   model.get('total_price')
-          , totalItems:   model.get('products').length
+          // , totalItems:   model.get('orders').length
           , orderStatus:  model.get('status')
-          , customerName: 'Fake Name'
+          , customerName: 'toto Name'
           , createdDate:  moment.utc( model.get('created_at') ).fromNow()
         })
 
@@ -182,7 +243,17 @@
 
     , onDetailIsEmpty: function()
       {
-        this._controller.getViewByPath( 'Subbly.View.OrderEntry' ).noResult()
+        this._controller.getViewByPath( 'Subbly.View.OrderEntry' ).noResults()
+      }
+
+    , doSearch: function( query )
+      {
+        this._searchForm.preFill( query )
+      }
+
+    , noResults: function()
+      {
+        this.showSearch()
       }
 
       // Higthligth active row

@@ -235,9 +235,10 @@
       {
         // Bind search form
         this._searchForm = Subbly.api('Subbly.View.Search', {
-            collection: 'Subbly.Collection.Users'
-          , element:    '#customers-search'
-          , context:    this
+            collection:  'Subbly.Collection.Users'
+          , element:     '#customers-search'
+          , pathContext: 'customers'
+          , context:     this
         })
       }
 
