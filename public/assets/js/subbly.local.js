@@ -27444,8 +27444,19 @@ var SubblyView = Backbone.View.extend(
 
   , setValue: function( key, value )
     {
-      this[ key ] = value
-
+      // TODO: add test
+      if( _.isObject( key ) )
+      {
+        _.each( key, function( v, k )
+        {
+          this[ k ] = v
+        }, this)
+      }
+      else
+      {
+        this[ key ] = value
+      }
+      
       return this
     }
 
@@ -28232,6 +28243,33 @@ SubblyCore.prototype.fetch = function( obj, options, context )
 }
 
 
+
+// Provides a way to execute callback functions 
+// based on one or more XHR promise
+//
+//      @params  {object}  promise
+//      @params  {object}  callbacks options
+//      @return  {void}
+//
+SubblyCore.prototype.parsePromise = function( deferrer, callback )
+{
+  callback = callback || {}
+  
+  if( deferrer[ 1 ] == 'success' )
+  {
+    if( callback.success && _.isFunction( callback.success ) )
+    {
+      callback.success( deferrer[ 0 ].response )
+    }
+
+    return deferrer[ 0 ].response
+  }
+  else // TODO: manage error
+  {
+console.log( deferrer[ 1 ] )
+  }
+}
+
 // Generic method to save a model.
 // Format json aand
 // stores the XHR call to prevent cancel
@@ -28481,8 +28519,6 @@ Components.Subbly.Model.Product = SubblyModel.extend(
     idAttribute:           'sku'
   , serviceName:           'products'
   , singleResult:          'product'
-  , categoriesIds:         false
-  , onCreateAddCategories: false
 
     // Product categories
     // ------------------------
@@ -28491,53 +28527,15 @@ Components.Subbly.Model.Product = SubblyModel.extend(
     {
       var categories = this.get('categories')
 
-      if( !categories || !categories.length )
-        return false
-
-      categories = _.each( categories, function( category )
-      {
-        category.asString = ''
-
-        if( !_.isNull( category.parent ) )
-        {
-          var parentId = +category.parent
-            , parent   = _.filter( categories, function( cat ) { return cat.id == parentId })
-
-          if( parent.length == 1 )
-          category.asString = parent[0].label + ' > '
-        }
-
-        category.asString += category.label
-      })
+      if( _.isUndefined( categories ) )
+        return []
 
       return categories
     }
 
   , getCategoriesIds: function()
     {
-      var categories = this.getCategories()
-
-      if( !categories )
-        return false
-
-      // set cache
-      this.categoriesIds = _.pluck( categories, 'id')
-
-      return this.categoriesIds
-    }
-
-  , belongToCategory: function( catId )
-    {
-      if( !this.categoriesIds )
-        this.categoriesIds = this.getCategoriesIds()
-
-      if( !this.categoriesIds )
-      {
-        this.categoriesIds = []
-        return false
-      }
-
-      return ( this.categoriesIds.indexOf( catId ) !== -1 )
+      return _.pluck( this.getCategories(), 'id' )
     }
 
     // Product images
@@ -28860,20 +28858,18 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 {
     el:                 '#modal'
   , parentCategory:     null
-  , modelCategories:    []
 
   , initialize: function( options )
     {
       // this.$el = $( document.getElementById('modal') )
 
-      this.product = options.product
       this.selectedIds = options.selectedIds || []
 
-      this.modelCategories = this.product.getCategoriesIds()
+      // this.modelCategories = this.product.getCategoriesIds()
 
-      this.product = options.product
+      // this.product = options.product
 
-      var tpl  = Handlebars.compile( TPL.products.categories )
+      var tpl  = Handlebars.compile( TPL.products.categoriesPopin )
         , html = tpl( {} )
 
       this.$el.on( 'shown.bs.modal',  _.bind( this.display, this ) )
@@ -29034,7 +29030,8 @@ Components.Subbly.View.Categories = Backbone.View.extend(
       // <li>
       //   <i class="icon icon-handler js-handle"></i>
       //   <label>
-      //     <input type="checkbox">
+      //     <span class="input-checkbox-category"></span>
+      //     <input type="checkbox" class="js-manage-categories">
       //   </label>
       //   Women
       //   <span class="badge">2</span>
@@ -29044,6 +29041,7 @@ Components.Subbly.View.Categories = Backbone.View.extend(
       var liItem     = document.createElement('li')
         , handler    = document.createElement('i')
         , checkLabel = document.createElement('label')
+        , checkSpan  = document.createElement('span')
         , checkbox   = document.createElement('input')
         , trash      = document.createElement('i')
         , parent     = model.get('parent')
@@ -29056,13 +29054,16 @@ Components.Subbly.View.Categories = Backbone.View.extend(
       checkbox.className  = 'js-manage-categories'
       checkbox.dataset.id = model.id
 
-      if( this.modelCategories && this.modelCategories.indexOf( model.id ) != -1 )
+      if( this.belongToSeleted( model.id ) )
         checkbox.checked = true
 
       if( !_.isNull( parent ) )
         checkbox.dataset.parent = parent
 
       checkLabel.appendChild( checkbox )
+
+      checkSpan.className = 'input-checkbox-category'
+      checkLabel.appendChild( checkSpan )
 
       liItem.appendChild( handler )
       liItem.appendChild( checkLabel )
@@ -29077,7 +29078,7 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 
         _.each( children, function( child )
         {
-          if( this.product.belongToCategory( child.id ) )
+          if( this.belongToSeleted( child.id ) )
             ++selected
         }, this )
 
@@ -29248,8 +29249,9 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 
       if( $parent )
       {
-        var $badge   = $parent.find('span.badge')
-          , selected = +$badge.attr('data-selected')
+        var $badge    = $parent.find('span.badge')
+          , selected  = +$badge.attr('data-selected')
+          , $checkbox = $parent.find('input.js-manage-categories')
 
         selected = ( target.checked ) ? ( selected + 1 ) : ( selected - 1 )
 
@@ -29257,15 +29259,20 @@ Components.Subbly.View.Categories = Backbone.View.extend(
           .attr('data-selected', selected )
           .html( selected ) 
 
-        $parent
-          .find('input.js-manage-categories')[0]
-          .checked = selected
+        $checkbox.prop('checked', target.checked )
+
+        $checkbox.trigger('change')
       }
+    }
+
+  , belongToSeleted: function( catId )
+    {
+      return ( this.selectedIds.indexOf( catId ) !== -1 )
     }
 
   , addToSeleted: function( catId )
     {
-      if( this.selectedIds.indexOf( catId ) === -1 )
+      if( !this.belongToSeleted( catId ) )
       {
         this.selectedIds.push( +catId )
       }
@@ -29285,9 +29292,7 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 
       _.each( this.selectedIds, function( modelId )
       {
-        collection.add( Subbly.api('Subbly.Model.Category', {
-          id: modelId
-        }) )
+        collection.add( this.collection.get( modelId ) )
       }, this)
 
       Subbly.trigger( 'categories::close', collection )
@@ -29305,12 +29310,14 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 
   , onCancel: function()
     {
+console.log('categories modal onCancel')
       // scope.settings.onCancel()
       // scope.modal.close()
     }
 
   , onSubmit: function()
     {
+console.log('categories modal onSubmit')
       // scope.callXhr()
     }
 })
@@ -31084,30 +31091,58 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
 
     , display: function( sku ) 
       {
-        var isNew   = ( sku === '_new' )
-          , opts    = ( isNew ) ? {} : { sku: sku }
-          , product = Subbly.api('Subbly.Model.Product', opts )
-          , view    = this.getViewByPath( 'Subbly.View.ProductEntry' )
+        var isNew      = ( sku === '_new' )
+          , opts       = ( isNew ) ? {} : { sku: sku }
+          , product    = Subbly.api('Subbly.Model.Product', opts )
+          , categories = Subbly.api('Subbly.Collection.Categories')
+          , view       = this.getViewByPath( 'Subbly.View.ProductEntry' )
         
         view.displayTpl()
 
-        Subbly.fetch( product,
+        // Handle AJAX sync exemple
+        // we need to call product desc + categories list
+
+        // product promise
+        var deferredProduct = Subbly.fetch( product,
         {
             data: { includes: ['options', 'images', 'categories'] }
-          , success: function( model, response )
-            {
-              // TODO: get status list from config
-              var json = model.toJSON()
-              
-              json.isNew      = isNew
-              json.statusList = [ 'draft', 'active', 'hidden', 'sold_out', 'coming_soon' ]
-
-              view
-                .setValue( 'model', model )
-                .displayTpl( json )
-                .render()
-            }
         }, this )
+
+        // categories promise
+        var deferredCategories = Subbly.fetch( categories )
+
+        // when both are loaded
+        $.when( deferredProduct, deferredCategories )
+          .done(function ( productResponse, categoriesResponse ) 
+          {
+              var categories = Subbly.parsePromise( categoriesResponse )['categories']
+
+              Subbly.parsePromise( productResponse, {
+                success: function( response )
+                {
+                  product = Subbly.api('Subbly.Model.Product', response['product'] )
+
+                  // TODO: get status list from config
+                  var json = product.toJSON()
+
+                  json.isNew      = isNew
+                  json.statusList = [ 'draft', 'active', 'hidden', 'sold_out', 'coming_soon' ]
+
+                  view
+                    .setValue( {
+                        'model':      product 
+                      , 'categories': categories
+                    })
+                    .displayTpl( json )
+                    .render()
+                    .updateCategories()
+                }
+              })
+          })
+          .fail(function() // if one fail
+          {
+console.log( this )
+          })
       }
   }
 
@@ -31124,10 +31159,17 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , onInitialize: function()
       {
         // add view's event
-        this.addEvents( {'click a.js-trigger-categories':  'categoriesOpenPopup'} )
+        this.addEvents( {
+            'click a.js-trigger-categories':      'categoriesOpenPopup'
+          , 'click a.js-remove-category-trigger': 'removeCategory'
+        })
         
+        // register sub-views
         this.thumbTpl = Handlebars.compile( TPL.products.thumb )
+        this.catTpl   = Handlebars.compile( TPL.products.categoriesList )
+
         Handlebars.registerPartial( 'productThumb', TPL.products.thumb )
+        Handlebars.registerPartial( 'categoriesList', TPL.products.categoriesList )
 
         Subbly.on( 'categories::close', this.categoriesClosePopup, this )
       }
@@ -31144,6 +31186,16 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         // Images upload
         // ---------------------
         this.initUploader()
+
+        // Images sort
+        // ---------------------
+        this.initSortable()
+
+        // Categories
+        // ---------------------
+        // this.$categoriesList = this.$el.find('ul.product-categories')
+
+        this.model.on('change:categories', this.updateCategories, this )
       }
 
     , initUploader: function()
@@ -31206,8 +31258,14 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
               _feedback.setProgress( progress )
             }
           , formData:  formData
-          , url:       Subbly.apiUrl('uploader') //Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
+          , url:       Subbly.apiUrl('uploader')
         })
+      }
+
+    , initSortable: function()
+      {
+        var _feedback       = Subbly.feedback()
+          , page            = this
 
         // allow to sort images
         this.sortable = new sortable( this.$el.find('ul.sortable'), 
@@ -31229,15 +31287,117 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         })
       }
 
+    , loadCategories: function()
+      {
+        console.log( this.categories )
+        console.log( this.model.getCategories() )
+
+        var modelCatIds = this.model.getCategoriesIds()
+          , categories  = []
+          , isChildren  = []
+          , hasChildren = []
+
+        var modelCategories = _.filter( this.categories, function( category )
+        {
+          if( modelCatIds.indexOf( category.id ) === -1 )
+            return false
+
+          if( !_.isNull( category.parent ) )
+          {
+            if( !hasChildren[ category.parent ] )
+              hasChildren[ category.parent ] = []
+
+            hasChildren[ category.parent ].push( category.id )
+
+            hasChildren.push( category.id )
+
+            // isChildren.push( category.parent )
+          }
+
+          return category
+        }, this)
+
+        return _.filter( modelCategories, function( category )
+        {
+          category.asString = ''
+
+          if( !_.isNull( category.parent ) )
+          {
+            var parentId = +category.parent
+              , parent   = _.filter( this.categories, function( cat ) 
+                {
+                  return cat.id == parentId 
+                })
+
+            if( parent.length == 1 )
+              category.asString = parent[0].label + ' > ' + category.label
+            else
+              return false
+          }
+          else
+          {
+            if( hasChildren.indexOf( category.id ) !== -1 )
+              category.asString = category.label
+            else
+            {
+console.log( 'exclude ' + category.label )
+              return false
+            }
+          }
+
+          return category
+        }, this)
+
+      }
+
     , categoriesOpenPopup: function()
       {
         this.modal = Subbly.api('Subbly.View.Categories', {
-            product: this.model
-          , selectedIds: this.model.getCategoriesIds()
+            selectedIds: this.model.getCategoriesIds()
           , view:    this
         })
       }
 
+    , categoriesClosePopup: function( categories )
+      {
+        var productId        = this.model.get('id')
+          , categoriesIds    = []
+          , categoriesModels = []
+
+        _.each( categories.models, function( category )
+        {
+          categoriesIds.push( category.get('id') )
+          categoriesModels.push( category.toJSON() )
+
+          return category
+        })
+
+        this.model.set( 'categories', categoriesModels )
+        this.model.setAdditonalParams( 'product_category[]', categoriesIds )
+      }
+
+    , updateCategories: function()
+      {
+        var html = this.catTpl( { categories: this.loadCategories() })
+
+        this.$el.find('ul.product-categories').html( html )
+      }
+
+    , removeCategory: function( event )
+      {
+        var target     = event.currentTarget
+          , catId      = target.getAttribute('data-id')
+          , categories = this.model.get('categories')
+
+        categories = _.reject( categories, function( category )
+        {
+          return category.id === +catId 
+        })
+
+        this.model.set( 'categories', categories )
+      }
+
+      // Save form update
     , onSubmit: function()
       {
         Subbly.store( this.model, this.getFormValues(), 
@@ -31249,36 +31409,11 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         })
       }
 
-    , categoriesClosePopup: function( categories )
-      {
-        var productId       = this.model.get('id')
-          , categoriesData  = []
-
-        _.each( categories.models, function( category )
-        {
-          categoriesData.push( category.get('id') )
-
-          return category
-        })
-
-        if( !categoriesData.length )
-          return
-
-        if( this.model.isNew() )
-        {
-          this.model.setAdditonalParams( 'product_category[]', categoriesData )
-        }
-        else
-        {
-console.log('POST new categories')
-        }
-
-console.log( this.model.getAdditonalParams())
-      }
-
+      // unbind events
     , onClose: function()
       {
         Subbly.off( 'categories::close', this.categoriesClosePopup, this )
+        this.model.off('change:categories', this.updateCategories, this )
       }
   }
 

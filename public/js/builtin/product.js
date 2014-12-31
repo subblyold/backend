@@ -235,10 +235,10 @@ console.log( this )
 
           if( !_.isNull( category.parent ) )
           {
-            if( !isParent[ category.parent ] )
-              isParent[ category.parent ] = []
+            if( !hasChildren[ category.parent ] )
+              hasChildren[ category.parent ] = []
 
-            isParent[ category.parent ].push( category.id )
+            hasChildren[ category.parent ].push( category.id )
 
             hasChildren.push( category.id )
 

@@ -28,7 +28,7 @@ module.exports = function(grunt)
                   , sourceMapFilename: '<%= pkg.dist %>css/<%= pkg.filename %>.local.css.map'
                 }
               , files: {
-                  '<%= pkg.dist %>css/<%= pkg.filename %>.local.css': 'assets/less/subbly.less'
+                  '<%= pkg.dist %>css/<%= pkg.filename %>.local.css': 'public/less/subbly.less'
                 }
             }
           , staging: 
@@ -43,7 +43,7 @@ module.exports = function(grunt)
                   , compress: true
                 }
               , files: {
-                  '<%= pkg.dist %>css/<%= pkg.filename %>.staging.css': 'assets/less/subbly.less'
+                  '<%= pkg.dist %>css/<%= pkg.filename %>.staging.css': 'public/less/subbly.less'
                 }
             }
         }
@@ -63,7 +63,7 @@ module.exports = function(grunt)
               , files: 
                 {
                     '<%= pkg.dist %>css/<%= pkg.filename %>.local.css': [
-                        'assets/less/subbly.less'
+                        'public/less/subbly.less'
                     ]
                 }
               , src: '<%= pkg.dist %>css/<%= pkg.filename %>.local.css'
@@ -73,7 +73,7 @@ module.exports = function(grunt)
         {
             options: 
             {
-              csslintrc: 'assets/less/.csslintrc'
+              csslintrc: 'public/less/.csslintrc'
             }
           , src: [ '<%= pkg.dist %>css/<%= pkg.filename %>.local.css' ]
         }
@@ -129,61 +129,61 @@ module.exports = function(grunt)
             {
                 src: [
                   // Dependencies
-                    'assets/lib/jquery/jquery-2.1.1.js'
-                  , 'assets/lib/jquery/jquery.ui.core.js'
-                  , 'assets/lib/jquery/jquery.ui.widget.js'
-                  , 'assets/lib/jquery/jquery.ui.mouse.js'
-                  , 'assets/lib/jquery/jquery.ui.draggable.js'
-                  , 'assets/lib/jquery/jquery.ui.droppable.js'
-                  , 'assets/lib/jquery/jquery.ui.sortable.js'
-                  , 'assets/lib/jquery/jquery.nanoscroller.js'
-                  // , 'assets/lib/jquery/jquery.sortable.js'
-                  , 'assets/lib/jquery/jquery.fileupload.js'
-                  , 'assets/lib/underscore/underscore.js'
-                  , 'assets/lib/underscore/underscore.string.js'
-                  , 'assets/lib/backbone/backbone.js'
-                  , 'assets/lib/backbone/backbone.controller.js'
-                  , 'assets/lib/backbone/backbone-approuter.js'
-                  , 'assets/lib/backbone/backbone-appready.js'
-                  , 'assets/lib/backbone/backbone.basicauth.js'
-                  , 'assets/lib/handlebars/handlebars-v2.0.0.js'
-                  // , 'assets/lib/bootstrap/dropdown.js'
-                  , 'assets/lib/bootstrap/button.js'
-                  , 'assets/lib/bootstrap/modal.js'
-                  , 'assets/lib/moment/moment.js'
-                  // , 'assets/lib/download/download.js'
+                    'public/lib/jquery/jquery-2.1.1.js'
+                  , 'public/lib/jquery/jquery.ui.core.js'
+                  , 'public/lib/jquery/jquery.ui.widget.js'
+                  , 'public/lib/jquery/jquery.ui.mouse.js'
+                  , 'public/lib/jquery/jquery.ui.draggable.js'
+                  , 'public/lib/jquery/jquery.ui.droppable.js'
+                  , 'public/lib/jquery/jquery.ui.sortable.js'
+                  , 'public/lib/jquery/jquery.nanoscroller.js'
+                  // , 'public/lib/jquery/jquery.sortable.js'
+                  , 'public/lib/jquery/jquery.fileupload.js'
+                  , 'public/lib/underscore/underscore.js'
+                  , 'public/lib/underscore/underscore.string.js'
+                  , 'public/lib/backbone/backbone.js'
+                  , 'public/lib/backbone/backbone.controller.js'
+                  , 'public/lib/backbone/backbone-approuter.js'
+                  , 'public/lib/backbone/backbone-appready.js'
+                  , 'public/lib/backbone/backbone.basicauth.js'
+                  , 'public/lib/handlebars/handlebars-v2.0.0.js'
+                  // , 'public/lib/bootstrap/dropdown.js'
+                  , 'public/lib/bootstrap/button.js'
+                  , 'public/lib/bootstrap/modal.js'
+                  , 'public/lib/moment/moment.js'
+                  // , 'public/lib/download/download.js'
 
                   // App
-                  , 'assets/js/closure.intro.js'
-                  , 'assets/js/helpers/scroll2sicky.js'
-                  , 'assets/js/helpers/helpers.js'
-                  , 'assets/js/helpers/i18n.js'
-                  , 'assets/js/helpers/handlebars.js'
-                  , 'assets/js/helpers/validation.js'
-                  , 'assets/js/helpers/xhr.js'
-                  , 'assets/js/helpers/uploader.js'
-                  , 'assets/js/helpers/feedback.js'
-                  , 'assets/js/helpers/sortable.js'
-                  // , 'assets/js/helpers/delete.js'
-                  // , 'assets/js/helpers/session.js'
-                  // , 'assets/js/helpers/feedback.js'
+                  , 'public/js/closure.intro.js'
+                  , 'public/js/helpers/scroll2sicky.js'
+                  , 'public/js/helpers/helpers.js'
+                  , 'public/js/helpers/i18n.js'
+                  , 'public/js/helpers/handlebars.js'
+                  , 'public/js/helpers/validation.js'
+                  , 'public/js/helpers/xhr.js'
+                  , 'public/js/helpers/uploader.js'
+                  , 'public/js/helpers/feedback.js'
+                  , 'public/js/helpers/sortable.js'
+                  // , 'public/js/helpers/delete.js'
+                  // , 'public/js/helpers/session.js'
+                  // , 'public/js/helpers/feedback.js'
 
-                  , 'assets/js/model.js'
-                  , 'assets/js/collection.js'
-                  , 'assets/js/view.js'
-                  , 'assets/js/controller.js'
-                  , 'assets/js/subbly.js'
+                  , 'public/js/model.js'
+                  , 'public/js/collection.js'
+                  , 'public/js/view.js'
+                  , 'public/js/controller.js'
+                  , 'public/js/subbly.js'
 
-                  , 'assets/js/models/*.js'
-                  , 'assets/js/collections/*.js'
-                  , 'assets/js/controllers/*.js'
-                  , 'assets/js/views/*.js'
+                  , 'public/js/models/*.js'
+                  , 'public/js/collections/*.js'
+                  , 'public/js/controllers/*.js'
+                  , 'public/js/views/*.js'
 
-                  , 'assets/js/builtin/*.js'
+                  , 'public/js/builtin/*.js'
 
-                  , 'assets/js/router.js'
-                  , 'assets/js/closure.utils.js'
-                  , 'assets/js/closure.outro.js'
+                  , 'public/js/router.js'
+                  , 'public/js/closure.utils.js'
+                  , 'public/js/closure.outro.js'
                 ]
               , dest: '<%= pkg.dist %>js/<%= pkg.filename %>.local.js'
             }
@@ -266,7 +266,7 @@ module.exports = function(grunt)
         {
             javascript: 
             {
-              files: ['assets/js/*.js', 'assets/js/*/*.js', 'themes/plugins/*.js'] //, 'assets/js/*/*.js'
+              files: ['public/js/*.js', 'public/js/*/*.js', 'themes/plugins/*.js'] //, 'assets/js/*/*.js'
             , tasks: ['concat_sourcemap', 'exec:devJs']
             , options: 
               {
@@ -275,7 +275,7 @@ module.exports = function(grunt)
             }
           , css: 
             {
-              files: ['assets/less/*.less']
+              files: ['public/less/*.less']
             , tasks: ['less-compile', 'exec:devCss']
             , options: 
               {
@@ -299,7 +299,7 @@ module.exports = function(grunt)
     grunt.loadNpmTasks('grunt-notify');
     grunt.task.run('notify_hooks');
     grunt.loadNpmTasks('grunt-exec');
-    grunt.loadNpmTasks('grunt-docco');
+    // grunt.loadNpmTasks('grunt-docco');
 
     grunt.registerTask('less-compile', ['less:development']);
 
@@ -312,7 +312,7 @@ module.exports = function(grunt)
       , 'uglify'
       , 'less'
       , 'cssmin'
-      , 'exec:docco'
+      // , 'exec:docco'
     ]);
     grunt.registerTask('dev', [
         'watch'
