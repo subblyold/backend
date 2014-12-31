@@ -22,30 +22,58 @@
 
     , display: function( sku ) 
       {
-        var isNew   = ( sku === '_new' )
-          , opts    = ( isNew ) ? {} : { sku: sku }
-          , product = Subbly.api('Subbly.Model.Product', opts )
-          , view    = this.getViewByPath( 'Subbly.View.ProductEntry' )
+        var isNew      = ( sku === '_new' )
+          , opts       = ( isNew ) ? {} : { sku: sku }
+          , product    = Subbly.api('Subbly.Model.Product', opts )
+          , categories = Subbly.api('Subbly.Collection.Categories')
+          , view       = this.getViewByPath( 'Subbly.View.ProductEntry' )
         
         view.displayTpl()
 
-        Subbly.fetch( product,
+        // Handle AJAX sync exemple
+        // we need to call product desc + categories list
+
+        // product promise
+        var deferredProduct = Subbly.fetch( product,
         {
             data: { includes: ['options', 'images', 'categories'] }
-          , success: function( model, response )
-            {
-              // TODO: get status list from config
-              var json = model.toJSON()
-              
-              json.isNew      = isNew
-              json.statusList = [ 'draft', 'active', 'hidden', 'sold_out', 'coming_soon' ]
-
-              view
-                .setValue( 'model', model )
-                .displayTpl( json )
-                .render()
-            }
         }, this )
+
+        // categories promise
+        var deferredCategories = Subbly.fetch( categories )
+
+        // when both are loaded
+        $.when( deferredProduct, deferredCategories )
+          .done(function ( productResponse, categoriesResponse ) 
+          {
+              var categories = Subbly.parsePromise( categoriesResponse )['categories']
+
+              Subbly.parsePromise( productResponse, {
+                success: function( response )
+                {
+                  product = Subbly.api('Subbly.Model.Product', response['product'] )
+
+                  // TODO: get status list from config
+                  var json = product.toJSON()
+
+                  json.isNew      = isNew
+                  json.statusList = [ 'draft', 'active', 'hidden', 'sold_out', 'coming_soon' ]
+
+                  view
+                    .setValue( {
+                        'model':      product 
+                      , 'categories': categories
+                    })
+                    .displayTpl( json )
+                    .render()
+                    .updateCategories()
+                }
+              })
+          })
+          .fail(function() // if one fail
+          {
+console.log( this )
+          })
       }
   }
 
@@ -62,10 +90,17 @@
     , onInitialize: function()
       {
         // add view's event
-        this.addEvents( {'click a.js-trigger-categories':  'categoriesOpenPopup'} )
+        this.addEvents( {
+            'click a.js-trigger-categories':      'categoriesOpenPopup'
+          , 'click a.js-remove-category-trigger': 'removeCategory'
+        })
         
+        // register sub-views
         this.thumbTpl = Handlebars.compile( TPL.products.thumb )
+        this.catTpl   = Handlebars.compile( TPL.products.categoriesList )
+
         Handlebars.registerPartial( 'productThumb', TPL.products.thumb )
+        Handlebars.registerPartial( 'categoriesList', TPL.products.categoriesList )
 
         Subbly.on( 'categories::close', this.categoriesClosePopup, this )
       }
@@ -82,6 +117,16 @@
         // Images upload
         // ---------------------
         this.initUploader()
+
+        // Images sort
+        // ---------------------
+        this.initSortable()
+
+        // Categories
+        // ---------------------
+        // this.$categoriesList = this.$el.find('ul.product-categories')
+
+        this.model.on('change:categories', this.updateCategories, this )
       }
 
     , initUploader: function()
@@ -144,8 +189,14 @@
               _feedback.setProgress( progress )
             }
           , formData:  formData
-          , url:       Subbly.apiUrl('uploader') //Subbly.apiUrl('products/' + this.model.get('sku') + '/images')
+          , url:       Subbly.apiUrl('uploader')
         })
+      }
+
+    , initSortable: function()
+      {
+        var _feedback       = Subbly.feedback()
+          , page            = this
 
         // allow to sort images
         this.sortable = new sortable( this.$el.find('ul.sortable'), 
@@ -167,15 +218,117 @@
         })
       }
 
+    , loadCategories: function()
+      {
+        console.log( this.categories )
+        console.log( this.model.getCategories() )
+
+        var modelCatIds = this.model.getCategoriesIds()
+          , categories  = []
+          , isChildren  = []
+          , hasChildren = []
+
+        var modelCategories = _.filter( this.categories, function( category )
+        {
+          if( modelCatIds.indexOf( category.id ) === -1 )
+            return false
+
+          if( !_.isNull( category.parent ) )
+          {
+            if( !isParent[ category.parent ] )
+              isParent[ category.parent ] = []
+
+            isParent[ category.parent ].push( category.id )
+
+            hasChildren.push( category.id )
+
+            // isChildren.push( category.parent )
+          }
+
+          return category
+        }, this)
+
+        return _.filter( modelCategories, function( category )
+        {
+          category.asString = ''
+
+          if( !_.isNull( category.parent ) )
+          {
+            var parentId = +category.parent
+              , parent   = _.filter( this.categories, function( cat ) 
+                {
+                  return cat.id == parentId 
+                })
+
+            if( parent.length == 1 )
+              category.asString = parent[0].label + ' > ' + category.label
+            else
+              return false
+          }
+          else
+          {
+            if( hasChildren.indexOf( category.id ) !== -1 )
+              category.asString = category.label
+            else
+            {
+console.log( 'exclude ' + category.label )
+              return false
+            }
+          }
+
+          return category
+        }, this)
+
+      }
+
     , categoriesOpenPopup: function()
       {
         this.modal = Subbly.api('Subbly.View.Categories', {
-            product: this.model
-          , selectedIds: this.model.getCategoriesIds()
+            selectedIds: this.model.getCategoriesIds()
           , view:    this
         })
       }
 
+    , categoriesClosePopup: function( categories )
+      {
+        var productId        = this.model.get('id')
+          , categoriesIds    = []
+          , categoriesModels = []
+
+        _.each( categories.models, function( category )
+        {
+          categoriesIds.push( category.get('id') )
+          categoriesModels.push( category.toJSON() )
+
+          return category
+        })
+
+        this.model.set( 'categories', categoriesModels )
+        this.model.setAdditonalParams( 'product_category[]', categoriesIds )
+      }
+
+    , updateCategories: function()
+      {
+        var html = this.catTpl( { categories: this.loadCategories() })
+
+        this.$el.find('ul.product-categories').html( html )
+      }
+
+    , removeCategory: function( event )
+      {
+        var target     = event.currentTarget
+          , catId      = target.getAttribute('data-id')
+          , categories = this.model.get('categories')
+
+        categories = _.reject( categories, function( category )
+        {
+          return category.id === +catId 
+        })
+
+        this.model.set( 'categories', categories )
+      }
+
+      // Save form update
     , onSubmit: function()
       {
         Subbly.store( this.model, this.getFormValues(), 
@@ -187,36 +340,11 @@
         })
       }
 
-    , categoriesClosePopup: function( categories )
-      {
-        var productId       = this.model.get('id')
-          , categoriesData  = []
-
-        _.each( categories.models, function( category )
-        {
-          categoriesData.push( category.get('id') )
-
-          return category
-        })
-
-        if( !categoriesData.length )
-          return
-
-        if( this.model.isNew() )
-        {
-          this.model.setAdditonalParams( 'product_category[]', categoriesData )
-        }
-        else
-        {
-console.log('POST new categories')
-        }
-
-console.log( this.model.getAdditonalParams())
-      }
-
+      // unbind events
     , onClose: function()
       {
         Subbly.off( 'categories::close', this.categoriesClosePopup, this )
+        this.model.off('change:categories', this.updateCategories, this )
       }
   }
 

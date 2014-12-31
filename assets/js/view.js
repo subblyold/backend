@@ -72,8 +72,19 @@ var SubblyView = Backbone.View.extend(
 
   , setValue: function( key, value )
     {
-      this[ key ] = value
-
+      // TODO: add test
+      if( _.isObject( key ) )
+      {
+        _.each( key, function( v, k )
+        {
+          this[ k ] = v
+        }, this)
+      }
+      else
+      {
+        this[ key ] = value
+      }
+      
       return this
     }
 

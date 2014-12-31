@@ -19,6 +19,16 @@
     "btnAdd": "Add product",
     "formPlaceholder": "Search by name, ref, etc."
   },
+  "product": {
+    "titleAdd": "Add product",
+    "titleEdit": "Edit Product",
+    "title": "Title",
+    "sku": "Reference",
+    "desc": "Description",
+    "categories": "Categories",
+    "editCategories": "Edit categories",
+    "noCategories": "Select all categories for your product."
+  },
   "customers": {
     "noEntry": "You don't have<br> any customers yet.",
     "pageTitle": "Customers",

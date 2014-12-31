@@ -449,6 +449,33 @@ SubblyCore.prototype.fetch = function( obj, options, context )
 }
 
 
+
+// Provides a way to execute callback functions 
+// based on one or more XHR promise
+//
+//      @params  {object}  promise
+//      @params  {object}  callbacks options
+//      @return  {void}
+//
+SubblyCore.prototype.parsePromise = function( deferrer, callback )
+{
+  callback = callback || {}
+  
+  if( deferrer[ 1 ] == 'success' )
+  {
+    if( callback.success && _.isFunction( callback.success ) )
+    {
+      callback.success( deferrer[ 0 ].response )
+    }
+
+    return deferrer[ 0 ].response
+  }
+  else // TODO: manage error
+  {
+console.log( deferrer[ 1 ] )
+  }
+}
+
 // Generic method to save a model.
 // Format json aand
 // stores the XHR call to prevent cancel

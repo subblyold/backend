@@ -3,20 +3,18 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 {
     el:                 '#modal'
   , parentCategory:     null
-  , modelCategories:    []
 
   , initialize: function( options )
     {
       // this.$el = $( document.getElementById('modal') )
 
-      this.product = options.product
       this.selectedIds = options.selectedIds || []
 
-      this.modelCategories = this.product.getCategoriesIds()
+      // this.modelCategories = this.product.getCategoriesIds()
 
-      this.product = options.product
+      // this.product = options.product
 
-      var tpl  = Handlebars.compile( TPL.products.categories )
+      var tpl  = Handlebars.compile( TPL.products.categoriesPopin )
         , html = tpl( {} )
 
       this.$el.on( 'shown.bs.modal',  _.bind( this.display, this ) )
@@ -177,7 +175,8 @@ Components.Subbly.View.Categories = Backbone.View.extend(
       // <li>
       //   <i class="icon icon-handler js-handle"></i>
       //   <label>
-      //     <input type="checkbox">
+      //     <span class="input-checkbox-category"></span>
+      //     <input type="checkbox" class="js-manage-categories">
       //   </label>
       //   Women
       //   <span class="badge">2</span>
@@ -187,6 +186,7 @@ Components.Subbly.View.Categories = Backbone.View.extend(
       var liItem     = document.createElement('li')
         , handler    = document.createElement('i')
         , checkLabel = document.createElement('label')
+        , checkSpan  = document.createElement('span')
         , checkbox   = document.createElement('input')
         , trash      = document.createElement('i')
         , parent     = model.get('parent')
@@ -199,13 +199,16 @@ Components.Subbly.View.Categories = Backbone.View.extend(
       checkbox.className  = 'js-manage-categories'
       checkbox.dataset.id = model.id
 
-      if( this.modelCategories && this.modelCategories.indexOf( model.id ) != -1 )
+      if( this.belongToSeleted( model.id ) )
         checkbox.checked = true
 
       if( !_.isNull( parent ) )
         checkbox.dataset.parent = parent
 
       checkLabel.appendChild( checkbox )
+
+      checkSpan.className = 'input-checkbox-category'
+      checkLabel.appendChild( checkSpan )
 
       liItem.appendChild( handler )
       liItem.appendChild( checkLabel )
@@ -220,7 +223,7 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 
         _.each( children, function( child )
         {
-          if( this.product.belongToCategory( child.id ) )
+          if( this.belongToSeleted( child.id ) )
             ++selected
         }, this )
 
@@ -391,8 +394,9 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 
       if( $parent )
       {
-        var $badge   = $parent.find('span.badge')
-          , selected = +$badge.attr('data-selected')
+        var $badge    = $parent.find('span.badge')
+          , selected  = +$badge.attr('data-selected')
+          , $checkbox = $parent.find('input.js-manage-categories')
 
         selected = ( target.checked ) ? ( selected + 1 ) : ( selected - 1 )
 
@@ -400,15 +404,20 @@ Components.Subbly.View.Categories = Backbone.View.extend(
           .attr('data-selected', selected )
           .html( selected ) 
 
-        $parent
-          .find('input.js-manage-categories')[0]
-          .checked = selected
+        $checkbox.prop('checked', target.checked )
+
+        $checkbox.trigger('change')
       }
+    }
+
+  , belongToSeleted: function( catId )
+    {
+      return ( this.selectedIds.indexOf( catId ) !== -1 )
     }
 
   , addToSeleted: function( catId )
     {
-      if( this.selectedIds.indexOf( catId ) === -1 )
+      if( !this.belongToSeleted( catId ) )
       {
         this.selectedIds.push( +catId )
       }
@@ -428,9 +437,7 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 
       _.each( this.selectedIds, function( modelId )
       {
-        collection.add( Subbly.api('Subbly.Model.Category', {
-          id: modelId
-        }) )
+        collection.add( this.collection.get( modelId ) )
       }, this)
 
       Subbly.trigger( 'categories::close', collection )
@@ -448,12 +455,14 @@ Components.Subbly.View.Categories = Backbone.View.extend(
 
   , onCancel: function()
     {
+console.log('categories modal onCancel')
       // scope.settings.onCancel()
       // scope.modal.close()
     }
 
   , onSubmit: function()
     {
+console.log('categories modal onSubmit')
       // scope.callXhr()
     }
 })

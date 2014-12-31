@@ -18,6 +18,16 @@
     "btnAdd": "Ajoutez un produits",
     "formPlaceholder": "Rechercher par nom, réf., etc."
   },
+  "product": {
+    "titleAdd": "Ajouter un produit",
+    "titleEdit": "Editez un produit",
+    "title": "Nom",
+    "sku": "Référence",
+    "desc": "Description",
+    "categories": "Categories",
+    "editCategories": "Editez les categories",
+    "noCategories": "Sélectionnez les catégories de votre produit."
+  },
   "customers": {
     "noEntry": "Vous n’avez<br>pas encore de clients",
     "pageTitle": "Clients",

@@ -8,10 +8,10 @@
         <div class="column-title cl-f c-pdg-h c-pdg-t">
           <h3 class="f-ttl c-blk fl-l">
             {{#isNew}}
-            Add product
+            {{i18n 'product.titleAdd'}}
             {{/isNew}}
             {{^isNew}}
-            Edit Product
+            {{i18n 'product.titleEdit'}}
             {{/isNew}}
           </h3>
         </div><!-- /.column-title -->
@@ -19,13 +19,13 @@
           <div class="form-row">
             <div class="form-field input-8">
               <label class="form-label">
-                Title
+                {{i18n 'product.title'}}
               </label>
               <input type="text" class="form-input" name="name" value="{{name}}">
             </div><!-- /.form-field -->
             <div class="form-field input-4">
               <label class="form-label">
-                Reference
+                {{i18n 'product.sku'}}
               </label>
               <input type="text" class="form-input" name="sku" value="{{sku}}">
             </div><!-- /.form-field -->
@@ -33,7 +33,7 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">
-                Description
+                {{i18n 'product.desc'}}
               </label>
               <textarea class="form-input" name="description" row="5" col="3">{{description}}</textarea>
             </div><!-- /.form-field -->
@@ -41,22 +41,21 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">
-                Category
+                {{i18n 'product.categories'}}
               </label>
-              <p class="alignment-justify">
+              <p>
                 <a href="javascript:;" class="btn btn-action js-trigger-categories">
-                  Edit category
+                  {{i18n 'product.editCategories'}}
                 </a>
-                {{#if getCategories}}
-                <ul>
-                  {{#each getCategories}}
-                    <li>{{asString}}</li>
-                  {{/each}}
-                </ul>
-                {{else}}
-                <span class="f-sml c-pdg-bas-l">Select where in your store's menu that you want your customers to find your product.</span>
-                {{/if}}
+                {{#unless getCategories}}
+                <span class="f-sml c-pdg-bas-l">{{i18n 'product.noCategories'}}</span>
+                {{/unless}}
               </p>
+              <ul class="product-categories">
+                <li class="product-categories-loading">
+                  <span class="loader"></span>
+                </li>
+              </ul>
             </div><!-- /.form-field -->
           </div><!-- /.form-row -->
           <hr class="hr">
