@@ -12,7 +12,8 @@ Route::group(array(
   {
     $env    = App::environment();
     $config = [
-        'baseUrl'      => Config::get( 'subbly.backendUri', '/admin' ).'/'
+        'baseUrl'      => Config::get( 'subbly.backendUri', '/admin' ) . '/'
+      , 'domain'       => URL::to( '/' ) .'/'
       , 'apiUrl'       => URL::to('/api/v1') .'/'
       , 'env'          => $env
       , 'debug'        => (bool) Config::get('app.debug')
