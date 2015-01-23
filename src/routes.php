@@ -9,20 +9,24 @@ Route::group(array(
 ), function() 
 {
   /*
-   * If exists do not display 
-   * Debugbar on Backend UI
-   * 
-   */
-  if( class_exists('Debugbar') )
-    Debugbar::disable();
-
-  /*
-   * Server's based configuration
-   * to send as parameters to UI
+   * Generic Backend route's callback
    * 
    */
   $displayBackend = function()
   {
+    /*
+     * If exists do not display 
+     * Debugbar on Backend UI
+     * 
+     */
+    if( class_exists('Debugbar') )
+      Debugbar::disable();
+
+    /*
+     * Server's based configuration
+     * to send as parameters to UI
+     * 
+     */
     $env    = App::environment();
     $config = [
         'baseUrl'      => Config::get( 'subbly.backendUri', '/admin' ) . '/'
