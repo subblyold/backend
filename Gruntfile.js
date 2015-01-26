@@ -183,6 +183,7 @@ module.exports = function(grunt)
 
                   , 'public/js/router.js'
                   , 'public/js/closure.utils.js'
+                  , 'public/js/closure.error.js'
                   , 'public/js/closure.outro.js'
                 ]
               , dest: '<%= pkg.dist %>js/<%= pkg.filename %>.local.js'
