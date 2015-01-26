@@ -32089,15 +32089,8 @@ console.groupEnd()
 
     // if( xhr.status === 418 )
     //   return 
-
-    // // ask delete token
-    // if( xhr.status === 406 && !xhr.responseJSON.error )
-    //   return
-    
-    // // real error
-    // // display message
-    // App.feedback.handleError( xhr )
   })
+
 
   // On DOMready
   $(function()
