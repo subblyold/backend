@@ -18,12 +18,23 @@
                 : false
     }
 
-console.group('Ajax Error')
-console.log( xhr )
-console.log( xhr.status )
-console.log( xhr.responseJSON )
-console.log( ( message ) ? message : 'no error message' )
-console.groupEnd()
+    // request was aborted
+    // no need to log this
+    if( 
+        xhr.status === 0 
+        && xhr.statusText === 'abort' 
+      )
+    {
+      console.info( 'Aborted request' )
+      return
+    }
+
+    console.group('Ajax Error')
+    console.log( xhr )
+    console.log( xhr.status )
+    console.log( xhr.responseJSON )
+    console.log( ( message ) ? message : 'no error message' )
+    console.groupEnd()
 
     if( xhr.status === 401 )
     {
