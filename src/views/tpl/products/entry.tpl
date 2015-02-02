@@ -21,13 +21,21 @@
               <label class="form-label">
                 {{i18n 'product.title'}}
               </label>
-              <input type="text" class="form-input" name="name" value="{{name}}">
+              <input type="text" class="form-input" name="name" value="{{name}}" id="subbly-product-entry-name">
             </div><!-- /.form-field -->
             <div class="form-field input-4">
               <label class="form-label">
                 {{i18n 'product.sku'}}
               </label>
               <input type="text" class="form-input" name="sku" value="{{sku}}">
+            </div><!-- /.form-field -->
+          </div><!-- /.form-row -->
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">
+                {{i18n 'product.slug'}}
+              </label>
+              <input type="text" class="form-input js-slugify" name="slug" value="{{slug}}" id="subbly-product-entry-slug">
             </div><!-- /.form-field -->
           </div><!-- /.form-row -->
           <div class="form-row">

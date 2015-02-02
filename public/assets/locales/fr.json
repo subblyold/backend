@@ -23,6 +23,7 @@
     "titleEdit": "Editez un produit",
     "title": "Nom",
     "sku": "Référence",
+    "slug": "SEO URL",
     "desc": "Description",
     "categories": "Categories",
     "editCategories": "Editez les categories",

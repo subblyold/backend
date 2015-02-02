@@ -137,6 +137,7 @@ module.exports = function(grunt)
                   , 'public/lib/jquery/jquery.ui.droppable.js'
                   , 'public/lib/jquery/jquery.ui.sortable.js'
                   , 'public/lib/jquery/jquery.nanoscroller.js'
+                  , 'public/lib/jquery/jquery.slugify.js'
                   // , 'public/lib/jquery/jquery.sortable.js'
                   , 'public/lib/jquery/jquery.fileupload.js'
                   , 'public/lib/underscore/underscore.js'

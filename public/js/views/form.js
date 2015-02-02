@@ -12,10 +12,11 @@ Components.Subbly.View.FormView = SubblyViewForm = SubblyView.extend(
 
       // add view's event
       this.addEvents( {
-          'click .js-submit-form'                        : 'submit'
-        , 'click .js-cancel-form'                        : 'cancel'
+          'click .js-submit-form'                              : 'submit'
+        , 'click .js-cancel-form'                              : 'cancel'
         , 'keypress :input:not(textarea,[data-bypass="true"])' : 'onEnter'
         , 'change :input'                                      : 'removeWarning'
+        , 'blur input.js-slugify'                              : 'slugify'
       })
     }
 
@@ -59,6 +60,13 @@ Components.Subbly.View.FormView = SubblyViewForm = SubblyView.extend(
   , removeWarning: function( event )
     {
       event.target.classList.remove('warning')
+    }
+
+    // Type as you slug
+    // https://github.com/madflow/jquery-slugify
+  , slugify: function( event )
+    {
+      event.target.value = $.slugify( event.target.value )
     }
 
     // Form definition

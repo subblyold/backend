@@ -113,6 +113,11 @@ console.log( this )
           , rules:    this.model.getRules()
           , skip:     false
         })
+        
+        // Type as you slug
+        // https://github.com/madflow/jquery-slugify
+        $( document.getElementById('subbly-product-entry-slug') )
+          .slugify(  document.getElementById('subbly-product-entry-name') )
 
         // Images upload
         // ---------------------
@@ -220,8 +225,8 @@ console.log( this )
 
     , loadCategories: function()
       {
-        console.log( this.categories )
-        console.log( this.model.getCategories() )
+        // console.log( this.categories )
+        // console.log( this.model.getCategories() )
 
         var modelCatIds = this.model.getCategoriesIds()
           , categories  = []

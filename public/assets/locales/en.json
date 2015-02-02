@@ -24,6 +24,7 @@
     "titleEdit": "Edit Product",
     "title": "Title",
     "sku": "Reference",
+    "slug": "Friendly URL",
     "desc": "Description",
     "categories": "Categories",
     "editCategories": "Edit categories",
