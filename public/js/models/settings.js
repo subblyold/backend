@@ -1,7 +1,7 @@
 
 // Subbly's Backbone base model
 
-Components.Subbly.Model.Settings = Backbone.Model.extend(
+Components.Subbly.Model.Settings = SubblyModel.extend(
 {
     serviceName:  'settings'
   , singleResult: 'settings'
@@ -9,11 +9,6 @@ Components.Subbly.Model.Settings = Backbone.Model.extend(
   , url: function()
     {
       return Subbly.apiUrl( this.serviceName )
-    }
-
-  , credentials: function() 
-    {
-      return Subbly.getCredentials()
     }
 
   , parse: function ( response ) 

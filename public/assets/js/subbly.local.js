@@ -27844,7 +27844,7 @@ Feedback.prototype.progressEnd = function( state, message )
  */
 Feedback.prototype.downMainView = function()
 {
-  this.view.classList.remove( 'w-feedback' )
+  // this.view.classList.remove( 'w-feedback' )
 }
 
 /*
@@ -27852,7 +27852,7 @@ Feedback.prototype.downMainView = function()
  */
 Feedback.prototype.upMainView = function()
 {
-  this.view.classList.add( 'w-feedback' )
+  // this.view.classList.add( 'w-feedback' )
 }
 
 
@@ -29323,7 +29323,7 @@ Components.Subbly.Model.Product = SubblyModel.extend(
 
 // Subbly's Backbone base model
 
-Components.Subbly.Model.Settings = Backbone.Model.extend(
+Components.Subbly.Model.Settings = SubblyModel.extend(
 {
     serviceName:  'settings'
   , singleResult: 'settings'
@@ -29331,11 +29331,6 @@ Components.Subbly.Model.Settings = Backbone.Model.extend(
   , url: function()
     {
       return Subbly.apiUrl( this.serviceName )
-    }
-
-  , credentials: function() 
-    {
-      return Subbly.getCredentials()
     }
 
   , parse: function ( response ) 
@@ -32477,7 +32472,8 @@ console.log( 'exclude ' + category.label )
                             formData['subbly.backend_language'] 
                             && Subbly.getSetting('subbly.backend_language') != formData['subbly.backend_language']
                           )
-
+// console.log( formData )
+// return
         Subbly.store( this.model, formData, 
         {
             type: 'PUT'
