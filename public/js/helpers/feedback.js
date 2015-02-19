@@ -170,7 +170,7 @@ Feedback.prototype.progressEnd = function( state, message )
  */
 Feedback.prototype.downMainView = function()
 {
-  this.view.classList.remove( 'w-feedback' )
+  // this.view.classList.remove( 'w-feedback' )
 }
 
 /*
@@ -178,7 +178,7 @@ Feedback.prototype.downMainView = function()
  */
 Feedback.prototype.upMainView = function()
 {
-  this.view.classList.add( 'w-feedback' )
+  // this.view.classList.add( 'w-feedback' )
 }
 
 
