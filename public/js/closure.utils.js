@@ -96,7 +96,7 @@
     this.attr( key, key )
   }
 
-  $window.on('resize', function( event )
+  $window.on('resize', _.debounce( function( event )
   {
     // update viewport
     var viewport = {
@@ -106,5 +106,5 @@
 
     // publish jQuery event + viewport 
     Subbly.trigger( 'window::resize', event, viewport )
-  })
+  }, 500))
   
