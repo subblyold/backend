@@ -2,12 +2,17 @@
   // CONTROLLER
   // --------------------------------
 
-  var Orders = 
+  // Orders controller work as Customers controler
+  // so we extend it
+
+  var Orders = $.extend( {}, Customers, 
   {
       _tplStructure:   'half' // full|half|third
     , _viewsNames:     [ 'Subbly.View.Orders', 'Subbly.View.OrderEntry' ]
     , _controllerName: 'orders'
     , _listDisplayed:  false  
+    , _collectionPath: 'Subbly.Collection.Orders'
+    , _displayData:    { includes: ['user', 'products'] } 
     , _mainNavRegister:
       {
           name:       'Orders'
@@ -21,87 +26,8 @@
         , 'orders/search/:query': 'search'
       }
 
-    , onRemove: function()
-      {
-        this._listDisplayed = false
-      }
-
       // Routes
       //-------------------------------
-
-    , display: function( id ) 
-      {
-        if( !this._listDisplayed )
-        {
-          var scope = this
-
-          this.displayView( function()
-          {
-            if( !_.isNull( id ) )
-              scope.sheet( id )
-          })
-
-          return
-        }
-        
-        if( !_.isNull( id ) )
-          this.sheet( id )
-        else
-          this.getViewByPath( 'Subbly.View.Orders' )
-            .onInitialRender()
-      }
-
-    , search: function( query ) 
-      {
-        var scope      = this
-          , view       = this.getViewByPath( 'Subbly.View.Orders' )
-          , collection = Subbly.api('Subbly.Collection.Orders')
-
-        // call sub-view display
-        this.getViewByPath( 'Subbly.View.OrderEntry' )
-          .displayTpl()
-
-        view.displayTpl()
-          .doSearch( query )
-
-      }
-
-    , displayView: function( sheetCB )
-      {
-        var scope      = this
-          , view       = this.getViewByPath( 'Subbly.View.Orders' )
-          , collection = Subbly.api('Subbly.Collection.Orders')
-        
-        this._listDisplayed = true
-
-        Subbly.once( 'view::tplDisplayed', function()
-        {
-          Subbly.fetch( collection,
-          {
-              data:   {
-                includes: ['user', 'products']
-              }
-            , success: function( collection, response )
-              {
-                scope._listDisplayed = true
-
-                view
-                  .render()
-
-                if( _.isFunction( sheetCB ) )
-                  sheetCB()
-              }
-          }, this )
-        } )
-
-        view
-          .setValue( 'collection', collection )
-          .displayTpl()
-
-        // call sub-view display
-        this.getViewByPath( 'Subbly.View.OrderEntry' )
-          .displayTpl()
-      }
 
     , sheet: function(  id ) 
       {
@@ -130,34 +56,7 @@
             }
         }, this )
       }
-
-    , searching: function()
-      {
-        this.getViewByPath( 'Subbly.View.OrderEntry' ).noResults()
-      }
-
-    , noResults: function()
-      {
-        this.getViewByPath( 'Subbly.View.Orders' ).noResults()
-        this.getViewByPath( 'Subbly.View.OrderEntry' ).noResults()
-      }
-
-    , resetSearch: function()
-      {
-        this._listDisplayed = false
-
-        var listView = this.getViewByPath( 'Subbly.View.Orders' )
-
-        listView
-          .resetList()
-
-        this.displayView( function()
-        {
-          listView
-            .onInitialRender()
-        })
-      }
-  }
+  })
 
 
   // Order Entry view
@@ -182,7 +81,10 @@
       }
   }
 
-  var OrdersList = 
+  // Orders controller work as Customers controler
+  // so we extend it
+  // TODO: finish merge
+  var OrdersList = $.extend( {}, CustomersList, 
   {
       _viewName:       'Orders'
     , _viewTpl:        TPL.orders.list
@@ -191,22 +93,6 @@
     , _tplRow:         TPL.orders.listrow
     , _rowHeight:      100
     , _headerSelector: 'div.nano-content > div:first-child'
-
-      // On view initialize
-    , onInitialize: function()
-      {
-        // add view's event
-        this.addEvents( {'click li.js-trigger-goto':  'goTo'} )
-      }
-
-      // Call on list first render
-    , onInitialRender: function()
-      {
-        var $firstRow = this.getListEl().children(':first')
-          , id       = $firstRow.attr('data-id')
-
-        this.callController( 'sheet', id )
-      }
 
     , onDisplayTpl: function()
       {
@@ -239,16 +125,6 @@
         this._controller.getViewByPath( 'Subbly.View.OrderEntry' ).noResults()
       }
 
-    , doSearch: function( query )
-      {
-        this._searchForm.preFill( query )
-      }
-
-    , noResults: function()
-      {
-        this.showSearch()
-      }
-
       // Higthligth active row
     , setActiveRow: function( id )
       {
@@ -266,7 +142,7 @@
 
         Subbly.trigger( 'hash::change', 'orders/' + id )
       }
-  }
+  })
 
   Subbly.register( 'Subbly', 'Orders', 
   {

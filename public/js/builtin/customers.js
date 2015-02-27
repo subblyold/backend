@@ -8,6 +8,8 @@
     , _viewsNames:     [ 'Subbly.View.Customers', 'Subbly.View.CustomerSheet' ]
     , _controllerName: 'customers'
     , _listDisplayed:  false
+    , _collectionPath: 'Subbly.Collection.Users'
+    , _displayData:    {} 
     , _mainNavRegister:
       {
           name:       'Customers'
@@ -47,18 +49,18 @@
         if( !_.isNull( uid ) )
           this.sheet( uid )
         else
-          this.getViewByPath( 'Subbly.View.Customers' )
+          this.getViewByPath( this._viewsNames[0] ) // 'Subbly.View.Customers'
             .onInitialRender()
       }
 
     , search: function( query ) 
       {
         var scope      = this
-          , view       = this.getViewByPath( 'Subbly.View.Customers' )
-          , collection = Subbly.api('Subbly.Collection.Users')
+          , view       = this.getViewByPath( this._viewsNames[0] ) // 'Subbly.View.Customers'
+          , collection = Subbly.api( this._collectionPath )
 
         // call sub-view display
-        this.getViewByPath( 'Subbly.View.CustomerSheet' )
+        this.getViewByPath( this._viewsNames[1] ) // 'Subbly.View.CustomerSheet' 
           .displayTpl()
 
         view.displayTpl()
@@ -69,17 +71,17 @@
     , displayView: function( sheetCB )
       {
         var scope      = this
-          , view       = this.getViewByPath( 'Subbly.View.Customers' )
-          , collection = Subbly.api('Subbly.Collection.Users')
+          , view       = this.getViewByPath( this._viewsNames[0] ) // 'Subbly.View.Customers'
+          , collection = Subbly.api( this._collectionPath )
 
         this._listDisplayed = true
-
 
         Subbly.once( 'view::tplDisplayed', function()
         {
           Subbly.fetch( collection,
           {
-              success: function( collection, response )
+              data:   this._displayData
+            , success: function( collection, response )
               {
                 scope._listDisplayed = true
 
@@ -96,7 +98,7 @@
           .displayTpl()
 
         // call sub-view display
-        this.getViewByPath( 'Subbly.View.CustomerSheet' )
+        this.getViewByPath( this._viewsNames[1] ) // 'Subbly.View.CustomerSheet'
           .displayTpl()
       }
 
@@ -130,20 +132,20 @@
 
     , searching: function()
       {
-        this.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+        this.getViewByPath( this._viewsNames[1] ).noResults()
       }
 
     , noResults: function()
       {
-        this.getViewByPath( 'Subbly.View.Customers' ).noResults()
-        this.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+        this.getViewByPath( this._viewsNames[0] ).noResults()
+        this.getViewByPath( this._viewsNames[1] ).noResults()
       }
 
     , resetSearch: function()
       {
         this._listDisplayed = false
 
-        var listView = this.getViewByPath( 'Subbly.View.Customers' )
+        var listView = this.getViewByPath( this._viewsNames[0]  )
 
         listView
           .resetList()
