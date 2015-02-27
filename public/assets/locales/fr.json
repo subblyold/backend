@@ -1,4 +1,9 @@
 {
+  "errors": {
+    "codeDefault": "Erreur",
+    "codeStatus": "Erreur %1$s",
+    "serverDefault": "Le serveur à retourné une erreur."
+  },
   "dashboard": {
     "welcome": "Bienvenue dans votre boutique"
   },

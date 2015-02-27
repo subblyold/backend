@@ -1,4 +1,9 @@
 {
+  "error": {
+    "codeDefault": "Error",
+    "codeStatus": "Error %1$s",
+    "serverDefault": "Server send back an error."
+  },
   "dashboard": {
     "welcome": "Welcome in your shop",
     "test": "%1$sm%2$s"

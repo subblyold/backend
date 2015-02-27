@@ -83,7 +83,7 @@
       {
         var $node = $( document.getElementById('entry-error-message') )
 
-        $node.find('code').text( 'error ' + errorObj.status() )
+        $node.find('code').text( Subbly.i18n().get( 'errors.codeStatus', errorObj.status() ) )
         $node.find('p').text( errorObj.message() )
 
         this.displayRendering( 'error' )

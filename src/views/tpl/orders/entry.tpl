@@ -5,8 +5,8 @@
         <div class="loader large"></div>
       </div>
       <div class="error-message" id="entry-error-message">
-        <code>error</code>
-        <p>Server send back an error</p>
+        <code>{{{i18n 'errors.codeDefault'}}}</code>
+        <p>{{{i18n 'errors.serverDefault'}}}</p>
       </div>
       <div class="ordr-cnt">
         <div class="c-pdg-h c-pdg-t">

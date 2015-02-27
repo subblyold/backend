@@ -75,6 +75,15 @@
     </section><!-- /.main-nav -->
     <section class="main-view" id="main-view"></section><!-- /.main-view -->
   </div><!-- /. container -->
+  <noscript>
+    <div id="global-fuckup">
+      <h3>ouch!</h3>
+      <p>
+        somethings went wrong and break everythings
+        <small>checkout <code>console</code>'s log for more details</small>
+      </p>
+    </div>
+  </noscript>
 
   <!-- Force 3d acceleration always and forever :) -->
   <div style="-webkit-transform: translateZ(0)"></div>
