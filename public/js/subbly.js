@@ -681,7 +681,7 @@ SubblyCore.prototype.extend = function( vendor, type, name, obj )
 //
 SubblyCore.prototype.register = function( vendor, name, plugin )
 {
-  console.groupCollapsed( 'Register Plugin ' + vendor + '.' + name )
+  console.info( 'Register Plugin ' + vendor + '.' + name )
 
   _.each( plugin, function( component, typeName )
   {
@@ -690,7 +690,7 @@ SubblyCore.prototype.register = function( vendor, name, plugin )
     this.extend( vendor, arr[0], arr[1], component )
   }, this )
 
-  console.groupEnd()
+  // console.groupEnd()
 }
 
 // Global Init

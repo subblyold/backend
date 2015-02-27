@@ -95,15 +95,46 @@
       }
   }
 
+  // List's row view 
+  var OrderRow = 
+  {
+      tagName:   'li'
+    , className: 'cln-lst-rw ordr-row js-trigger-goto list-row'
+    , _viewName: 'CustomerRow'
+
+    , render: function()
+      {
+        var html = this.tplRow({
+            totalPrice:   this.model.get('total_price')
+          // , totalItems:   model.get('orders').length
+          , orderStatus:  this.model.get('status')
+          , customerName: 'toto Name'
+          , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
+        })
+
+        this.$el.html( html )
+
+        this.el.dataset.uid  = this.model.get('uid')
+
+        return this
+      }
+
+    , goTo: function( event )
+      {
+        Subbly.trigger( 'hash::change', 'orders/' + this.model.get('uid') )
+      }
+  }
+
   // Orders controller work as Customers controler
   // so we extend it
-  // TODO: finish merge
   var OrdersList = $.extend( {}, CustomersList, 
   {
       _viewName:       'Orders'
     , _viewTpl:        TPL.orders.list
     , _classlist:      ['view-half-list']
     , _listSelector:   '#orders-list'
+    , _viewRow:        'Subbly.View.OrderRow'
+    , _viewSheet:      'Subbly.View.OrderEntry'
     , _tplRow:         TPL.orders.listrow
     , _rowHeight:      100
     , _headerSelector: 'div.nano-content > div:first-child'
@@ -118,49 +149,12 @@
           , context:     this
         })
       }
-
-      // Build single list's row
-    , displayRow: function( model )
-      {
-        var html = this._tplRowCompiled({
-            id:           model.get('id')
-          , totalPrice:   model.get('total_price')
-          // , totalItems:   model.get('orders').length
-          , orderStatus:  model.get('status')
-          , customerName: 'toto Name'
-          , createdDate:  moment.utc( model.get('created_at') ).fromNow()
-        })
-
-        return html
-      }
-
-    , onDetailIsEmpty: function()
-      {
-        this._controller.getViewByPath( 'Subbly.View.OrderEntry' ).noResults()
-      }
-
-      // Higthligth active row
-    , setActiveRow: function( id )
-      {
-        var $listRows  = this.getListRows()
-          , $activeRow = $listRows.filter('[data-id="' + id + '"]')
-
-        $listRows.removeClass('active')
-        $activeRow.addClass('active')
-      }
-
-      // go to customer profile
-    , goTo: function( event )
-      {
-        var id = event.currentTarget.dataset.id
-
-        Subbly.trigger( 'hash::change', 'orders/' + id )
-      }
   })
 
   Subbly.register( 'Subbly', 'Orders', 
   {
-      'ViewList:Orders':   OrdersList
-    , 'View:OrderEntry':   OrderEntry
-    , 'Controller:Orders': Orders
+      'ViewList:Orders':      OrdersList
+    , 'ViewListRow:OrderRow': OrderRow
+    , 'View:OrderEntry':      OrderEntry
+    , 'Controller:Orders':    Orders
   })

@@ -377,6 +377,19 @@ ol {
   margin: 0;
   padding: 0;
 }
+#global-fuckup {
+  -webkit-transform: translate(-50%, -30%);
+  -ms-transform: translate(-50%, -30%);
+  -o-transform: translate(-50%, -30%);
+  transform: translate(-50%, -30%);
+  color: #202124;
+  left: 50%;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  width: 350px;
+  z-index: 3000;
+}
 .container {
   display: -webkit-flex;
   display: -moz-flex;
@@ -943,12 +956,14 @@ a.badge:focus {
 .fetch-holder .empty-list,
 .fetch-holder .loading-list,
 .fetch-holder .no-results,
-.fetch-holder .no-entry-selected {
+.fetch-holder .no-entry-selected,
+.fetch-holder .error-message {
   display: none;
 }
 .fetch-holder .empty-list,
 .fetch-holder .no-entry-selected,
-.fetch-holder .no-results {
+.fetch-holder .no-results,
+.fetch-holder .error-message {
   font: 32px 'LatoLight';
   position: absolute;
   top: 50%;
@@ -958,6 +973,12 @@ a.badge:focus {
   width: 100%;
   -webkit-transform: translateY(-50%);
   transform: translateY(-50%);
+}
+.fetch-holder .error-message code {
+  color: #202124;
+  display: block;
+  font: 12px Menlo, Monaco, Consolas, "Courier New", monospace;
+  padding-bottom: 5px;
 }
 .fetch-holder .loading-list {
   height: 100%;
@@ -975,10 +996,14 @@ a.badge:focus {
 .fetch-holder.search .no-results {
   display: block;
 }
+.fetch-holder.error .error-message {
+  display: block;
+}
 .cln-lst {
   border-bottom: 1px solid #e1e1e1;
 }
 .cln-lst-rw {
+  background: none;
   cursor: pointer;
   border-top: 1px solid #e1e1e1;
   height: 100px;
@@ -1855,6 +1880,11 @@ input[type="search"] {
   padding-top: 18px;
 }
 .ordr-row.active {
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -ms-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
   background: #aacdf9;
   border-top: 1px solid #aacdf9;
 }
@@ -1990,6 +2020,11 @@ input[type="search"] {
   margin-left: 50px;
 }
 .cust-row.active {
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -ms-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
   background: #b9ccb6;
   border-top: 1px solid #b9ccb6;
 }

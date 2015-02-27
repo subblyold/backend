@@ -28102,7 +28102,7 @@ var SubblyView = Backbone.View.extend(
   , _$fetchView:      false
   , _isRendering:     false
   , _classlist:       []
-  , _renderingStates: 'loading empty search idle'
+  , _renderingStates: 'loading empty search idle error'
   , _renderingClass:  'rendering'
 
   , initialize: function( options )
@@ -29193,7 +29193,7 @@ SubblyCore.prototype.extend = function( vendor, type, name, obj )
 //
 SubblyCore.prototype.register = function( vendor, name, plugin )
 {
-  console.groupCollapsed( 'Register Plugin ' + vendor + '.' + name )
+  console.info( 'Register Plugin ' + vendor + '.' + name )
 
   _.each( plugin, function( component, typeName )
   {
@@ -29202,7 +29202,7 @@ SubblyCore.prototype.register = function( vendor, name, plugin )
     this.extend( vendor, arr[0], arr[1], component )
   }, this )
 
-  console.groupEnd()
+  // console.groupEnd()
 }
 
 // Global Init
@@ -29226,7 +29226,7 @@ Components.Subbly.Model.Category = SubblyModel.extend(
 
 Components.Subbly.Model.Order = SubblyModel.extend(
 {
-    idAttribute:  'id'
+    idAttribute:  'uid'
   , serviceName:  'orders'
   , singleResult: 'order'
 })
@@ -29519,7 +29519,7 @@ Components.Subbly.Collection.Orders = Components.Subbly.Collection.List.extend(
 
   , comparator: function( model )
     {
-        return model.get('id')
+        return -model.get('id')
     }
 })
 
@@ -29551,7 +29551,14 @@ Components.Subbly.Collection.Users = Components.Subbly.Collection.List.extend(
 
   , comparator: function( model )
     {
-        return model.get('lastname')
+      // prevent initiale sort
+      // see `collection.js` for more details
+      if( !_.isUndefined( model.get('lastname') ) )
+      {
+        var lastname  = model.get('lastname')
+          , firstname = model.get('firstname') 
+        return [ lastname.charAt(0).toLowerCase(), firstname.charAt(0).toLowerCase() ]
+      }
     }
 })
 
@@ -30737,6 +30744,15 @@ Components.Subbly.View.ViewlistRow = SubblyViewListRow = SubblyView.extend(
     _classIdentifier: 'list-row'
   , tagName:          'li'
 
+  // on Subbly View Initialize override
+  , initialize: function( options )
+    {
+      // Call parent `initialize` method
+      SubblyView.prototype.initialize.apply( this, arguments )
+
+      this.tplRow = options.tpl
+    }
+
   , events: _.extend( {}, SubblyView.prototype.events, 
     {
         'click.js-trigger-goto':  'goTo'
@@ -30745,7 +30761,7 @@ Components.Subbly.View.ViewlistRow = SubblyViewListRow = SubblyView.extend(
 
   , goTo: function( event )
     {
-console.log('goTo')
+      throw new Error( 'ViewlistRow must implement "goTo" method' )
     }
 })
 
@@ -31237,7 +31253,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , _controllerName: 'customers'
     , _listDisplayed:  false
     , _collectionPath: 'Subbly.Collection.Users'
-    , _displayData:    { order_by: { last_name: 'ASC' } } 
+    , _displayData:    { includes: ['orders'], order_by: { last_name: 'ASC', first_name: 'ASC' } } 
     , _mainNavRegister:
       {
           name:       'Customers'
@@ -31394,35 +31410,31 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
   // List's row view (optional)
   // use it if you need to have 
   // full control on model (delete, etc.)
-  // var CustomersRow = 
-  // {
-  //     className: 'cln-lst-rw cust-row js-trigger-goto'
-  //   , _viewName: 'CustomerRow'
+  var CustomersRow = 
+  {
+      tagName:   'li'
+    , className: 'cln-lst-rw cust-row js-trigger-goto list-row'
+    , _viewName: 'CustomerRow'
 
-  //   , onInitialize: function( options )
-  //     {
-  //       this.tplRow = options.tpl
-  //     }
+    , render: function()
+      {
+        var html = this.tplRow({
+            displayName: this.model.displayName()
+          , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
+        })
 
-  //   , render: function()
-  //     {
-  //       var html = this.tplRow({
-  //           displayName: this.model.displayName()
-  //         , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
-  //       })
+        this.$el.html( html )
 
-  //       this.$el.html( html )
+        this.el.dataset.uid  = this.model.get('uid')
 
-  //       this.el.dataset.uid  = this.model.get('uid')
+        return this
+      }
 
-  //       return this
-  //     }
-
-  //   , goTo: function( event )
-  //     {
-  //       this.callController( 'sheet', this.model.get('uid') )
-  //     }
-  // }
+    , goTo: function( event )
+      {
+        Subbly.trigger( 'hash::change', 'customers/' + this.model.get('uid') )
+      }
+  }
 
   // Customers List view
   var CustomersList = 
@@ -31432,16 +31444,10 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , _classlist:      ['view-half-list']
     , _listSelector:   '#customers-list'
     , _tplRow:         TPL.customers.listrow
+    , _viewRow:        'Subbly.View.CustomerRow'
+    , _viewSheet:      'Subbly.View.CustomerSheet'
     , _rowHeight:      100
     , _headerSelector: 'div.nano-content > div:first-child'
-    // , _viewRow:       'Subbly.View.CustomerRow'
-
-      // On view initialize
-    , onInitialize: function()
-      {
-        // add view's event
-        this.addEvents( {'click li.js-trigger-goto':  'goTo'} )
-      }
 
       // Call on list first render
     , onInitialRender: function()
@@ -31463,21 +31469,9 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         })
       }
 
-      // Build single list's row
-    , displayRow: function( model )
-      {
-        var html = this._tplRowCompiled({
-            displayName: model.displayName()
-          , createdDate: moment.utc( model.get('created_at') ).fromNow()
-          , uid:         model.get('uid')
-        })
-
-        return html
-      }
-
     , onDetailIsEmpty: function()
       {
-        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+        this._controller.getViewByPath( this._viewSheet ).noResults()
       }
 
     , doSearch: function( query )
@@ -31499,16 +31493,6 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         $listRows.removeClass('active')
         $activeRow.addClass('active')
       }
-
-      // go to customer profile
-    , goTo: function( event )
-      {
-        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).showLoading()
-
-        var uid = event.currentTarget.dataset.uid
-
-        Subbly.trigger( 'hash::change', 'customers/' + uid, true )
-      }
   }
 
   // Customers Sheet view
@@ -31529,6 +31513,11 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , noResults: function()
       {
         this.displayRendering()
+      }
+
+    , serverError: function()
+      {
+        this.displayRendering( 'error' )
       }
 
     , onDisplayTpl: function()
@@ -31559,9 +31548,10 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
 
   Subbly.register( 'Subbly', 'Customers', 
   {
-      'ViewList:Customers':   CustomersList
-    , 'View:CustomerSheet':   CustomerSheet
-    , 'Controller:Customers': Customers
+      'ViewList:Customers':      CustomersList
+    , 'ViewListRow:CustomerRow': CustomersRow
+    , 'View:CustomerSheet':      CustomerSheet
+    , 'Controller:Customers':    Customers
   })
 
 
@@ -31660,12 +31650,12 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
       // Routes
       //-------------------------------
 
-    , sheet: function(  id ) 
+    , sheet: function( uid ) 
       {
-        this.getViewByPath( 'Subbly.View.Orders' ).setActiveRow( id )
+        this.getViewByPath( 'Subbly.View.Orders' ).setActiveRow( uid )
 
         var scope = this
-          , order = Subbly.api('Subbly.Model.Order', { id: id })
+          , order = Subbly.api('Subbly.Model.Order', { uid: uid })
           , view  = scope.getViewByPath( 'Subbly.View.OrderEntry' )
 
         view.showLoading()
@@ -31684,6 +31674,10 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
                 .setValue( 'model', model )
                 .displayTpl( json )
                 .removeRendering()
+            }
+          , error: function( bbObj, response, opts )
+            {
+              view.serverError( new serverError( response ) )
             }
         }, this )
       }
@@ -31706,21 +31700,62 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         this.displayRendering()
       }
 
+    , serverError: function( errorObj )
+      {
+        var $node = $( document.getElementById('entry-error-message') )
+
+        $node.find('code').text( Subbly.i18n().get( 'errors.codeStatus', errorObj.status() ) )
+        $node.find('p').text( errorObj.message() )
+
+        this.displayRendering( 'error' )
+      }
+
     , onDisplayTpl: function()
       {
         // this.$el.find('div.fetch-holder').removeClass('rendering').removeClass('loading')
       }
   }
 
+  // List's row view 
+  var OrderRow = 
+  {
+      tagName:   'li'
+    , className: 'cln-lst-rw ordr-row js-trigger-goto list-row'
+    , _viewName: 'CustomerRow'
+
+    , render: function()
+      {
+        var html = this.tplRow({
+            totalPrice:   this.model.get('total_price')
+          // , totalItems:   model.get('orders').length
+          , orderStatus:  this.model.get('status')
+          , customerName: 'toto Name'
+          , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
+        })
+
+        this.$el.html( html )
+
+        this.el.dataset.uid  = this.model.get('uid')
+
+        return this
+      }
+
+    , goTo: function( event )
+      {
+        Subbly.trigger( 'hash::change', 'orders/' + this.model.get('uid') )
+      }
+  }
+
   // Orders controller work as Customers controler
   // so we extend it
-  // TODO: finish merge
   var OrdersList = $.extend( {}, CustomersList, 
   {
       _viewName:       'Orders'
     , _viewTpl:        TPL.orders.list
     , _classlist:      ['view-half-list']
     , _listSelector:   '#orders-list'
+    , _viewRow:        'Subbly.View.OrderRow'
+    , _viewSheet:      'Subbly.View.OrderEntry'
     , _tplRow:         TPL.orders.listrow
     , _rowHeight:      100
     , _headerSelector: 'div.nano-content > div:first-child'
@@ -31735,51 +31770,14 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
           , context:     this
         })
       }
-
-      // Build single list's row
-    , displayRow: function( model )
-      {
-        var html = this._tplRowCompiled({
-            id:           model.get('id')
-          , totalPrice:   model.get('total_price')
-          // , totalItems:   model.get('orders').length
-          , orderStatus:  model.get('status')
-          , customerName: 'toto Name'
-          , createdDate:  moment.utc( model.get('created_at') ).fromNow()
-        })
-
-        return html
-      }
-
-    , onDetailIsEmpty: function()
-      {
-        this._controller.getViewByPath( 'Subbly.View.OrderEntry' ).noResults()
-      }
-
-      // Higthligth active row
-    , setActiveRow: function( id )
-      {
-        var $listRows  = this.getListRows()
-          , $activeRow = $listRows.filter('[data-id="' + id + '"]')
-
-        $listRows.removeClass('active')
-        $activeRow.addClass('active')
-      }
-
-      // go to customer profile
-    , goTo: function( event )
-      {
-        var id = event.currentTarget.dataset.id
-
-        Subbly.trigger( 'hash::change', 'orders/' + id )
-      }
   })
 
   Subbly.register( 'Subbly', 'Orders', 
   {
-      'ViewList:Orders':   OrdersList
-    , 'View:OrderEntry':   OrderEntry
-    , 'Controller:Orders': Orders
+      'ViewList:Orders':      OrdersList
+    , 'ViewListRow:OrderRow': OrderRow
+    , 'View:OrderEntry':      OrderEntry
+    , 'Controller:Orders':    Orders
   })
 
 
@@ -32785,30 +32783,84 @@ var Router = Backbone.Router.extend(
   }, 500))
   
 
-  // Global error handler for backbone.js ajax requests
-  // http://stackoverflow.com/a/6154922
-  $document.ajaxError( function( e, xhr, options )
+  var serverError = function( xhr )
   {
-    var isJson     = ( xhr.responseJSON )
-      , response = false
-      , message  = false
+    var isJson    = ( xhr.responseJSON )
+    
+    this._response   = false
+    this._message    = false
+    this._status     = xhr.status
+    this._statusText = xhr.statusText
 
     if( isJson )
     {
-      response = ( xhr.responseJSON.response )
-                 ? xhr.responseJSON.response
-                 : false
+      this._response = ( xhr.responseJSON.response )
+                      ? xhr.responseJSON.response
+                      : false
 
-      message = ( response && response.error )  
-                ? response.error 
-                : false
+      this._message  = ( this._response && this._response.error )  
+                      ? this._response.error 
+                      : false
     }
+  }
+
+  // Generic method to get property
+  //
+  //      @params  {string}  property name
+  //      @return  {mixed}
+  //
+  serverError.prototype.getProperty = function( property, defaults )
+  {
+    if( _.isUndefined( this[ property ] ) )
+      return false
+
+    return ( this[ property ] ) 
+           ? this[ property ]
+           : defaults || false
+  }
+
+  // Get error message
+  //
+  //      @return  {string}
+  //
+  serverError.prototype.message = function()
+  {
+    return this.getProperty( '_message', 'no error message' )
+  }
+
+  // Get error status code
+  //
+  //      @return  {string}
+  //
+  serverError.prototype.status = function()
+  {
+    return this.getProperty( '_status' )
+  }
+
+  // Get error status text
+  //
+  //      @return  {string}
+  //
+  serverError.prototype.statusText = function()
+  {
+    return this.getProperty( '_statusText' )
+  }
+
+
+
+
+  // Global error handler for backbone.js ajax requests
+  // http://stackoverflow.com/a/6154922
+  // 
+  $document.ajaxError( function( e, xhr, options )
+  {
+    var error = new serverError( xhr )
 
     // request was aborted
     // no need to log this
     if( 
-        xhr.status === 0 
-        && xhr.statusText === 'abort' 
+        error.status() === 0 
+        && error.statusText() === 'abort' 
       )
     {
       console.info( 'Aborted request' )
@@ -32816,13 +32868,12 @@ var Router = Backbone.Router.extend(
     }
 
     console.group('Ajax Error')
-    console.log( xhr )
-    console.log( xhr.status )
-    console.log( xhr.responseJSON )
-    console.log( ( message ) ? message : 'no error message' )
+    console.log( error.status() )
+    console.log( error.statusText() )
+    console.log( error.message() )
     console.groupEnd()
 
-    if( xhr.status === 401 )
+    if( error.status() === 401 )
     {
       Subbly.trigger( 'user::logout', message )
       return 

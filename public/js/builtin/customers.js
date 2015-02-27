@@ -9,7 +9,7 @@
     , _controllerName: 'customers'
     , _listDisplayed:  false
     , _collectionPath: 'Subbly.Collection.Users'
-    , _displayData:    { order_by: { last_name: 'ASC' } } 
+    , _displayData:    { includes: ['orders'], order_by: { last_name: 'ASC', first_name: 'ASC' } } 
     , _mainNavRegister:
       {
           name:       'Customers'
@@ -166,35 +166,31 @@
   // List's row view (optional)
   // use it if you need to have 
   // full control on model (delete, etc.)
-  // var CustomersRow = 
-  // {
-  //     className: 'cln-lst-rw cust-row js-trigger-goto'
-  //   , _viewName: 'CustomerRow'
+  var CustomersRow = 
+  {
+      tagName:   'li'
+    , className: 'cln-lst-rw cust-row js-trigger-goto list-row'
+    , _viewName: 'CustomerRow'
 
-  //   , onInitialize: function( options )
-  //     {
-  //       this.tplRow = options.tpl
-  //     }
+    , render: function()
+      {
+        var html = this.tplRow({
+            displayName: this.model.displayName()
+          , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
+        })
 
-  //   , render: function()
-  //     {
-  //       var html = this.tplRow({
-  //           displayName: this.model.displayName()
-  //         , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
-  //       })
+        this.$el.html( html )
 
-  //       this.$el.html( html )
+        this.el.dataset.uid  = this.model.get('uid')
 
-  //       this.el.dataset.uid  = this.model.get('uid')
+        return this
+      }
 
-  //       return this
-  //     }
-
-  //   , goTo: function( event )
-  //     {
-  //       this.callController( 'sheet', this.model.get('uid') )
-  //     }
-  // }
+    , goTo: function( event )
+      {
+        Subbly.trigger( 'hash::change', 'customers/' + this.model.get('uid') )
+      }
+  }
 
   // Customers List view
   var CustomersList = 
@@ -204,16 +200,10 @@
     , _classlist:      ['view-half-list']
     , _listSelector:   '#customers-list'
     , _tplRow:         TPL.customers.listrow
+    , _viewRow:        'Subbly.View.CustomerRow'
+    , _viewSheet:      'Subbly.View.CustomerSheet'
     , _rowHeight:      100
     , _headerSelector: 'div.nano-content > div:first-child'
-    // , _viewRow:       'Subbly.View.CustomerRow'
-
-      // On view initialize
-    , onInitialize: function()
-      {
-        // add view's event
-        this.addEvents( {'click li.js-trigger-goto':  'goTo'} )
-      }
 
       // Call on list first render
     , onInitialRender: function()
@@ -235,21 +225,9 @@
         })
       }
 
-      // Build single list's row
-    , displayRow: function( model )
-      {
-        var html = this._tplRowCompiled({
-            displayName: model.displayName()
-          , createdDate: moment.utc( model.get('created_at') ).fromNow()
-          , uid:         model.get('uid')
-        })
-
-        return html
-      }
-
     , onDetailIsEmpty: function()
       {
-        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).noResults()
+        this._controller.getViewByPath( this._viewSheet ).noResults()
       }
 
     , doSearch: function( query )
@@ -270,16 +248,6 @@
 
         $listRows.removeClass('active')
         $activeRow.addClass('active')
-      }
-
-      // go to customer profile
-    , goTo: function( event )
-      {
-        this._controller.getViewByPath( 'Subbly.View.CustomerSheet' ).showLoading()
-
-        var uid = event.currentTarget.dataset.uid
-
-        Subbly.trigger( 'hash::change', 'customers/' + uid, true )
       }
   }
 
@@ -336,8 +304,9 @@
 
   Subbly.register( 'Subbly', 'Customers', 
   {
-      'ViewList:Customers':   CustomersList
-    , 'View:CustomerSheet':   CustomerSheet
-    , 'Controller:Customers': Customers
+      'ViewList:Customers':      CustomersList
+    , 'ViewListRow:CustomerRow': CustomersRow
+    , 'View:CustomerSheet':      CustomerSheet
+    , 'Controller:Customers':    Customers
   })
 

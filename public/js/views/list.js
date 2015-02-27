@@ -445,6 +445,15 @@ Components.Subbly.View.ViewlistRow = SubblyViewListRow = SubblyView.extend(
     _classIdentifier: 'list-row'
   , tagName:          'li'
 
+  // on Subbly View Initialize override
+  , initialize: function( options )
+    {
+      // Call parent `initialize` method
+      SubblyView.prototype.initialize.apply( this, arguments )
+
+      this.tplRow = options.tpl
+    }
+
   , events: _.extend( {}, SubblyView.prototype.events, 
     {
         'click.js-trigger-goto':  'goTo'
@@ -453,6 +462,6 @@ Components.Subbly.View.ViewlistRow = SubblyViewListRow = SubblyView.extend(
 
   , goTo: function( event )
     {
-console.log('goTo')
+      throw new Error( 'ViewlistRow must implement "goTo" method' )
     }
 })
