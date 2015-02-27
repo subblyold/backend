@@ -6,6 +6,6 @@ Components.Subbly.Collection.Users = Components.Subbly.Collection.List.extend(
 
   , comparator: function( model )
     {
-        return model.displayName()
+        return model.get('lastname')
     }
 })

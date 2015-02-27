@@ -29407,10 +29407,12 @@ Components.Subbly.Collection.List = SubblyCollectionList = SubblyCollection.exte
     {
       options = options || {}
 
-      this.total  = false
-      this.offset = 0
-      this.limit  = options.limit || this.defaultPerPage
-      this.page   = 1
+      this.total    = false
+      this.offset   = 0
+      this.limit    = options.limit || this.defaultPerPage
+      this.includes = options.includes || []
+      this.order_by = options.order_by || [] 
+      this.page     = 1
 
       if( this.init )
         this.init( options )
@@ -29424,8 +29426,10 @@ Components.Subbly.Collection.List = SubblyCollectionList = SubblyCollection.exte
   , queryParams: function()
     {
       return {
-          offset: this.offset
-        , limit:  this.limit
+          offset:   this.offset
+        , limit:    this.limit
+        , includes: this.includes
+        , order_by: this.order_by
       }
     }
 
@@ -29547,7 +29551,7 @@ Components.Subbly.Collection.Users = Components.Subbly.Collection.List.extend(
 
   , comparator: function( model )
     {
-        return model.displayName()
+        return model.get('lastname')
     }
 })
 
@@ -31233,7 +31237,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , _controllerName: 'customers'
     , _listDisplayed:  false
     , _collectionPath: 'Subbly.Collection.Users'
-    , _displayData:    {} 
+    , _displayData:    { order_by: { last_name: 'ASC' } } 
     , _mainNavRegister:
       {
           name:       'Customers'
@@ -31296,7 +31300,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
       {
         var scope      = this
           , view       = this.getViewByPath( this._viewsNames[0] ) // 'Subbly.View.Customers'
-          , collection = Subbly.api( this._collectionPath )
+          , collection = Subbly.api( this._collectionPath, this._displayData )
 
         this._listDisplayed = true
 
@@ -31304,7 +31308,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         {
           Subbly.fetch( collection,
           {
-              data:   this._displayData
+              data:   scope._displayData
             , success: function( collection, response )
               {
                 scope._listDisplayed = true
@@ -31639,7 +31643,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , _controllerName: 'orders'
     , _listDisplayed:  false  
     , _collectionPath: 'Subbly.Collection.Orders'
-    , _displayData:    { includes: ['user', 'products'] } 
+    , _displayData:    { includes: ['user', 'products'], order_by:{ id: 'DESC' } } 
     , _mainNavRegister:
       {
           name:       'Orders'

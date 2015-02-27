@@ -9,7 +9,7 @@
     , _controllerName: 'customers'
     , _listDisplayed:  false
     , _collectionPath: 'Subbly.Collection.Users'
-    , _displayData:    {} 
+    , _displayData:    { order_by: { last_name: 'ASC' } } 
     , _mainNavRegister:
       {
           name:       'Customers'
@@ -72,7 +72,7 @@
       {
         var scope      = this
           , view       = this.getViewByPath( this._viewsNames[0] ) // 'Subbly.View.Customers'
-          , collection = Subbly.api( this._collectionPath )
+          , collection = Subbly.api( this._collectionPath, this._displayData )
 
         this._listDisplayed = true
 
@@ -80,7 +80,7 @@
         {
           Subbly.fetch( collection,
           {
-              data:   this._displayData
+              data:   scope._displayData
             , success: function( collection, response )
               {
                 scope._listDisplayed = true

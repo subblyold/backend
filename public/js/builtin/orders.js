@@ -12,7 +12,7 @@
     , _controllerName: 'orders'
     , _listDisplayed:  false  
     , _collectionPath: 'Subbly.Collection.Orders'
-    , _displayData:    { includes: ['user', 'products'] } 
+    , _displayData:    { includes: ['user', 'products'], order_by:{ id: 'DESC' } } 
     , _mainNavRegister:
       {
           name:       'Orders'

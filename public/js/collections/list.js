@@ -11,10 +11,12 @@ Components.Subbly.Collection.List = SubblyCollectionList = SubblyCollection.exte
     {
       options = options || {}
 
-      this.total  = false
-      this.offset = 0
-      this.limit  = options.limit || this.defaultPerPage
-      this.page   = 1
+      this.total    = false
+      this.offset   = 0
+      this.limit    = options.limit || this.defaultPerPage
+      this.includes = options.includes || []
+      this.order_by = options.order_by || [] 
+      this.page     = 1
 
       if( this.init )
         this.init( options )
@@ -28,8 +30,10 @@ Components.Subbly.Collection.List = SubblyCollectionList = SubblyCollection.exte
   , queryParams: function()
     {
       return {
-          offset: this.offset
-        , limit:  this.limit
+          offset:   this.offset
+        , limit:    this.limit
+        , includes: this.includes
+        , order_by: this.order_by
       }
     }
 
