@@ -12,7 +12,7 @@ var SubblyView = Backbone.View.extend(
   , _$fetchView:      false
   , _isRendering:     false
   , _classlist:       []
-  , _renderingStates: 'loading empty search idle'
+  , _renderingStates: 'loading empty search idle error'
   , _renderingClass:  'rendering'
 
   , initialize: function( options )

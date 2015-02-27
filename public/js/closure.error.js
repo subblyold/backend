@@ -1,28 +1,82 @@
 
-  // Global error handler for backbone.js ajax requests
-  // http://stackoverflow.com/a/6154922
-  $document.ajaxError( function( e, xhr, options )
+  var serverError = function( xhr )
   {
-    var isJson     = ( xhr.responseJSON )
-      , response = false
-      , message  = false
+    var isJson    = ( xhr.responseJSON )
+    
+    this._response   = false
+    this._message    = false
+    this._status     = xhr.status
+    this._statusText = xhr.statusText
 
     if( isJson )
     {
-      response = ( xhr.responseJSON.response )
-                 ? xhr.responseJSON.response
-                 : false
+      this._response = ( xhr.responseJSON.response )
+                      ? xhr.responseJSON.response
+                      : false
 
-      message = ( response && response.error )  
-                ? response.error 
-                : false
+      this._message  = ( this._response && this._response.error )  
+                      ? this._response.error 
+                      : false
     }
+  }
+
+  // Generic method to get property
+  //
+  //      @params  {string}  property name
+  //      @return  {mixed}
+  //
+  serverError.prototype.getProperty = function( property, defaults )
+  {
+    if( _.isUndefined( this[ property ] ) )
+      return false
+
+    return ( this[ property ] ) 
+           ? this[ property ]
+           : defaults || false
+  }
+
+  // Get error message
+  //
+  //      @return  {string}
+  //
+  serverError.prototype.message = function()
+  {
+    return this.getProperty( '_message', 'no error message' )
+  }
+
+  // Get error status code
+  //
+  //      @return  {string}
+  //
+  serverError.prototype.status = function()
+  {
+    return this.getProperty( '_status' )
+  }
+
+  // Get error status text
+  //
+  //      @return  {string}
+  //
+  serverError.prototype.statusText = function()
+  {
+    return this.getProperty( '_statusText' )
+  }
+
+
+
+
+  // Global error handler for backbone.js ajax requests
+  // http://stackoverflow.com/a/6154922
+  // 
+  $document.ajaxError( function( e, xhr, options )
+  {
+    var error = new serverError( xhr )
 
     // request was aborted
     // no need to log this
     if( 
-        xhr.status === 0 
-        && xhr.statusText === 'abort' 
+        error.status() === 0 
+        && error.statusText() === 'abort' 
       )
     {
       console.info( 'Aborted request' )
@@ -30,13 +84,12 @@
     }
 
     console.group('Ajax Error')
-    console.log( xhr )
-    console.log( xhr.status )
-    console.log( xhr.responseJSON )
-    console.log( ( message ) ? message : 'no error message' )
+    console.log( error.status() )
+    console.log( error.statusText() )
+    console.log( error.message() )
     console.groupEnd()
 
-    if( xhr.status === 401 )
+    if( error.status() === 401 )
     {
       Subbly.trigger( 'user::logout', message )
       return 

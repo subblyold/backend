@@ -54,6 +54,10 @@
                 .displayTpl( json )
                 .removeRendering()
             }
+          , error: function( bbObj, response, opts )
+            {
+              view.serverError( new serverError( response ) )
+            }
         }, this )
       }
   })
@@ -73,6 +77,16 @@
     , noResults: function()
       {
         this.displayRendering()
+      }
+
+    , serverError: function( errorObj )
+      {
+        var $node = $( document.getElementById('entry-error-message') )
+
+        $node.find('code').text( 'error ' + errorObj.status() )
+        $node.find('p').text( errorObj.message() )
+
+        this.displayRendering( 'error' )
       }
 
     , onDisplayTpl: function()

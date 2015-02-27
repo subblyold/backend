@@ -303,6 +303,11 @@
         this.displayRendering()
       }
 
+    , serverError: function()
+      {
+        this.displayRendering( 'error' )
+      }
+
     , onDisplayTpl: function()
       {
         this._$tabsLinks = this.$el.find('ul.customer-nav a')

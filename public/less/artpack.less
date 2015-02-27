@@ -294,13 +294,15 @@ h1, h2, h3, h4, h5, h6 {
   .empty-list,
   .loading-list,
   .no-results,
-  .no-entry-selected {
+  .no-entry-selected,
+  .error-message {
     display: none;
   }
 
   .empty-list,
   .no-entry-selected,
-  .no-results {
+  .no-results,
+  .error-message {
     font: 32px 'LatoLight';
     position: absolute;
     top: 50%;
@@ -310,6 +312,15 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
+  }
+
+  .error-message {
+    code {
+      color: @black;
+      display: block;
+      font: @font-size-small @font-family-monospace;
+      padding-bottom: @padding-small-vertical; 
+    }
   }
 
   .loading-list {
@@ -340,6 +351,12 @@ h1, h2, h3, h4, h5, h6 {
       display: block;
     }
   }
+
+  &.error {
+    .error-message {
+      display: block;
+    }
+  }
 }
 
 //
@@ -352,6 +369,7 @@ h1, h2, h3, h4, h5, h6 {
   // column list's row
 .cln-lst-rw {
   .clearfix;
+  background: none;
   cursor: pointer;
   border-top: 1px solid @border-ligth;
   height: 100px;
