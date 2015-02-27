@@ -5,9 +5,12 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 {
     _listSelector:   false
   , _inviteTxt:      false // if no entries, show invite text
-  , _viewsPointers:  {} // sub views references
+  , _viewsPointers:  {}    // sub views references
   , _viewRow:        false
   , _tplRow:         false
+  , _winHeight:      0
+  , _rowHeight:      false 
+  , _headerSelector: false
   , _initialDisplay: false
   , _isLoadingMore:  false
   , _$list:          false
@@ -20,8 +23,9 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       // Call parent `initialize` method
       SubblyView.prototype.initialize.apply( this, arguments )
 
-      this.on( 'view::scrollend', this.nextPage, this )
-      Subbly.on( 'pagination::fetch', this.loadMore, this )
+      this.on( 'view::scrollend',     this.nextPage,          this )
+      Subbly.on( 'pagination::fetch', this.loadMore,          this )
+      Subbly.on( 'window::resize',    this.reDefineRowsLimit, this )
     }
 
   , displayTpl: function()
@@ -34,9 +38,19 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 
       this._$list = this.$el.find( this._listSelector )
 
+      if( this._headerSelector )
+        this._headHeight = this.$el.find( this._headerSelector ).height()
+
       // Compile row template
       if( this._tplRow )
         this._tplRowCompiled = Handlebars.compile( this._tplRow )
+
+      this.defineRowsLimit()
+
+      if( this.onDisplayListTpl )
+        this.onDisplayListTpl()
+
+      Subbly.trigger( 'view::tplDisplayed' )
 
       return this
     }
@@ -63,7 +77,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 
       if( this._isLoadingMore )
       {
-        console.info('already loading')
+        console.warn('already loading')
         console.groupEnd()
         return
       }
@@ -74,8 +88,11 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         console.groupEnd()
         return
       }
-
-      Subbly.trigger( 'pagination::fetch' )
+      
+      this.defineRowsLimit( function()
+      {
+        Subbly.trigger( 'pagination::fetch' )
+      })
 
       console.info('call next page')
       console.groupEnd()
@@ -89,6 +106,59 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         return
 
       Subbly.trigger( 'pagination::fetch' )
+    }
+
+    // Calculate the query limit based on on available height
+    // this prevent query to not call enough rows to perform 
+    // an infinite scroll on very large screen
+  , defineRowsLimit: function( _cb )
+    {
+      console.groupCollapsed( 'Define rows limit' )
+
+      if( parseInt( this._rowHeight, 10 ) && _.isString( this._headerSelector ) )
+      {
+        if( !this._winHeight )
+          this._winHeight = this._$nano.height()
+
+        var limit = Math.ceil( ( this._winHeight - this._headHeight ) / this._rowHeight )
+
+        if( limit > this.collection.limit )
+        {
+          console.info('redefine query limit to '+ limit)
+          this.collection.setPerPage( limit )          
+        }
+        else
+        {
+          console.info('there is engouth rows in query\'s limit')
+        }
+      }
+      else
+      {
+        console.warn('Missing properties, we use `defaultPerPage` as the query\'s limit' )
+        console.info('this._rowHeight: ' + this._rowHeight)
+        console.info('this._headerSelector: ' + this._headerSelector)
+      }
+
+      if( _.isFunction( _cb ) )
+          console.info('trigger callback')
+        , _cb()
+
+      console.groupEnd()
+    }
+
+    // On window's resize, store the new screen height
+    // if height is taller than before it redefine the query limit
+    // and trigger a list's `scrollend` event
+  , reDefineRowsLimit: function( event, viewport )
+    {
+      var tmp = this._winHeight
+
+      this._winHeight = viewport.height
+
+      if( viewport.height > tmp )
+      {
+        this._$nano.trigger( 'scrollend' )
+      }
     }
 
     // Display the `loading` row
@@ -362,8 +432,9 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       // Subbly.off( 'pagination::changed',  this.render, this ) 
       // Subbly.off( 'row::delete',          this.removeRow, this ) 
       // Subbly.off( 'collection::truncate', this.cleanRows, this )
-      this.off( 'view::scrollend', this.nextPage, this )
-      Subbly.off( 'pagination::fetch', this.loadMore, this )
+      this.off( 'view::scrollend',     this.nextPage,          this )
+      Subbly.off( 'pagination::fetch', this.loadMore,          this )
+      Subbly.off( 'window::resize',    this.reDefineRowsLimit, this )
 
       this.cleanRows()
     }

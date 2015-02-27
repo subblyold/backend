@@ -30293,9 +30293,12 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 {
     _listSelector:   false
   , _inviteTxt:      false // if no entries, show invite text
-  , _viewsPointers:  {} // sub views references
+  , _viewsPointers:  {}    // sub views references
   , _viewRow:        false
   , _tplRow:         false
+  , _winHeight:      0
+  , _rowHeight:      false 
+  , _headerSelector: false
   , _initialDisplay: false
   , _isLoadingMore:  false
   , _$list:          false
@@ -30308,8 +30311,9 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       // Call parent `initialize` method
       SubblyView.prototype.initialize.apply( this, arguments )
 
-      this.on( 'view::scrollend', this.nextPage, this )
-      Subbly.on( 'pagination::fetch', this.loadMore, this )
+      this.on( 'view::scrollend',     this.nextPage,          this )
+      Subbly.on( 'pagination::fetch', this.loadMore,          this )
+      Subbly.on( 'window::resize',    this.reDefineRowsLimit, this )
     }
 
   , displayTpl: function()
@@ -30322,9 +30326,19 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 
       this._$list = this.$el.find( this._listSelector )
 
+      if( this._headerSelector )
+        this._headHeight = this.$el.find( this._headerSelector ).height()
+
       // Compile row template
       if( this._tplRow )
         this._tplRowCompiled = Handlebars.compile( this._tplRow )
+
+      this.defineRowsLimit()
+
+      if( this.onDisplayListTpl )
+        this.onDisplayListTpl()
+
+      Subbly.trigger( 'view::tplDisplayed' )
 
       return this
     }
@@ -30351,7 +30365,7 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
 
       if( this._isLoadingMore )
       {
-        console.info('already loading')
+        console.warn('already loading')
         console.groupEnd()
         return
       }
@@ -30362,8 +30376,11 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         console.groupEnd()
         return
       }
-
-      Subbly.trigger( 'pagination::fetch' )
+      
+      this.defineRowsLimit( function()
+      {
+        Subbly.trigger( 'pagination::fetch' )
+      })
 
       console.info('call next page')
       console.groupEnd()
@@ -30377,6 +30394,59 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
         return
 
       Subbly.trigger( 'pagination::fetch' )
+    }
+
+    // Calculate the query limit based on on available height
+    // this prevent query to not call enough rows to perform 
+    // an infinite scroll on very large screen
+  , defineRowsLimit: function( _cb )
+    {
+      console.groupCollapsed( 'Define rows limit' )
+
+      if( parseInt( this._rowHeight, 10 ) && _.isString( this._headerSelector ) )
+      {
+        if( !this._winHeight )
+          this._winHeight = this._$nano.height()
+
+        var limit = Math.ceil( ( this._winHeight - this._headHeight ) / this._rowHeight )
+
+        if( limit > this.collection.limit )
+        {
+          console.info('redefine query limit to '+ limit)
+          this.collection.setPerPage( limit )          
+        }
+        else
+        {
+          console.info('there is engouth rows in query\'s limit')
+        }
+      }
+      else
+      {
+        console.warn('Missing properties, we use `defaultPerPage` as the query\'s limit' )
+        console.info('this._rowHeight: ' + this._rowHeight)
+        console.info('this._headerSelector: ' + this._headerSelector)
+      }
+
+      if( _.isFunction( _cb ) )
+          console.info('trigger callback')
+        , _cb()
+
+      console.groupEnd()
+    }
+
+    // On window's resize, store the new screen height
+    // if height is taller than before it redefine the query limit
+    // and trigger a list's `scrollend` event
+  , reDefineRowsLimit: function( event, viewport )
+    {
+      var tmp = this._winHeight
+
+      this._winHeight = viewport.height
+
+      if( viewport.height > tmp )
+      {
+        this._$nano.trigger( 'scrollend' )
+      }
     }
 
     // Display the `loading` row
@@ -30650,8 +30720,9 @@ Components.Subbly.View.Viewlist = SubblyViewList = SubblyView.extend(
       // Subbly.off( 'pagination::changed',  this.render, this ) 
       // Subbly.off( 'row::delete',          this.removeRow, this ) 
       // Subbly.off( 'collection::truncate', this.cleanRows, this )
-      this.off( 'view::scrollend', this.nextPage, this )
-      Subbly.off( 'pagination::fetch', this.loadMore, this )
+      this.off( 'view::scrollend',     this.nextPage,          this )
+      Subbly.off( 'pagination::fetch', this.loadMore,          this )
+      Subbly.off( 'window::resize',    this.reDefineRowsLimit, this )
 
       this.cleanRows()
     }
@@ -31227,41 +31298,30 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
 
         this._listDisplayed = true
 
-        view.displayTpl()
+
+        Subbly.once( 'view::tplDisplayed', function()
+        {
+          Subbly.fetch( collection,
+          {
+              success: function( collection, response )
+              {
+                scope._listDisplayed = true
+
+                view.render()
+
+                if( _.isFunction( sheetCB ) )
+                  sheetCB()
+              }
+          }, this )
+        } )
+
+        view
+          .setValue( 'collection', collection )
+          .displayTpl()
 
         // call sub-view display
         this.getViewByPath( 'Subbly.View.CustomerSheet' )
           .displayTpl()
-
-        // test zero customers return
-//         window.setTimeout(function()
-//         {
-// console.log( collection )
-//               view
-//                 .setValue( 'collection', collection )
-//                 .render()
-
-//         }, 500)
-//         return
-
-        Subbly.fetch( collection,
-        {
-            data:   {
-                offset: 0
-              , limit:  10
-            }
-          , success: function( collection, response )
-            {
-              scope._listDisplayed = true
-
-              view
-                .setValue( 'collection', collection )
-                .render()
-
-              if( _.isFunction( sheetCB ) )
-                sheetCB()
-            }
-        }, this )
       }
 
     , sheet: function(  uid ) 
@@ -31361,11 +31421,13 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
   // Customers List view
   var CustomersList = 
   {
-      _viewName:     'Customers'
-    , _viewTpl:      TPL.customers.list
-    , _classlist:    ['view-half-list']
-    , _listSelector: '#customers-list'
-    , _tplRow:        TPL.customers.listrow
+      _viewName:       'Customers'
+    , _viewTpl:        TPL.customers.list
+    , _classlist:      ['view-half-list']
+    , _listSelector:   '#customers-list'
+    , _tplRow:         TPL.customers.listrow
+    , _rowHeight:      100
+    , _headerSelector: 'div.nano-content > div:first-child'
     // , _viewRow:       'Subbly.View.CustomerRow'
 
       // On view initialize
@@ -31637,41 +31699,33 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         
         this._listDisplayed = true
 
-        view.displayTpl()
+        Subbly.once( 'view::tplDisplayed', function()
+        {
+          Subbly.fetch( collection,
+          {
+              data:   {
+                includes: ['user', 'products']
+              }
+            , success: function( collection, response )
+              {
+                scope._listDisplayed = true
+
+                view
+                  .render()
+
+                if( _.isFunction( sheetCB ) )
+                  sheetCB()
+              }
+          }, this )
+        } )
+
+        view
+          .setValue( 'collection', collection )
+          .displayTpl()
 
         // call sub-view display
         this.getViewByPath( 'Subbly.View.OrderEntry' )
           .displayTpl()
-
-        // // test zero orders return
-        // window.setTimeout(function()
-        // {
-        //       view
-        //         .setValue( 'collection', collection )
-        //         .render()
-
-        // }, 2500)
-        // return
-
-        Subbly.fetch( collection,
-        {
-            data:   {
-                offset:   0
-              , limit:    5
-              , includes: ['user', 'products']
-            }
-          , success: function( collection, response )
-            {
-              scope._listDisplayed = true
-
-              view
-                .setValue( 'collection', collection )
-                .render()
-
-              if( _.isFunction( sheetCB ) )
-                sheetCB()
-            }
-        }, this )
       }
 
     , sheet: function(  id ) 
@@ -31755,11 +31809,13 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
 
   var OrdersList = 
   {
-      _viewName:     'Orders'
-    , _viewTpl:      TPL.orders.list
-    , _classlist:    ['view-half-list']
-    , _listSelector: '#orders-list'
-    , _tplRow:        TPL.orders.listrow
+      _viewName:       'Orders'
+    , _viewTpl:        TPL.orders.list
+    , _classlist:      ['view-half-list']
+    , _listSelector:   '#orders-list'
+    , _tplRow:         TPL.orders.listrow
+    , _rowHeight:      100
+    , _headerSelector: 'div.nano-content > div:first-child'
 
       // On view initialize
     , onInitialize: function()
@@ -31791,7 +31847,6 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
       // Build single list's row
     , displayRow: function( model )
       {
-console.log( model )
         var html = this._tplRowCompiled({
             id:           model.get('id')
           , totalPrice:   model.get('total_price')
@@ -32241,23 +32296,24 @@ console.log( 'exclude ' + category.label )
           , view  = this.getViewByPath( 'Subbly.View.Products' )
 
         var collection = Subbly.api('Subbly.Collection.Products')
-
-        view.displayTpl()
-
-        Subbly.fetch( Subbly.api('Subbly.Collection.Products'),
+        
+        Subbly.once( 'view::tplDisplayed', function()
         {
-            data:   {
-                offset:   0
-              , limit:    5
-              , includes: [ 'images']
-            }
-          , success: function( collection, response )
-            {
-              view
-                .setValue( 'collection', collection )
-                .render()
-            }
-        }, this )
+          Subbly.fetch( collection,
+          {
+              data:   {
+                  includes: [ 'images']
+              }
+            , success: function( collection, response )
+              {
+                view.render()
+              }
+          }, this )
+        } )
+
+        view
+          .setValue( 'collection', collection )
+          .displayTpl()
       }
   }
 
@@ -32270,16 +32326,21 @@ console.log( 'exclude ' + category.label )
   // Products List view
   var ProductsList = 
   {
-      _viewName:     'Products'
-    , _viewTpl:      TPL.products.list
-    , _displayMode:  'grid'
-    , _cookieName:   'SubblyProductsViewMode'
-    , _listSelector: '#products-view-list'
-    , _tplRow:        TPL.products.listrow
+      _viewName:       'Products'
+    , _viewTpl:        TPL.products.list
+    , _displayMode:    'grid'
+    , _cookieName:     'SubblyProductsViewMode'
+    , _listSelector:   '#products-view-list'
+    , _tplRow:         TPL.products.listrow
+    , _headerSelector: 'div.nano-content > div:first-child'
 
       // On view initialize
     , onInitialize: function()
       {
+        this._displayMode = Subbly.getCookie( this._cookieName )
+
+        this.getRowHeight()
+
         // add view's event
         this.addEvents( {
             'click .js-tigger-goto':  'goTo'
@@ -32287,7 +32348,7 @@ console.log( 'exclude ' + category.label )
           , 'click a.js-trigger-new': 'addNew'
         })
 
-        this._$window = $( window )
+        // this._$window = $( window )
       }
 
       // Build single list's row
@@ -32303,7 +32364,8 @@ console.log( 'exclude ' + category.label )
         this._$viewItems = $( document.getElementById('products-view-list') )
         this._$btnViews  = this.$el.find('a[data-view]')
         
-        this.getToggleView()
+        // this.getToggleView()
+        this.toggleView()
 
         var scope = this
 
@@ -32336,20 +32398,98 @@ console.log( 'exclude ' + category.label )
         Subbly.trigger( 'hash::change', 'products/' + sku )
       }
 
+    , getRowHeight: function()
+      {
+        if( this._displayMode == 'list' )
+          this._rowHeight = 70
+        else
+            this._rowHeight = 276
+          , this._rowWidth  = 216 
+      }
+
     , getToggleView: function()
       {
         this._displayMode = Subbly.getCookie( this._cookieName )
 
+        this.getRowHeight()
+
         this.toggleView()
       }
 
+      // override the method because grid mode needs 
+      // to take count of window width
+    , defineRowsLimit: function( _cb )
+      {
+        // standard calcul
+        // Call parent `defineRowsLimit` method
+        if( this._displayMode == 'list' )
+        {
+          SubblyViewList.prototype.defineRowsLimit.apply( this, arguments )
+        }
+        else
+        {
+          // Grid Mode
+          if( !this._winHeight )
+            this._winHeight = this._$nano.height()
+
+          if( !this._winWidth )
+            this._winWidth = this._$list.width()
+
+          var perLine = ( this._winWidth / this._rowWidth )
+            , limit   = Math.ceil( ( ( this._winHeight - this._headHeight ) / this._rowHeight ) * perLine )
+
+          if( limit > this.collection.limit )
+          {
+            console.info('redefine query limit to '+ limit)
+            this.collection.setPerPage( limit )          
+          }
+
+          if( _.isFunction( _cb ) )
+            _cb()
+        }
+      }
+      // override the method because grid mode needs 
+      // to take count of window width
+    , reDefineRowsLimit: function( event, viewport )
+      {
+        // standard calcul
+        // Call parent `reDefineRowsLimit` method
+        if( this._displayMode == 'list' )
+        {
+          SubblyViewList.prototype.reDefineRowsLimit.apply( this, arguments )
+        }
+        else
+        {
+          // Grid Mode
+          var tmpH  = this._winHeight
+            , tmpW  = this._winWidth
+            , listW = this._$list.width()
+
+          this._winHeight = viewport.height
+          this._winWidth  = listW
+
+          if( ( viewport.height > tmpH ) || ( listW > tmpW ) )
+          {
+            this._$nano.trigger( 'scrollend' )
+          }
+        }
+      }
+
+
     , clickToggleView: function( event )
       {
-        this._displayMode = event.currentTarget.dataset.view
+        var tmp = event.currentTarget.dataset.view
+
+        if( tmp == this._displayMode )
+          return
+
+        this._displayMode = tmp
 
         Subbly.setCookie( this._cookieName, this._displayMode )
 
         this.toggleView()
+
+        $window.trigger('resize')
       }
 
     , toggleView: function()
@@ -32362,8 +32502,6 @@ console.log( 'exclude ' + category.label )
         this._$btnViews.removeClass('active')
 
         this._$btnViews.filter('[data-view="' + this._displayMode + '"]').addClass('active')
-
-        this._$window.trigger('resize')
       }
 
     , displayList: function()
@@ -32472,8 +32610,7 @@ console.log( 'exclude ' + category.label )
                             formData['subbly.backend_language'] 
                             && Subbly.getSetting('subbly.backend_language') != formData['subbly.backend_language']
                           )
-// console.log( formData )
-// return
+
         Subbly.store( this.model, formData, 
         {
             type: 'PUT'
@@ -32753,7 +32890,7 @@ var Router = Backbone.Router.extend(
     this.attr( key, key )
   }
 
-  $window.on('resize', function( event )
+  $window.on('resize', _.debounce( function( event )
   {
     // update viewport
     var viewport = {
@@ -32763,7 +32900,7 @@ var Router = Backbone.Router.extend(
 
     // publish jQuery event + viewport 
     Subbly.trigger( 'window::resize', event, viewport )
-  })
+  }, 500))
   
 
   // Global error handler for backbone.js ajax requests

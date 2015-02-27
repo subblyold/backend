@@ -74,41 +74,30 @@
 
         this._listDisplayed = true
 
-        view.displayTpl()
+
+        Subbly.once( 'view::tplDisplayed', function()
+        {
+          Subbly.fetch( collection,
+          {
+              success: function( collection, response )
+              {
+                scope._listDisplayed = true
+
+                view.render()
+
+                if( _.isFunction( sheetCB ) )
+                  sheetCB()
+              }
+          }, this )
+        } )
+
+        view
+          .setValue( 'collection', collection )
+          .displayTpl()
 
         // call sub-view display
         this.getViewByPath( 'Subbly.View.CustomerSheet' )
           .displayTpl()
-
-        // test zero customers return
-//         window.setTimeout(function()
-//         {
-// console.log( collection )
-//               view
-//                 .setValue( 'collection', collection )
-//                 .render()
-
-//         }, 500)
-//         return
-
-        Subbly.fetch( collection,
-        {
-            data:   {
-                offset: 0
-              , limit:  10
-            }
-          , success: function( collection, response )
-            {
-              scope._listDisplayed = true
-
-              view
-                .setValue( 'collection', collection )
-                .render()
-
-              if( _.isFunction( sheetCB ) )
-                sheetCB()
-            }
-        }, this )
       }
 
     , sheet: function(  uid ) 
@@ -208,11 +197,13 @@
   // Customers List view
   var CustomersList = 
   {
-      _viewName:     'Customers'
-    , _viewTpl:      TPL.customers.list
-    , _classlist:    ['view-half-list']
-    , _listSelector: '#customers-list'
-    , _tplRow:        TPL.customers.listrow
+      _viewName:       'Customers'
+    , _viewTpl:        TPL.customers.list
+    , _classlist:      ['view-half-list']
+    , _listSelector:   '#customers-list'
+    , _tplRow:         TPL.customers.listrow
+    , _rowHeight:      100
+    , _headerSelector: 'div.nano-content > div:first-child'
     // , _viewRow:       'Subbly.View.CustomerRow'
 
       // On view initialize

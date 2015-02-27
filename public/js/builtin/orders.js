@@ -74,41 +74,33 @@
         
         this._listDisplayed = true
 
-        view.displayTpl()
+        Subbly.once( 'view::tplDisplayed', function()
+        {
+          Subbly.fetch( collection,
+          {
+              data:   {
+                includes: ['user', 'products']
+              }
+            , success: function( collection, response )
+              {
+                scope._listDisplayed = true
+
+                view
+                  .render()
+
+                if( _.isFunction( sheetCB ) )
+                  sheetCB()
+              }
+          }, this )
+        } )
+
+        view
+          .setValue( 'collection', collection )
+          .displayTpl()
 
         // call sub-view display
         this.getViewByPath( 'Subbly.View.OrderEntry' )
           .displayTpl()
-
-        // // test zero orders return
-        // window.setTimeout(function()
-        // {
-        //       view
-        //         .setValue( 'collection', collection )
-        //         .render()
-
-        // }, 2500)
-        // return
-
-        Subbly.fetch( collection,
-        {
-            data:   {
-                offset:   0
-              , limit:    5
-              , includes: ['user', 'products']
-            }
-          , success: function( collection, response )
-            {
-              scope._listDisplayed = true
-
-              view
-                .setValue( 'collection', collection )
-                .render()
-
-              if( _.isFunction( sheetCB ) )
-                sheetCB()
-            }
-        }, this )
       }
 
     , sheet: function(  id ) 
@@ -192,11 +184,13 @@
 
   var OrdersList = 
   {
-      _viewName:     'Orders'
-    , _viewTpl:      TPL.orders.list
-    , _classlist:    ['view-half-list']
-    , _listSelector: '#orders-list'
-    , _tplRow:        TPL.orders.listrow
+      _viewName:       'Orders'
+    , _viewTpl:        TPL.orders.list
+    , _classlist:      ['view-half-list']
+    , _listSelector:   '#orders-list'
+    , _tplRow:         TPL.orders.listrow
+    , _rowHeight:      100
+    , _headerSelector: 'div.nano-content > div:first-child'
 
       // On view initialize
     , onInitialize: function()
@@ -228,7 +222,6 @@
       // Build single list's row
     , displayRow: function( model )
       {
-console.log( model )
         var html = this._tplRowCompiled({
             id:           model.get('id')
           , totalPrice:   model.get('total_price')
