@@ -6,6 +6,6 @@ Components.Subbly.Collection.Orders = Components.Subbly.Collection.List.extend(
 
   , comparator: function( model )
     {
-        return model.get('id')
+        return -model.get('id')
     }
 })

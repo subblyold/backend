@@ -29,12 +29,12 @@
       // Routes
       //-------------------------------
 
-    , sheet: function(  id ) 
+    , sheet: function( uid ) 
       {
-        this.getViewByPath( 'Subbly.View.Orders' ).setActiveRow( id )
+        this.getViewByPath( 'Subbly.View.Orders' ).setActiveRow( uid )
 
         var scope = this
-          , order = Subbly.api('Subbly.Model.Order', { id: id })
+          , order = Subbly.api('Subbly.Model.Order', { uid: uid })
           , view  = scope.getViewByPath( 'Subbly.View.OrderEntry' )
 
         view.showLoading()
