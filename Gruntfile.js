@@ -152,6 +152,7 @@ module.exports = function(grunt)
                   , 'public/lib/bootstrap/button.js'
                   , 'public/lib/bootstrap/modal.js'
                   , 'public/lib/moment/moment.js'
+                  , 'public/lib/moment/fr.js'
                   // , 'public/lib/download/download.js'
 
                   // App

@@ -86,6 +86,9 @@
             {
               if( updateI18n )
               {
+                // Set date library's locale
+                moment.locale( formData['subbly.backend_language'] )
+                
                 Subbly.i18n().setLocale( formData['subbly.backend_language'], function()
                 {
                   scope.displayTpl( model.getAsObject() )

@@ -291,8 +291,15 @@ SubblyCore.prototype.setCredentials = function( credentials )
   {
     success: function( model, response )
     {
+      var locale = scope.getSetting('subbly.backend_language')
+
+      console.info('set backend locale: ' + locale )
+
+      // Set date library's locale
+      moment.locale( locale )
+
       // on Success, load store UI language
-      scope.i18n().setLocale( scope.getSetting('subbly.backend_language'), function()
+      scope.i18n().setLocale( locale, function()
       {
         // Trigger App's router
         scope._router.ready(function( route )
