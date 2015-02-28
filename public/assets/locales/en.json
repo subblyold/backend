@@ -39,6 +39,7 @@
     "noEntry": "You don't have<br> any customers yet.",
     "pageTitle": "Customers",
     "formPlaceholder": "Search by name, date",
+    "lastVisit": "Last visit",
     "orders": {
       "none": "no order",
       "single": "1 order",
@@ -62,7 +63,9 @@
         "single": "order",
         "plural": "orders (%1$s)"
       }
-    }
+    },
+    "orderId": "Order #%1$s",
+    "userId": "#%1$s"
   },
   "categories": {
     "noEntry": "no entries",

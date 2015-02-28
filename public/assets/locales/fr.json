@@ -38,6 +38,7 @@
     "noEntry": "Vous n’avez<br>pas encore de clients",
     "pageTitle": "Clients",
     "formPlaceholder": "Rechercher par nom",
+    "lastVisit": "Dernière connexion ",
     "orders": {
       "none": "aucune commende",
       "single": "1 commande",
@@ -61,7 +62,9 @@
         "single": "commande",
         "plural": "commandes (%1$s)"
       }
-    }
+    },
+    "orderId": "Commande N°%1$s",
+    "userId": "N°%1$s"
   },
   "categories": {
     "noEntry": "Aucune catégories",

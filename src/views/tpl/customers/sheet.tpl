@@ -25,11 +25,13 @@
           </div>
           <div id="customer-profile" class="customer-tab active">
             <hr class="hr">
-            <div class="cl-f">
+            <div class="cl-f pos-r">
               <div class="cust-identifier">
                 <strong class="c-blk strong">{{displayName}}</strong>  n° {{id}}<br>
-                {{email}}<br>
-                Last visit: {{lastLogin}}
+                {{email}}
+                {{#if last_login}}
+                <br>{{i18n 'customers.lastVisit'}}: {{lastLogin}}
+                {{/if}}
               </div><!-- /.fl-l -->
               <span class="cust-action">
                 <a href="javascript:;" class="btn btn-w-icon">

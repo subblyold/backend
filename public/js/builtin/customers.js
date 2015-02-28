@@ -119,7 +119,8 @@
             {
               var json = model.toJSON()
 
-              json.lastLogin   = moment.utc( model.get('last_login') ).format('llll')
+              if( !_.isUndefined( model.get('last_login') ) )
+                json.lastLogin = moment.utc( model.get('last_login') ).fromNow()
 
               view
                 .setValue( 'model', model )

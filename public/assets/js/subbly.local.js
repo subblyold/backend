@@ -31430,7 +31430,8 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
             {
               var json = model.toJSON()
 
-              json.lastLogin   = moment.utc( model.get('last_login') ).format('llll')
+              if( !_.isUndefined( model.get('last_login') ) )
+                json.lastLogin = moment.utc( model.get('last_login') ).fromNow()
 
               view
                 .setValue( 'model', model )
@@ -31733,15 +31734,9 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
             data: { includes: ['user', 'shipping_address', 'billing_address', 'products'] }
           , success: function( model, response )
             {
-              var json = model.toJSON()
-              json.listStatus   = [ 'draft', 'confirmed', 'refused', 'waiting', 'paid', 'sent' ]
-              json.customerName = 'Fake Name'
-              json.createdDate  = moment.utc( model.get('created_at') ).fromNow()
-
               view
                 .setValue( 'model', model )
-                .displayTpl( json )
-                .removeRendering()
+                .formatEntry()
             }
           , error: function( bbObj, response, opts )
             {
@@ -31778,6 +31773,21 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         this.displayRendering( 'error' )
       }
 
+    , formatEntry: function()
+      {
+        var json = this.model.toJSON()
+        json.listStatus   = [ 'draft', 'confirmed', 'refused', 'waiting', 'paid', 'sent' ]
+        json.customerName = 'Fake Name'
+        json.createdDate  = moment.utc( this.model.get('created_at') ).fromNow()
+
+        json.userId  = Subbly.i18n().get( 'orderDetails.userId', json.user.id )
+        json.orderId = Subbly.i18n().get( 'orderDetails.orderId', this.model.get('id') )
+
+        this
+          .displayTpl( json )
+          .removeRendering()
+      }
+
     , onDisplayTpl: function()
       {
         // this.$el.find('div.fetch-holder').removeClass('rendering').removeClass('loading')
@@ -31793,9 +31803,16 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
 
     , render: function()
       {
+        var qty = 0
+
+        _.each( this.model.get('products'), function( product )
+        {
+          qty += ( 1 * product.quantity )
+        })
+
         var html = this.tplRow({
             totalPrice:   this.model.get('total_price')
-          , totalItems:   Subbly.i18n().choice( 'orders.items', this.model.get('products').length ) 
+          , totalItems:   Subbly.i18n().choice( 'orders.items', qty ) 
           , orderStatus:  this.model.get('status')
           , customerName: this.model.get('user').displayName
           , createdDate:  moment.utc( this.model.get('created_at') ).fromNow()

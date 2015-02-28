@@ -12,7 +12,7 @@
         <div class="c-pdg-h c-pdg-t">
           <div class="order-title cl-f">
             <h3 class="fl-l">
-              <span class="f-ttl c-blk dp-b">Order N°4682</span>
+              <span class="f-ttl c-blk dp-b">{{orderId}}</span>
               {{createdDate}}
             </h3>
             <span class="fl-r">
@@ -26,12 +26,13 @@
           </div>
           <hr class="hr">
           <p class="ord-sts-rsm"><!-- order status resume -->
-            <span class="strong c-blk">Paypal</span> - Confirmed Payment
+            <span class="strong c-blk">{{gateway}}</span> - {{status}}
           </p><!-- /.ord-sts-rsm -->
           <ul class="ord-lst"><!-- order list -->
+            {{#each products}}
             <li class="ord-lst-rw">
               <span class="thmb-list">
-                <span class="thmb-img" style="background-image:url(/src/fixtures/img/product-03.jpg)"></span>
+                <span class="thmb-img" style="background-image:url(/uploads/product-03.jpg)"></span>
               </span>
               <span class="pdt-dtls">
                 <span class="pdt-dtls-primary">
@@ -43,12 +44,12 @@
                 <ul class="pdt-dtls-lst">
                   <li class="pdt-price">
                     <span class="pdt-value pdt-price-value">
-                      1 336,00 €
+                      {{formatNumber price type="currency"}}
                     </span>
                   </li>
                   <li class="pdt-qty">
                     <span class="pdt-value pdt-qty-value">
-                      999
+                      {{quantity}}
                     </span>
                   </li>
                   <li class="pdt-total">
@@ -59,6 +60,7 @@
                 </ul>
               </span><!-- /.pdt-dtls -->
             </li><!-- /.ord-lst-rw -->
+            {{/each}}
           </ul><!-- /.ord-lst -->
           <hr class="hr">
           <div class="ord-ttl-dts"><!-- orded total details -->
@@ -73,7 +75,7 @@
                 </span>
               </span>
               <span class="fl-r strong f-ttl strong c-blk">
-                {{total_price}}
+                {{formatNumber total_price type="currency"}}
               </span>
             </p>
           </div><!-- /.ord-ttl-dts -->
@@ -82,7 +84,7 @@
         <div class="c-pdg-h c-pdg-b">
           <div class="order-custommer cl-f">
             <h3 class="f-lrg fl-l" style="padding-top:8px">
-              <span class="strong c-blk">Benjamin Guedj</span> n°523
+              <span class="strong c-blk">{{user.displayName}}</span> {{{userId}}}
             </h3>
             <span class="fl-r">
               <a href="javascript:;" class="btn btn-icon">

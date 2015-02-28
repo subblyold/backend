@@ -1363,6 +1363,7 @@ input[type="search"] {
   width: calc(100% - 18px);
 }
 .btn {
+  background: #ffffff;
   border-radius: 60px;
   border: 1px solid #d9d9d9;
   display: inline-block;
@@ -1500,6 +1501,7 @@ input[type="search"] {
   display: block;
   float: left;
   height: 48px;
+  position: relative;
   width: 48px;
 }
 .pdt-list-item .thmb-list {
@@ -2032,12 +2034,14 @@ input[type="search"] {
   color: #ffffff !important;
 }
 .cust-identifier {
-  float: left;
   line-height: 20px;
+  min-height: 60px;
 }
 .cust-action {
-  float: right;
-  padding-top: 10px;
+  position: absolute;
+  right: 0;
+  top: 10px;
+  z-index: 100;
 }
 .cust-addresses {
   border-bottom: 1px solid #e1e1e1;
