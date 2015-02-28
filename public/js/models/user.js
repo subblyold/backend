@@ -5,8 +5,8 @@ Components.Subbly.Model.User = SubblyModel.extend(
   , serviceName:  'users'
   , singleResult: 'user'
 
-  , displayName: function()
-    {
-      return this.get('firstname') + ' ' + this.get('lastname')
-    }
+  // , displayName: function()
+  //   {
+  //     return this.get('firstname') + ' ' + this.get('lastname')
+  //   }
 })

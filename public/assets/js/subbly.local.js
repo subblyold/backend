@@ -26755,6 +26755,66 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
     }
 }).call(this);
 
+// moment.js locale configuration
+// locale : french (fr)
+// author : John Fischer : https://github.com/jfroffice
+
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['moment'], factory); // AMD
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('../moment')); // Node
+    } else {
+        factory(window.moment); // Browser global
+    }
+}(function (moment) {
+    return moment.defineLocale('fr', {
+        months : 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
+        monthsShort : 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
+        weekdays : 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
+        weekdaysShort : 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
+        weekdaysMin : 'Di_Lu_Ma_Me_Je_Ve_Sa'.split('_'),
+        longDateFormat : {
+            LT : 'HH:mm',
+            L : 'DD/MM/YYYY',
+            LL : 'D MMMM YYYY',
+            LLL : 'D MMMM YYYY LT',
+            LLLL : 'dddd D MMMM YYYY LT'
+        },
+        calendar : {
+            sameDay: '[Aujourd\'hui à] LT',
+            nextDay: '[Demain à] LT',
+            nextWeek: 'dddd [à] LT',
+            lastDay: '[Hier à] LT',
+            lastWeek: 'dddd [dernier à] LT',
+            sameElse: 'L'
+        },
+        relativeTime : {
+            future : 'dans %s',
+            past : 'il y a %s',
+            s : 'quelques secondes',
+            m : 'une minute',
+            mm : '%d minutes',
+            h : 'une heure',
+            hh : '%d heures',
+            d : 'un jour',
+            dd : '%d jours',
+            M : 'un mois',
+            MM : '%d mois',
+            y : 'un an',
+            yy : '%d ans'
+        },
+        ordinalParse: /\d{1,2}(er|)/,
+        ordinal : function (number) {
+            return number + (number === 1 ? 'er' : '');
+        },
+        week : {
+            dow : 1, // Monday is the first day of the week.
+            doy : 4  // The week that contains Jan 4th is the first week of the year.
+        }
+    });
+}));
+
 
 ;(function (window, undefined) 
 {
@@ -28803,8 +28863,15 @@ SubblyCore.prototype.setCredentials = function( credentials )
   {
     success: function( model, response )
     {
+      var locale = scope.getSetting('subbly.backend_language')
+
+      console.info('set backend locale: ' + locale )
+
+      // Set date library's locale
+      moment.locale( locale )
+
       // on Success, load store UI language
-      scope.i18n().setLocale( scope.getSetting('subbly.backend_language'), function()
+      scope.i18n().setLocale( locale, function()
       {
         // Trigger App's router
         scope._router.ready(function( route )
@@ -29361,10 +29428,10 @@ Components.Subbly.Model.User = SubblyModel.extend(
   , serviceName:  'users'
   , singleResult: 'user'
 
-  , displayName: function()
-    {
-      return this.get('firstname') + ' ' + this.get('lastname')
-    }
+  // , displayName: function()
+  //   {
+  //     return this.get('firstname') + ' ' + this.get('lastname')
+  //   }
 })
 
 
@@ -31363,7 +31430,6 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
             {
               var json = model.toJSON()
 
-              json.displayName = model.displayName()
               json.lastLogin   = moment.utc( model.get('last_login') ).format('llll')
 
               view
@@ -31419,7 +31485,8 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , render: function()
       {
         var html = this.tplRow({
-            displayName: this.model.displayName()
+            displayName: this.model.get('displayName')
+          , totalOrders: Subbly.i18n().choice( 'customers.orders', this.model.get('orders').length ) 
           , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
         })
 
@@ -31465,6 +31532,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
             collection:  'Subbly.Collection.Users'
           , element:     '#customers-search'
           , pathContext: 'customers'
+          , includes:    ['orders']
           , context:     this
         })
       }
@@ -31727,10 +31795,10 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
       {
         var html = this.tplRow({
             totalPrice:   this.model.get('total_price')
-          // , totalItems:   model.get('orders').length
+          , totalItems:   Subbly.i18n().choice( 'orders.items', this.model.get('products').length ) 
           , orderStatus:  this.model.get('status')
-          , customerName: 'toto Name'
-          , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
+          , customerName: this.model.get('user').displayName
+          , createdDate:  moment.utc( this.model.get('created_at') ).fromNow()
         })
 
         this.$el.html( html )
@@ -32498,6 +32566,9 @@ console.log( 'exclude ' + category.label )
             {
               if( updateI18n )
               {
+                // Set date library's locale
+                moment.locale( formData['subbly.backend_language'] )
+                
                 Subbly.i18n().setLocale( formData['subbly.backend_language'], function()
                 {
                   scope.displayTpl( model.getAsObject() )

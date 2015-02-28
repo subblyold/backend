@@ -119,7 +119,6 @@
             {
               var json = model.toJSON()
 
-              json.displayName = model.displayName()
               json.lastLogin   = moment.utc( model.get('last_login') ).format('llll')
 
               view
@@ -175,7 +174,8 @@
     , render: function()
       {
         var html = this.tplRow({
-            displayName: this.model.displayName()
+            displayName: this.model.get('displayName')
+          , totalOrders: Subbly.i18n().choice( 'customers.orders', this.model.get('orders').length ) 
           , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
         })
 
@@ -221,6 +221,7 @@
             collection:  'Subbly.Collection.Users'
           , element:     '#customers-search'
           , pathContext: 'customers'
+          , includes:    ['orders']
           , context:     this
         })
       }

@@ -37,12 +37,21 @@
   "customers": {
     "noEntry": "Vous n’avez<br>pas encore de clients",
     "pageTitle": "Clients",
-    "formPlaceholder": "Rechercher par nom"
+    "formPlaceholder": "Rechercher par nom",
+    "orders": {
+      "none": "aucune commende",
+      "single": "1 commande",
+      "plural": "%1$s commandes"
+    }
   },
   "orders": {
     "noEntry": "Vous n'avez pas encore<br>de commandes",
     "pageTitle": "Commandes",
-    "formPlaceholder": "Chercher par date, nom, etc."
+    "formPlaceholder": "Chercher par date, nom, etc.",
+    "items": {
+      "single": "1 produit",
+      "plural": "%1$s produits"
+    }
   },
   "orderDetails": {
     "tabs": {

@@ -38,12 +38,21 @@
   "customers": {
     "noEntry": "You don't have<br> any customers yet.",
     "pageTitle": "Customers",
-    "formPlaceholder": "Search by name, date"
+    "formPlaceholder": "Search by name, date",
+    "orders": {
+      "none": "no order",
+      "single": "1 order",
+      "plural": "%1$s orders"
+    }
   },
   "orders": {
     "noEntry": "You don't have<br> any orders yet.",
     "pageTitle": "Orders",
-    "formPlaceholder": "Search by date, name, etc."
+    "formPlaceholder": "Search by date, name, etc.",
+    "items": {
+      "single": "1 item",
+      "plural": "%1$s items"
+    }
   },
   "orderDetails": {
     "tabs": {

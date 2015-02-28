@@ -106,10 +106,10 @@
       {
         var html = this.tplRow({
             totalPrice:   this.model.get('total_price')
-          // , totalItems:   model.get('orders').length
+          , totalItems:   Subbly.i18n().choice( 'orders.items', this.model.get('products').length ) 
           , orderStatus:  this.model.get('status')
-          , customerName: 'toto Name'
-          , createdDate: moment.utc( this.model.get('created_at') ).fromNow()
+          , customerName: this.model.get('user').displayName
+          , createdDate:  moment.utc( this.model.get('created_at') ).fromNow()
         })
 
         this.$el.html( html )
