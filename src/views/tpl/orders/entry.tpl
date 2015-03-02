@@ -15,6 +15,7 @@
               <span class="f-ttl c-blk dp-b">{{orderId}}</span>
               {{createdDate}}
             </h3>
+            <!--
             <span class="fl-r">
               <a href="javascript:;" class="btn btn-icon">
                 <i class="icon icon-files"></i>
@@ -22,23 +23,25 @@
               <a href="javascript:;" class="btn btn-icon">
                 <i class="icon icon-print"></i>
               </a>
-            </span><!-- /.fl-r -->
+            </span> /.fl-r -->
           </div>
           <hr class="hr">
           <p class="ord-sts-rsm"><!-- order status resume -->
-            <span class="strong c-blk">{{gateway}}</span> - {{status}}
+            <span class="strong c-blk">{{gateway}}</span> - {{statusTxt}}
           </p><!-- /.ord-sts-rsm -->
           <ul class="ord-lst"><!-- order list -->
             {{#each products}}
             <li class="ord-lst-rw">
-              <span class="thmb-list">
-                <span class="thmb-img" style="background-image:url(/uploads/product-03.jpg)"></span>
+              <span class="thmb-list cur-p js-goto-product" data-sku="{{sku}}">
+                <span class="thmb-img" style="background-image:url({{image.filename}})"></span>
               </span>
               <span class="pdt-dtls">
                 <span class="pdt-dtls-primary">
                   <span>
-                    <strong class="pdt-name dp-b">Reunion tour shirt</strong>
-                    <span class="pdt-opt dp-b">taille s</span>
+                    <strong class="cur-p pdt-name dp-b js-goto-product" data-sku="{{sku}}">
+                      {{name}}
+                    </strong>
+                    <!--span class="pdt-opt dp-b">taille s</span-->
                   </span>
                 </span><!-- /.pdt-dtls-primary -->
                 <ul class="pdt-dtls-lst">
@@ -54,7 +57,7 @@
                   </li>
                   <li class="pdt-total">
                     <span class="pdt-value pdt-total-value">
-                      1 336,00 €
+                      {{formatNumber total type="currency"}}
                     </span>
                   </li>
                 </ul>
@@ -65,8 +68,8 @@
           <hr class="hr">
           <div class="ord-ttl-dts"><!-- orded total details -->
             <p class="cl-f">
-              <span class="fl-l">
-                <span class="ord-wgt c-blk strong dp-b">360 gr</span><!-- order weight -->
+              <span class="fl-l" style="padding-top:10px">
+                <!--span class="ord-wgt c-blk strong dp-b">360 gr</span--><!-- order weight -->
                 <span>
                   <span class="ord-dlv-cpy"><!-- order delivery company -->
                     Colissimo Express
@@ -84,35 +87,34 @@
         <div class="c-pdg-h c-pdg-b">
           <div class="order-custommer cl-f">
             <h3 class="f-lrg fl-l" style="padding-top:8px">
-              <span class="strong c-blk">{{user.displayName}}</span> {{{userId}}}
+              <span class="strong c-blk cur-p js-goto-customer">{{user.displayName}}</span> {{{userId}}}
             </h3>
-            <span class="fl-r">
+            <!--span class="fl-r">
               <a href="javascript:;" class="btn btn-icon">
                 <i class="icon icon-mail"></i>
               </a>
-            </span><!-- /.fl-r -->
+            </span--><!-- /.fl-r -->
           </div><!-- /.order-custommer -->
           <div class="order-addresses cl-f">
             <p class="fl-l c-pdg-bas-v" style="width:50%">
               <span class="strong c-blk dp-b cl-f" style="margin-bottom:8px">
-                Delivery adress
-                <i class="icon icon-edit c-dgr -fl-l" style="margin-left:10%"></i>
+                {{i18n 'orderDetails.deliveryAdress'}}
+                <!-- //TODO: add edit address -->
+                <!--i class="icon icon-edit c-dgr -fl-l" style="margin-left:10%"></i-->
               </span>
-              Benjamin Guedj<br>
-              16 bis allee du jardin anglais<br>
-              93340 LE RAINCY<br>
-              FRANCE<br>
+              {{shipping_address.lastname}} {{shipping_address.firstname}}<br>
+              {{{formatAddress shipping_address}}}
             </p>
+            {{#if billing_address}}
             <p class="fl-l c-pdg-bas-v" style="width:50%">
               <span class="strong c-blk dp-b" style="margin-bottom:8px">
-                Delivery adress
-                <i class="icon icon-edit c-dgr -fl-l" style="margin-left:10%"></i>
+                {{i18n 'orderDetails.billingAdress'}}
+                <!--i class="icon icon-edit c-dgr -fl-l" style="margin-left:10%"></i-->
               </span>
-              Benjamin Guedj<br>
-              16 bis allee du jardin anglais<br>
-              93340 LE RAINCY<br>
-              FRANCE<br>
+              {{billing_address.lastname}} {{billing_address.firstname}}<br>
+              {{{formatAddress billing_address}}}
             </p>
+            {{/if}}
           </div><!-- /.order-addresses -->
         </div><!-- /.c-pdg -->
       </div><!-- /.ordr-cnt -->

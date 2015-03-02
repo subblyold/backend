@@ -63,6 +63,15 @@
       _viewName:     'OrderEntry'
     , _viewTpl:      TPL.orders.entry
 
+    , onInitialize: function()
+      {
+        // add view's event
+        this.addEvents({
+            'click span.js-goto-customer': 'goToCustomer'
+          , 'click .js-goto-product':      'goToProduct'
+        })
+      }
+
     , noResult: function()
       {
         this.$el.find('div.fetch-holder').removeClass('loading')
@@ -87,11 +96,19 @@
       {
         var json = this.model.toJSON()
         json.listStatus   = [ 'draft', 'confirmed', 'refused', 'waiting', 'paid', 'sent' ]
-        json.customerName = 'Fake Name'
         json.createdDate  = moment.utc( this.model.get('created_at') ).fromNow()
 
         json.userId  = Subbly.i18n().get( 'orderDetails.userId', json.user.id )
         json.orderId = Subbly.i18n().get( 'orderDetails.orderId', this.model.get('id') )
+
+        json.statusTxt = __( 'orderDetails.status.' + this.model.get('status') )
+
+        _.each( json.products, function( product )
+        {
+          product.total = ( product.sale_price != '0.00' )
+                          ? parseFloat( product.sale_price ) * product.quantity
+                          : parseFloat( product.price ) * product.quantity
+        })
 
         this
           .displayTpl( json )
@@ -101,6 +118,16 @@
     , onDisplayTpl: function()
       {
         // this.$el.find('div.fetch-holder').removeClass('rendering').removeClass('loading')
+      }
+
+    , goToCustomer: function()
+      {
+        Subbly.trigger( 'hash::change', 'customers/' + this.model.get('user').uid )
+      }
+
+    , goToProduct: function( event )
+      {
+        Subbly.trigger( 'hash::change', 'products/' + event.currentTarget.dataset.sku )
       }
   }
 

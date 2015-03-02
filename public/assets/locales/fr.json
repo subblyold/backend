@@ -64,7 +64,17 @@
       }
     },
     "orderId": "Commande N°%1$s",
-    "userId": "N°%1$s"
+    "userId": "N°%1$s",
+    "deliveryAdress": "Adresse de livraison",
+    "billingAdress": "Adresse de facturation",
+    "status": {
+      "draft": "en attente", 
+      "confirmed": "confirmée", 
+      "refused": "refusée", 
+      "waiting": "en attente", 
+      "paid": "payée", 
+      "sent": "envoyée"
+    }
   },
   "categories": {
     "noEntry": "Aucune catégories",

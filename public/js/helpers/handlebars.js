@@ -234,14 +234,17 @@ Handlebars.registerHelper('indexPlusOne', function( str )
   return (( +str ) + 1 )
 })
 
-Handlebars.registerHelper('userAddress', function( obj ) 
+Handlebars.registerHelper('formatAddress', function( obj ) 
 {
+  if( !Object.size( obj ) )
+    return ''
+
   var str = [
       // obj.lastname + ' ' + obj.firstname + '<br>'
       obj.address1 + '<br>'
   ]
 
-  if( !_.isNull( obj.address2 ) )
+  if( !_.isBlank( obj.address2 ) )
     str.push( obj.address2 + '<br>' )
 
   str.push( obj.zipcode + ' ' + obj.city + '<br>' )

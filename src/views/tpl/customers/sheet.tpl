@@ -65,7 +65,7 @@
                   {{value.lastname}} {{value.firstname}}
                 </td>
                 <td>
-                  {{{userAddress value}}}
+                  {{{formatAddress value}}}
                 </td>
                 <td>
                   <a href="javascript:;">

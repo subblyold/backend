@@ -65,7 +65,17 @@
       }
     },
     "orderId": "Order #%1$s",
-    "userId": "#%1$s"
+    "userId": "#%1$s",
+    "deliveryAdress": "Delivery adress",
+    "billingAdress": "Shipping address",
+    "status": {
+      "draft": "pending", 
+      "confirmed": "confirmed", 
+      "refused": "refused", 
+      "waiting": "waiting", 
+      "paid": "paid", 
+      "sent": "sent"
+    }
   },
   "categories": {
     "noEntry": "no entries",
