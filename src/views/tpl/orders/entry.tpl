@@ -74,7 +74,7 @@
                   <span class="ord-dlv-cpy"><!-- order delivery company -->
                     Colissimo Express
                   </span>
-                  - $8,99
+                  - {{formatNumber shipping_cost type="currency"}}
                 </span>
               </span>
               <span class="fl-r strong f-ttl strong c-blk">

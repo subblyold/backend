@@ -265,6 +265,7 @@
         // add view's event
         this.addEvents( {
             'click ul.customer-nav a': 'switchTab'
+          , 'click li.js-order-goto':  'goToOrder'
         })
       }
 
@@ -296,6 +297,11 @@
         event.target.classList.add('active')
 
         document.getElementById( id ).classList.add('active')
+      }
+
+    , goToOrder: function( event )
+      {
+        Subbly.trigger( 'hash::change', 'orders/' + event.currentTarget.getAttribute('data-uid') )
       }
   }
 

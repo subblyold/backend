@@ -44,7 +44,8 @@
       "none": "no order",
       "single": "1 order",
       "plural": "%1$s orders"
-    }
+    },
+    "noOrdersMsg": "This customer has placed no orders."
   },
   "orders": {
     "noEntry": "You don't have<br> any orders yet.",
@@ -59,7 +60,7 @@
     "tabs": {
       "profile": "profile",
       "orders": {
-        "none": "order",
+        "none": "no orders",
         "single": "order",
         "plural": "orders (%1$s)"
       }

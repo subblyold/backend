@@ -27441,6 +27441,18 @@ Handlebars.registerHelper('formatAddress', function( obj )
   return str.join('')
 })
 
+
+Handlebars.registerHelper('formatTime', function( value, format )
+{
+  var value = moment.utc( value )
+
+  if( !_.isUndefined( format ) )
+  {
+    return  value.format( format )  
+  }
+  return  value.fromNow()
+})
+
 /*
  * validation inspired by validate.js by Rick Harrison, http://rickharrison.me
  * validate.js is open sourced under the MIT license.
@@ -31580,6 +31592,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         // add view's event
         this.addEvents( {
             'click ul.customer-nav a': 'switchTab'
+          , 'click li.js-order-goto':  'goToOrder'
         })
       }
 
@@ -31611,6 +31624,11 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
         event.target.classList.add('active')
 
         document.getElementById( id ).classList.add('active')
+      }
+
+    , goToOrder: function( event )
+      {
+        Subbly.trigger( 'hash::change', 'orders/' + event.currentTarget.getAttribute('data-uid') )
       }
   }
 
@@ -31706,7 +31724,7 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
     , _controllerName: 'orders'
     , _listDisplayed:  false  
     , _collectionPath: 'Subbly.Collection.Orders'
-    , _displayData:    { includes: ['user', 'products'], order_by:{ id: 'DESC' } } 
+    , _displayData:    { includes: ['user'], order_by:{ id: 'DESC' } } 
     , _mainNavRegister:
       {
           name:       'Orders'
@@ -31834,16 +31852,9 @@ Components.Subbly.View.Search = SubblyViewSearch = SubblyView.extend(
 
     , render: function()
       {
-        var qty = 0
-
-        _.each( this.model.get('products'), function( product )
-        {
-          qty += ( 1 * product.quantity )
-        })
-
         var html = this.tplRow({
             totalPrice:   this.model.get('total_price')
-          , totalItems:   Subbly.i18n().choice( 'orders.items', qty ) 
+          , totalItems:   Subbly.i18n().choice( 'orders.items', this.model.get('total_items') ) 
           , orderStatus:  this.model.get('status')
           , customerName: this.model.get('user').displayName
           , createdDate:  moment.utc( this.model.get('created_at') ).fromNow()

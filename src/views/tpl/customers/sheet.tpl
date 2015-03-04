@@ -18,7 +18,7 @@
               </li>
               <li>
                 <a href="#customer-orders">
-                  {{i18nChoice 'orderDetails.tabs.orders' orders}}
+                  {{i18nChoice 'orderDetails.tabs.orders' orders_total}}
                 </a>
               </li>          
             </ul>
@@ -88,18 +88,20 @@
             </p>
           </div><!-- /#customer-profile -->
           <div id="customer-orders" class="customer-tab">
+            {{#if orders}}
             <ul class="cln-lst c-pdg-bas-t user-orders">
-              <li class="cln-lst-rw cust-row js-trigger-goto list-row">
+              {{#each orders}}
+              <li class="cln-lst-rw cust-row js-trigger-goto list-row js-order-goto" data-uid="{{uid}}">
                 <span class="cln-lst-itm cln-lst-blk ordr-sts"> <span class="bullet waiting"></span> </span>
                 <span class="cln-lst-itm cln-lst-blk strong c-blk">
-                  5 products
+                   {{i18nChoice 'orders.items' total_items}}
                 </span>
                 <span class="fl-r">
                   <span class="cln-lst-itm cln-lst-blk strong c-blk ordr-total">
-                    $ 3 630.00
+                    {{formatNumber total_price type="currency"}}
                   </span>
                   <span class="cln-lst-itm cln-lst-blk">
-                    12/02/2014
+                    {{formatTime created_at 'L'}}
                   </span>
                   <span class="cln-lst-itm cln-lst-blk ordr-btn-rcp">
                     <a href="javascript:;" class="btn btn-icon">
@@ -108,7 +110,13 @@
                   </span>
                 </span>
               </li>
+              {{/each}}
             </ul>
+            {{else}}
+            <p class="cust-no-orders">
+              {{i18n 'customers.noOrdersMsg'}}
+            </p>
+            {{/if}}
           </div><!-- /#customer-orders -->
         </div><!-- /.c-pdg-h -->
       </div><!-- /.c-pdg-h -->

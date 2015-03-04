@@ -12,7 +12,7 @@
     , _controllerName: 'orders'
     , _listDisplayed:  false  
     , _collectionPath: 'Subbly.Collection.Orders'
-    , _displayData:    { includes: ['user', 'products'], order_by:{ id: 'DESC' } } 
+    , _displayData:    { includes: ['user'], order_by:{ id: 'DESC' } } 
     , _mainNavRegister:
       {
           name:       'Orders'
@@ -140,16 +140,9 @@
 
     , render: function()
       {
-        var qty = 0
-
-        _.each( this.model.get('products'), function( product )
-        {
-          qty += ( 1 * product.quantity )
-        })
-
         var html = this.tplRow({
             totalPrice:   this.model.get('total_price')
-          , totalItems:   Subbly.i18n().choice( 'orders.items', qty ) 
+          , totalItems:   Subbly.i18n().choice( 'orders.items', this.model.get('total_items') ) 
           , orderStatus:  this.model.get('status')
           , customerName: this.model.get('user').displayName
           , createdDate:  moment.utc( this.model.get('created_at') ).fromNow()

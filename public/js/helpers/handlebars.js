@@ -252,3 +252,15 @@ Handlebars.registerHelper('formatAddress', function( obj )
 
   return str.join('')
 })
+
+
+Handlebars.registerHelper('formatTime', function( value, format )
+{
+  var value = moment.utc( value )
+
+  if( !_.isUndefined( format ) )
+  {
+    return  value.format( format )  
+  }
+  return  value.fromNow()
+})

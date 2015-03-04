@@ -40,10 +40,11 @@
     "formPlaceholder": "Rechercher par nom",
     "lastVisit": "Dernière connexion ",
     "orders": {
-      "none": "aucune commende",
+      "none": "aucune commande",
       "single": "1 commande",
       "plural": "%1$s commandes"
-    }
+    },
+    "noOrdersMsg": "Ce client n'a passé aucune commande."
   },
   "orders": {
     "noEntry": "Vous n'avez pas encore<br>de commandes",
@@ -58,7 +59,7 @@
     "tabs": {
       "profile": "profil",
       "orders": {
-        "none": "commande",
+        "none": "aucune commande",
         "single": "commande",
         "plural": "commandes (%1$s)"
       }

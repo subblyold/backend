@@ -2065,11 +2065,16 @@ input[type="search"] {
 .cust-addresses a {
   color: #b9ccb6;
 }
+.cust-no-orders,
 .cust-no-addresses {
   background: #fafafa;
+  border: none;
   color: #878787;
   display: block;
   padding: 16px 16px;
+}
+.cust-no-orders {
+  margin-top: 20px;
 }
 .products-list.rendering {
   height: calc(100% - 148px);
